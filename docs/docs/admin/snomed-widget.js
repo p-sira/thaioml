@@ -8,65 +8,75 @@ var SnomedControl = createClass({
   },
 
   componentDidMount: function () {
-    this._timer = null;
     this.fetchSuggestion();
+    document.addEventListener('keydown', this.handleKeyDown);
   },
 
   componentDidUpdate: function (prevProps) {
-    var prevTitle = prevProps.entry.getIn(['data', 'title']);
-    var title = this.props.entry.getIn(['data', 'title']);
-    if (prevTitle !== title) {
-      this.fetchSuggestion();
-    }
+    // Removed auto-fetch to avoid spamming the backend while typing.
   },
 
   componentWillUnmount: function () {
-    if (this._timer) {
-      clearTimeout(this._timer);
+    document.removeEventListener('keydown', this.handleKeyDown);
+  },
+
+  handleKeyDown: function (e) {
+    if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT') {
+      var id = (e.target.id || '').toLowerCase();
+      // Look for the title input field in Decap CMS
+      if (id.includes('title')) {
+        e.preventDefault();
+        this.fetchSuggestion();
+      }
     }
   },
 
   fetchSuggestion: function () {
     var self = this;
     var title = this.props.entry.getIn(['data', 'title']);
-    if (!title || title.trim() === '') return;
-
-    if (this._timer) {
-      clearTimeout(this._timer);
+    
+    if (!title || typeof title !== 'string' || title.trim() === '') {
+      var titleInput = document.querySelector('input[id*="title"]');
+      if (titleInput) {
+        title = titleInput.value;
+      }
     }
 
-    this._timer = setTimeout(function () {
-      self.setState({ loading: true, error: null });
+    if (!title || title.trim() === '') {
+      this.setState({ error: 'Please enter a title first' });
+      return;
+    }
 
-      fetch('http://localhost:8080/snomed-suggest', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: title }),
-      })
-        .then(function (response) {
-          return response.json().then(function (data) {
-            if (!response.ok) {
-              throw new Error(data.detail || 'Failed to fetch SNOMED concept');
-            }
-            return data;
-          });
-        })
-        .then(function (data) {
-          self.setState({ suggestion: data });
+    self.setState({ loading: true, error: null });
 
-          var value = self.props.value;
-          var currentValue = value && value.toJS ? value.toJS() : value;
-          if (!currentValue) {
-            self.props.onChange(data);
+    fetch('http://localhost:8080/snomed-suggest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ query: title }),
+    })
+      .then(function (response) {
+        return response.json().then(function (data) {
+          if (!response.ok) {
+            throw new Error(data.detail || 'Failed to fetch SNOMED concept');
           }
-        })
-        .catch(function (err) {
-          self.setState({ error: err.message });
-        })
-        .finally(function () {
-          self.setState({ loading: false });
+          return data;
         });
-    }, 2000);
+      })
+      .then(function (data) {
+        self.setState({ suggestion: data });
+
+        var value = self.props.value;
+        var currentValue = value && value.toJS ? value.toJS() : value;
+        if (!currentValue) {
+          self.props.onChange(data);
+        }
+      })
+      .catch(function (err) {
+        self.setState({ error: err.message });
+      })
+      .finally(function () {
+        self.setState({ loading: false });
+      });
   },
 
   handleManualAccept: function (e) {
@@ -120,8 +130,17 @@ var SnomedControl = createClass({
 
     // Auto-suggest hint
     children.push(
-      h('div', { style: { fontSize: '0.85em', color: '#666', marginBottom: '10px' } },
-        h('em', {}, 'Auto-suggesting based on title: "' + (title || '...') + '"')
+      h('div', { style: { fontSize: '0.85em', color: '#666', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
+        h('span', {},
+          h('em', {}, 'Press '),
+          h('strong', {}, 'Enter'),
+          h('em', {}, ' in the title box or click to suggest: "' + (title || '...') + '"')
+        ),
+        h('button', {
+          type: 'button',
+          onClick: function (e) { e.preventDefault(); this.fetchSuggestion(); }.bind(this),
+          style: { padding: '4px 10px', background: '#e0e0e0', border: '1px solid #ccc', borderRadius: '4px', cursor: 'pointer', fontSize: '0.9em' }
+        }, 'Suggest')
       )
     );
 
