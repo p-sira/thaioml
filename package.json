@@ -1,0 +1,12 @@
+{
+  "name": "thaioml",
+  "version": "1.0.0",
+  "description": "Open Medical Library of Thailand",
+  "scripts": {
+    "dev:cms": "npx decap-server",
+    "dev:docs": "cd docs && mkdocs serve"
+  },
+  "dependencies": {
+    "decap-server": "^3.0.0"
+  }
+}

@@ -1,0 +1,30 @@
+local_backend: true
+backend:
+  name: git-gateway
+  branch: main
+  commit_messages:
+    create: 'Create {{collection}} "{{slug}}"'
+    update: 'Update {{collection}} "{{slug}}"'
+    delete: 'Delete {{collection}} "{{slug}}"'
+    uploadMedia: 'Upload "{{path}}"'
+    deleteMedia: 'Delete "{{path}}"'
+
+media_folder: "docs/docs/assets/images"
+public_folder: "assets/images"
+
+collections:
+  - name: "articles"
+    label: "Articles"
+    folder: "docs/docs/articles"
+    create: true
+    slug: "{{id}}"
+    fields:
+      - {label: "ID", name: "id", widget: "string"}
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Type", name: "type", widget: "select", options: ["disease", "drug", "procedure", "anatomy", "physiology", "symptom", "laboratory-test", "guideline", "abbreviation", "differential-diagnosis"]}
+      - {label: "Specialty", name: "specialty", widget: "list", required: false}
+      - {label: "Abbreviations", name: "abbreviations", widget: "list", required: false}
+      - {label: "Tags", name: "tags", widget: "list", required: false}
+      - {label: "Review Status", name: "review_status", widget: "select", options: ["draft", "pending", "reviewed"]}
+      - {label: "Last Medical Review", name: "last_medical_review", widget: "date", format: "YYYY-MM-DD", required: false}
+      - {label: "Body", name: "body", widget: "markdown"}

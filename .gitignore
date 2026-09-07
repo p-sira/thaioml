@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+
+# MkDocs
+site/
+
+# Node
+node_modules/
+package-lock.json
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Devcontainers local data
+.devcontainer/data/

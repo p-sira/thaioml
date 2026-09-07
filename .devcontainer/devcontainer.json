@@ -1,0 +1,33 @@
+{
+  "name": "ThaiOML Dev Environment",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "features": {
+    "ghcr.io/devcontainers/features/python:1": {
+      "version": "3.11"
+    },
+    "ghcr.io/devcontainers/features/node:1": {
+      "version": "20"
+    }
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "charliermarsh.ruff",
+        "esbenp.prettier-vscode",
+        "redhat.vscode-yaml"
+      ]
+    }
+  },
+  "postCreateCommand": "npm install && cd backend && uv sync && cd ../docs && uv venv && uv pip install -r requirements.txt",
+  "forwardPorts": [8000, 8081, 8082],
+  "portsAttributes": {
+    "8000": { "label": "MkDocs Server", "onAutoForward": "notify" },
+    "8081": { "label": "Decap CMS Proxy", "onAutoForward": "notify" },
+    "8082": { "label": "FastAPI RAG Backend", "onAutoForward": "notify" }
+  },
+  "remoteUser": "vscode"
+}
