@@ -20,7 +20,7 @@ class Settings(BaseSettings):
 
     # SNOMED Lookup Feature
     openrouter_api_key_lookup: str = ""
-    openrouter_model_lookup: str = "minimax/minimax-m2.7:free"
+    openrouter_model_lookup: str = "qwen/qwen-2.5-72b-instruct:free"
 
     model_config = SettingsConfigDict(
         env_file="../.env", env_file_encoding="utf-8", extra="ignore"
