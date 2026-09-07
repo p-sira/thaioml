@@ -74,11 +74,31 @@ def load_documents(base_path: str):
                 "source": rel_path,
                 "title": metadata.get("title", ""),
                 "type": metadata.get("type", ""),
+                "id": str(metadata.get("id", "")),
+                "snomed_fsn": metadata.get("snomed_fsn", ""),
             }
 
             # Add specialty if it exists and is list
             if "specialty" in metadata and isinstance(metadata["specialty"], list):
                 base_metadata["specialty"] = ", ".join(metadata["specialty"])
+
+            if "parents" in metadata and isinstance(metadata["parents"], list):
+                base_metadata["parents"] = [str(p) for p in metadata["parents"]]
+
+            synonyms = metadata.get("synonyms", [])
+            if not isinstance(synonyms, list):
+                synonyms = []
+            if synonyms:
+                base_metadata["synonyms"] = ", ".join(synonyms)
+
+            # Inject FSN and synonyms into the text so it gets vectorized
+            metadata_text = f"Title: {base_metadata['title']}\n"
+            if base_metadata.get("snomed_fsn"):
+                metadata_text += f"SNOMED FSN: {base_metadata['snomed_fsn']}\n"
+            if synonyms:
+                metadata_text += f"Synonyms: {', '.join(synonyms)}\n"
+
+            md_content = metadata_text + "\n" + md_content
 
             md_header_splits = markdown_splitter.split_text(md_content)
 
