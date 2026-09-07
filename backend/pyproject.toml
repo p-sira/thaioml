@@ -18,8 +18,10 @@ dependencies = [
     "langchain-text-splitters>=1.1.2",
     "psycopg[binary]>=3.3.5",
     "pydantic-settings>=2.15.0",
+    "pyright>=1.1.411",
     "python-dotenv>=1.2.3",
     "pyyaml>=6.0.3",
+    "ruff>=0.16.6",
     "uvicorn[standard]>=0.52.4",
 ]
 
