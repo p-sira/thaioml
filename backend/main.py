@@ -56,7 +56,7 @@ def init_rag():
         model=settings.openrouter_model,
     )
 
-    template = """Answer the question based only on the following context (answer in Thai where appropriate for medical context):
+    template = """Answer the question based only on the following context. Do not make up any information that is not in the context. Answer in Thai when the user ask in Thai, explicitly state so, or based on the context where appropriate, such as specific mnemonics:
 {context}
 
 Question: {question}
