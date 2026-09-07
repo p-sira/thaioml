@@ -9,7 +9,6 @@ var SnomedControl = createClass({
 
   componentDidMount: function () {
     this.fetchSuggestion();
-    document.addEventListener('keydown', this.handleKeyDown);
   },
 
   componentDidUpdate: function (prevProps) {
@@ -17,24 +16,13 @@ var SnomedControl = createClass({
   },
 
   componentWillUnmount: function () {
-    document.removeEventListener('keydown', this.handleKeyDown);
   },
 
-  handleKeyDown: function (e) {
-    if (e.key === 'Enter' && e.target && e.target.tagName === 'INPUT') {
-      var id = (e.target.id || '').toLowerCase();
-      // Look for the title input field in Decap CMS
-      if (id.includes('title')) {
-        e.preventDefault();
-        this.fetchSuggestion();
-      }
-    }
-  },
 
   fetchSuggestion: function () {
     var self = this;
     var title = this.props.entry.getIn(['data', 'title']);
-    
+
     if (!title || typeof title !== 'string' || title.trim() === '') {
       var titleInput = document.querySelector('input[id*="title"]');
       if (titleInput) {
@@ -132,9 +120,7 @@ var SnomedControl = createClass({
     children.push(
       h('div', { style: { fontSize: '0.85em', color: '#666', marginBottom: '10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' } },
         h('span', {},
-          h('em', {}, 'Press '),
-          h('strong', {}, 'Enter'),
-          h('em', {}, ' in the title box or click to suggest: "' + (title || '...') + '"')
+          h('em', {}, 'Click to suggest from title: "' + (title || '...') + '"')
         ),
         h('button', {
           type: 'button',
