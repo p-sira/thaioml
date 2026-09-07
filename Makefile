@@ -24,4 +24,4 @@ dev:
 
 dev-all:
 	@echo "Starting all services (Docs, CMS, Backend)..."
-	$(MAKE) dev-docs & $(MAKE) dev-backend & $(MAKE) dev-cms & wait
+	@trap 'echo "Stopping services..."; kill 0' SIGINT EXIT; $(MAKE) dev-docs & $(MAKE) dev-backend & $(MAKE) dev-cms & wait
