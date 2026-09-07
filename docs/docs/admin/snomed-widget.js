@@ -9,6 +9,7 @@ var SnomedControl = createClass({
 
   componentDidMount: function () {
     this.fetchSuggestion();
+    this.hideFields();
   },
 
   componentDidUpdate: function (prevProps) {
@@ -16,6 +17,61 @@ var SnomedControl = createClass({
   },
 
   componentWillUnmount: function () {
+  },
+
+  updateSiblingField: function (labelText, value) {
+    var labels = document.querySelectorAll('label');
+    for (var i = 0; i < labels.length; i++) {
+      var text = labels[i].textContent.trim();
+      if (text === labelText || text.startsWith(labelText + ' ')) {
+        var inputId = labels[i].getAttribute('for');
+        if (inputId) {
+          var input = document.getElementById(inputId);
+          if (input) {
+            var nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+            if (nativeInputValueSetter) {
+              nativeInputValueSetter.call(input, value);
+              input.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+          }
+        }
+      }
+    }
+  },
+
+  hideFields: function () {
+    var checkCount = 0;
+    var interval = setInterval(function() {
+      checkCount++;
+      if (checkCount > 50) { clearInterval(interval); return; }
+
+      var labels = document.querySelectorAll('label');
+      var hiddenCount = 0;
+      for (var i = 0; i < labels.length; i++) {
+        var text = labels[i].textContent.trim();
+        if (text === 'ID' || text.startsWith('ID ') || text === 'SNOMED FSN' || text.startsWith('SNOMED FSN ')) {
+          var inputId = labels[i].getAttribute('for');
+          var input = inputId ? document.getElementById(inputId) : null;
+          if (input) {
+            input.readOnly = true; // Fallback
+            var p = labels[i].parentNode;
+            while (p && p.tagName !== 'BODY') {
+              if (p.contains(input)) {
+                if (p.style.display !== 'none') {
+                  p.style.display = 'none';
+                }
+                break;
+              }
+              p = p.parentNode;
+            }
+            hiddenCount++;
+          }
+        }
+      }
+      if (hiddenCount >= 2) {
+        clearInterval(interval);
+      }
+    }, 200); // Check every 200ms
   },
 
 
@@ -57,6 +113,8 @@ var SnomedControl = createClass({
         var currentValue = value && value.toJS ? value.toJS() : value;
         if (!currentValue) {
           self.props.onChange(data);
+          self.updateSiblingField('ID', data.id);
+          self.updateSiblingField('SNOMED FSN', data.term);
         }
       })
       .catch(function (err) {
@@ -71,12 +129,16 @@ var SnomedControl = createClass({
     e.preventDefault();
     if (this.state.suggestion) {
       this.props.onChange(this.state.suggestion);
+      this.updateSiblingField('ID', this.state.suggestion.id);
+      this.updateSiblingField('SNOMED FSN', this.state.suggestion.term);
     }
   },
 
   handleClear: function (e) {
     e.preventDefault();
     this.props.onChange(null);
+    this.updateSiblingField('ID', '');
+    this.updateSiblingField('SNOMED FSN', '');
   },
 
   render: function () {
