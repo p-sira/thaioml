@@ -1,13 +1,15 @@
 ---
-id: heart-murmur
-title: Heart Murmur
-type: disease
+id: '88610006'
+title: Heart murmur
+snomed_fsn: Heart murmur (finding)
+type: finding
+parents: []
+synonyms:
+- เสียงฟู่ของหัวใจ
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Heart Murmur
 
 ## Murmur Grading

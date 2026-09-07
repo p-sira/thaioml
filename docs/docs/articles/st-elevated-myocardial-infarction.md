@@ -1,13 +1,16 @@
 ---
-id: st-elevated-myocardial-infarction
-title: St Elevated Myocardial Infarction
-type: disease
+id: '401303003'
+title: Acute ST segment elevation myocardial infarction
+snomed_fsn: Acute ST segment elevation myocardial infarction (disorder)
+type: disorder
+parents: []
+synonyms:
+- STEMI
+- กล้ามเนื้อหัวใจตายเฉียบพลันชนิด ST ยก
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # ST-elevated Myocardial Infarction
 
 ## Management

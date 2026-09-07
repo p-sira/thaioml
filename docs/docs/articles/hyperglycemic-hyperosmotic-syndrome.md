@@ -1,13 +1,17 @@
 ---
-id: hyperglycemic-hyperosmotic-syndrome
-title: Hyperglycemic Hyperosmotic Syndrome
-type: disease
+id: '190446001'
+title: Hyperosmolar hyperglycemic state
+snomed_fsn: Hyperosmolar hyperglycemic state (disorder)
+type: disorder
+parents:
+- '73211009'
+synonyms:
+- HHS
+- HONK
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Hyperglycemic Hyperosmotic Syndrome
 
 ## Diagnostic Criteria

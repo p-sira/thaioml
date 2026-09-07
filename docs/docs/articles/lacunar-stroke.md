@@ -1,13 +1,16 @@
 ---
-id: lacunar-stroke
-title: Lacunar Stroke
-type: disease
+id: '15301000'
+title: Lacunar infarction
+snomed_fsn: Lacunar infarction (disorder)
+type: disorder
+parents:
+- '422504002'
+synonyms:
+- Lacunar stroke
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Lacunar Stroke
 
 ## Lacunar Syndromes

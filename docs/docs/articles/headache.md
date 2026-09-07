@@ -1,13 +1,15 @@
 ---
-id: headache
+id: '25064002'
 title: Headache
-type: disease
+snomed_fsn: Headache (finding)
+type: finding
+parents: []
+synonyms:
+- อาการปวดศีรษะ
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Headache
 
 *[SAH]: [Subarachinoid hemorrhage]

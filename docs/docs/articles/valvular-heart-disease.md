@@ -1,13 +1,16 @@
 ---
-id: valvular-heart-disease
-title: Valvular Heart Disease
-type: disease
+id: '368009'
+title: Heart valve disorder
+snomed_fsn: Heart valve disorder (disorder)
+type: disorder
+parents: []
+synonyms:
+- VHD
+- โรคลิ้นหัวใจ
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Valvular Heart Disease
 
 *[VHD]: Valvular heart disease

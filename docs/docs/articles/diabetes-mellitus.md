@@ -1,13 +1,17 @@
 ---
-id: diabetes-mellitus
-title: Diabetes Mellitus
-type: disease
+id: '73211009'
+title: Diabetes mellitus
+snomed_fsn: Diabetes mellitus (disorder)
+type: disorder
+parents:
+- '73211009'
+synonyms:
+- DM
+- โรคเบาหวาน
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Diabetes Mellitus
 
 ## Diagnosis

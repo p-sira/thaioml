@@ -1,13 +1,17 @@
 ---
-id: diabetic-ketoacidosis
-title: Diabetic Ketoacidosis
-type: disease
+id: '420422005'
+title: Diabetic ketoacidosis
+snomed_fsn: Diabetic ketoacidosis (disorder)
+type: disorder
+parents:
+- '73211009'
+synonyms:
+- DKA
+- ภาวะเลือดเป็นกรดจากคีโตนจากเบาหวาน
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Diabetic Ketoacidosis
 
 ## Diagnostic Criteria

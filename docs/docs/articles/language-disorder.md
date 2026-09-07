@@ -1,13 +1,15 @@
 ---
-id: language-disorder
-title: Language Disorder
-type: disease
+id: '62415009'
+title: Language disorder
+snomed_fsn: Language disorder (disorder)
+type: disorder
+parents: []
+synonyms:
+- ความผิดปกติทางภาษา
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Language Disorder
 
 ## Broca Aphasia

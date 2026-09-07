@@ -1,13 +1,16 @@
 ---
-id: hypoglycemic-agents
-title: Hypoglycemic Agents
-type: disease
+id: '372793006'
+title: Hypoglycemic agent
+snomed_fsn: Hypoglycemic agent (substance)
+type: substance
+parents: []
+synonyms:
+- Anti-diabetic drugs
+- ยาลดน้ำตาลในเลือด
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Hypoglycemic Agents
 
 ## Groups

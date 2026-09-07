@@ -1,13 +1,16 @@
 ---
-id: ischemic-stroke
-title: Ischemic Stroke
-type: disease
+id: '422504002'
+title: Ischemic stroke
+snomed_fsn: Ischemic stroke (disorder)
+type: disorder
+parents: []
+synonyms:
+- Cerebral infarction
+- โรคหลอดเลือดสมองตีบหรืออุดตัน
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Ischemic Stroke
 
 ## TOAST Classification

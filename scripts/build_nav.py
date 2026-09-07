@@ -90,6 +90,9 @@ def update_mkdocs_nav(mkdocs_file, generated_nav):
         print(f"Warning: {mkdocs_file} not found. Cannot update nav.")
         return
 
+    # Add dummy constructor to ignore mkdocs python tags
+    yaml.SafeLoader.add_constructor(None, lambda loader, node: None)
+    
     with open(mkdocs_file, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f) or {}
 

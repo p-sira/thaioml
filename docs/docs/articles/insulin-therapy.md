@@ -1,13 +1,15 @@
 ---
-id: insulin-therapy
-title: Insulin Therapy
-type: disease
+id: '226065005'
+title: Insulin therapy
+snomed_fsn: Insulin therapy (procedure)
+type: procedure
+parents: []
+synonyms:
+- การรักษาด้วยอินซูลิน
 specialty: []
-abbreviations: []
 tags: []
 review_status: draft
 ---
-
 # Insulin Therapy
 
 *[TDD]: Total daily dose
