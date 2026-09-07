@@ -42,5 +42,11 @@ last_medical_review: [YYYY-MM-DD, optional]
 - **Thai Aliases:** Always map Thai condition names to the official SNOMED CT concept. Include the Thai name in the `synonyms` array to ensure AI search and RAG pipelines can find the English canonical concept via Thai queries.
 - **Workflow:** Authors should use the AI semantic lookup in Decap CMS to find the correct `id` and `snomed_fsn` when creating articles. Keep filenames in human-readable kebab-case (e.g., `myocardial-infarction.md`).
 
-## 3. Editorial CMS Workflow
+## 4. SNOMED Lookup Architecture
+When agents or frontend widgets interact with the SNOMED lookup system (e.g., via the backend `/snomed-suggest` endpoint), the following hybrid pipeline is used to prevent hallucination while retaining semantic translation capabilities (like Thai to English):
+1. **Semantic Translation:** An LLM predicts the canonical *English SNOMED CT term name* from the user's potentially non-standard or Thai query.
+2. **Verification (FHIR API):** The backend queries an official terminology server (e.g., CSIRO Ontoserver `tx.ontoserver.csiro.au`) via FHIR (`$expand`) using the predicted term to fetch the actual concept.
+3. **Validation:** The system extracts the first active concept, guaranteeing 100% ID accuracy before returning it to the user.
+
+## 5. Editorial CMS Workflow
 The GitHub repository acts as the backend for Decap CMS. For the exact editorial workflow (Contributor -> Reviewer -> Editor) and proxy approval rules, you MUST read the canonical guidelines at `docs/docs/guidelines/editorial-process.md` using the `view_file` tool before taking action.
