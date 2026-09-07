@@ -21,6 +21,7 @@ collections:
     fields:
       - {label: "ID", name: "id", widget: "string"}
       - {label: "Title", name: "title", widget: "string"}
+      - {label: "SNOMED Code", name: "snomed_code", widget: "snomed", required: false}
       - {label: "Type", name: "type", widget: "select", options: ["disease", "drug", "procedure", "anatomy", "physiology", "symptom", "laboratory-test", "guideline", "abbreviation", "differential-diagnosis"]}
       - {label: "Specialty", name: "specialty", widget: "list", required: false}
       - {label: "Abbreviations", name: "abbreviations", widget: "list", required: false}

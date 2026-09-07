@@ -9,7 +9,7 @@ setup:
 
 dev-docs:
 	@echo "Starting MkDocs..."
-	cd docs && uv run mkdocs serve
+	cd docs && .venv/bin/mkdocs serve
 
 dev-cms:
 	@echo "Starting Decap CMS proxy..."
@@ -17,7 +17,11 @@ dev-cms:
 
 dev-backend:
 	@echo "Starting FastAPI backend..."
-	cd backend && uv run uvicorn main:app --reload
+	cd backend && .venv/bin/uvicorn main:app --reload --port 8080
 
 dev:
-	@echo "To run everything, we recommend opening this folder in a Devcontainer, or running 'make dev-docs', 'make dev-cms', and 'make dev-backend' in separate terminals."
+	@echo "To run everything manually, we recommend opening this folder in a Devcontainer, or running 'make dev-docs', 'make dev-cms', and 'make dev-backend' in separate terminals."
+
+dev-all:
+	@echo "Starting all services (Docs, CMS, Backend)..."
+	$(MAKE) dev-docs & $(MAKE) dev-backend & $(MAKE) dev-cms & wait

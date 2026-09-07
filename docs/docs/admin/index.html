@@ -6,9 +6,28 @@
   <title>Content Manager</title>
   <!-- Include the script that enables Netlify Identity on this page. -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+  <!-- React & ReactDOM (Required for custom Decap widgets) -->
+  <script src="https://unpkg.com/react@17/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.production.min.js"></script>
+
+  <!-- Babel standalone for in-browser JSX compilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 <body>
+  <!-- Setup Manual Init so we can register widgets before starting CMS -->
+  <script>
+    window.CMS_MANUAL_INIT = true;
+  </script>
   <!-- Include the script that builds the page and powers Decap CMS -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
+  
+  <!-- Load the custom SNOMED widget via Babel -->
+  <script type="text/babel" src="snomed-widget.js"></script>
+
+  <!-- Initialize CMS after Babel finishes compiling -->
+  <script type="text/babel">
+    CMS.init();
+  </script>
 </body>
 </html>
