@@ -1,0 +1,117 @@
+:root {
+  /* Light Theme - Bespoke Slate/Zinc Monochrome */
+  --md-primary-fg-color:        #ffffff;
+  --md-primary-fg-color--light: #f8fafc;
+  --md-primary-fg-color--dark:  #f1f5f9;
+  --md-primary-bg-color:        #0f172a;
+
+  --md-default-bg-color:        #ffffff;
+  --md-default-bg-color--light: #f8fafc;
+  --md-default-fg-color:        #334155;
+  --md-default-fg-color--light: #64748b;
+  --md-default-fg-color--dark:  #0f172a;
+  
+  /* Default Neutral Accent */
+  --md-accent-fg-color:         #64748b; 
+  --md-accent-fg-color--transparent: rgba(100, 116, 139, 0.1);
+  --md-accent-bg-color:         #ffffff;
+
+  /* Card Backgrounds */
+  --md-typeset-color:           #334155;
+  --md-typeset-a-color:         var(--md-accent-fg-color);
+  --md-code-bg-color:           #f8fafc;
+}
+
+[data-md-color-scheme="slate"] {
+  /* Dark Theme - Bespoke Slate/Zinc Monochrome */
+  --md-primary-fg-color:        #0f172a;
+  --md-primary-fg-color--light: #1e293b;
+  --md-primary-fg-color--dark:  #020617;
+  --md-primary-bg-color:        #f1f5f9;
+
+  --md-default-bg-color:        #0f172a;
+  --md-default-bg-color--light: #1e293b;
+  --md-default-fg-color:        #cbd5e1;
+  --md-default-fg-color--light: #94a3b8;
+  --md-default-fg-color--dark:  #f8fafc;
+  
+  /* Default Neutral Accent */
+  --md-accent-fg-color:         #94a3b8; 
+  --md-accent-fg-color--transparent: rgba(148, 163, 184, 0.1);
+  --md-accent-bg-color:         #0f172a;
+
+  /* Card Backgrounds */
+  --md-typeset-color:           #cbd5e1;
+  --md-typeset-a-color:         var(--md-accent-fg-color);
+  --md-code-bg-color:           #1e293b;
+}
+
+/* Base styles for the color picker grid */
+.color-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  gap: 12px;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.color-swatch {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.color-swatch:hover {
+  transform: scale(1.1);
+}
+
+.color-swatch.active {
+  border-color: var(--md-default-fg-color);
+  transform: scale(1.1);
+}
+
+.color-swatch.active::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 0 2px rgba(0,0,0,0.5);
+}
+
+/* 
+  Override MkDocs Material's default behavior where active links use the primary color. 
+  Since our primary color matches the background (for header styling), we force active 
+  links to use the accent color instead so they are visible. 
+*/
+.md-nav__link--active,
+.md-nav__link--active:hover,
+.md-nav__item .md-nav__link--active,
+.md-tabs__link--active,
+.md-tabs__link--active:hover {
+  color: var(--md-accent-fg-color) !important;
+}
+
+/* 
+  Force links within the main content body to use the accent color.
+  By default MkDocs uses the primary color for links, which we've set to 
+  the header background color (white in light mode).
+*/
+.md-typeset a {
+  color: var(--md-accent-fg-color);
+}
+
+.md-typeset a:hover {
+  color: var(--md-accent-fg-color);
+  filter: brightness(1.2); /* Slight hover effect */
+}
+
+

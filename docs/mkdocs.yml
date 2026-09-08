@@ -4,12 +4,35 @@ site_description: Community-maintained, expert-reviewed medical education databa
 
 theme:
   name: material
+  palette:
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-7
+        name: Switch to Darkroom
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/brightness-4
+        name: Switch to Leuko
   features:
     - navigation.tabs
     - navigation.sections
     - navigation.top
     - search.suggest
     - search.highlight
+
+extra_css:
+  - stylesheets/custom-theme.css
+
+extra_javascript:
+  - javascripts/theme-accent.js
 
 markdown_extensions:
   - pymdownx.superfences:
