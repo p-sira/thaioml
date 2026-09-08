@@ -13,46 +13,40 @@ review_status: draft
 ---
 # ST-elevated Myocardial Infarction
 
-## Management
+## Treatment
 
-### Initial Management
+- **Initial Supportive Management**
+    - **Oxygen support**: Indicated only if **SpO2 < 90%**
 
-#### Supportive
+- **Initial Evaluation & Investigations**
+    - **hs-cTnT** or **hs-cTnI** for diagnosis
+    - **12-lead EKG** for diagnosis
+    - **Electrolytes, BUN, Cr**
+    - **CBC** (to assess platelet count and bleeding risk)
+    - **Coagulogram** (baseline for fibrinolytics or intervention)
+    - **CXR** (crucial to rule out **aortic dissection**)
+    - **Lipid profile** (for statin initiation)
+    - **LFT** (to adjust statin dose)
+    - **POC-glucose**
 
-1. Oxygen support for SpO2 < 90%
+- **Reperfusion Therapy: PCI vs Fibrinolytic**
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** **Primary PCI** is always preferred if available and timely.
+    - **Presented to PCI center**: Perform PCI **within 90 minutes**.
+    - **Time to PCI center < 120 minutes**: Transfer and refer to the center.
+    - **Time to PCI > 120 minutes**: Initiate **fibrinolytic therapy** immediately.
 
-#### Investigation
+- **Notes for PCI**
+    - **DAPT for at least 12 months**: **ASA + prasugrel** or **ticagrelor**
+    - **Unfractionated heparin** indicated
 
-1. hs-cTnT or hs-cTnI for diagnosis
-2. 12-lead EKG for diagnosis
-3. Electrolyte, BUN, Cr
-4. CBC to assess bleeding risk and platelet
-5. Coagulogram for fibrinolytics or intervention
-6. CXR to rule out aortic dissection
-7. Lipid profile for statin
-8. LFT to adjust statin dose
-9. POC-glu
+- **Notes for Fibrinolysis**
+    - Initiate fibrinolytic **within 30 minutes** of arrival.
+    - Preferred agents: **Tenecteplase** or **alteplase** (preferred over streptokinase).
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** **Never administer Streptokinase (SK) twice** due to antibody formation.
+    - Must always be followed by **routine coronary angiography**.
 
-### PCI or Fibrinolytic
-
-- Always PCI if possible.
-- If the patient is presented to a PCI center, PCI within 90 minutes. 
-- If time to PCI center < 120 minutes, refer to the center. 
-- Otherwise, initiate fibrinolytic therapy.
-
-### Notes for PCI
-
-- DAPT for at least 12 months: ASA + prasugrel or ticagrelor
-- Unfractionated heparin
-
-### Notes for Fibrinolysis
-
-- Initiate fibrinolytic within 30 minutes.
-- Tenecteplase or alteplase over streptokinase.
-- Never administer SK twice.
-- Always follow by routine coronary angiography.
-
-### Lipid Control
-
-- High-intensity statin: atorvastatin 80 mg > rosuvastatin 20-40 mg
-- Add ezetimibe if LDL > 70 or decreased less than 50%.
+- **Lipid Control**
+    - **High-intensity statin** indicated: **Atorvastatin 80 mg** or **Rosuvastatin 20-40 mg**
+    - Add **ezetimibe** if **LDL > 70** or decreased by less than **50%**.

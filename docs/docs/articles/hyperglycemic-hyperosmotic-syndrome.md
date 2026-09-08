@@ -14,9 +14,14 @@ review_status: draft
 ---
 # Hyperglycemic Hyperosmotic Syndrome
 
-## Diagnostic Criteria
+## Evaluation
 
-1. Hyperglycemia: Plasma glucose > 600 mg/dL
-2. Hyperosmolarity: Effective serum osmolality > 300 mOsm/kg (2\*Na + glucose) or total serum osmolality > 320 mOsm/kg (2\*Na + glucose + BUN)
-3. No significant ketosis
-4. No acidosis
+- **Diagnostic Criteria**
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** Characterized by severe hyperglycemia and hyperosmolarity **without** significant ketosis or acidosis.
+    - **Hyperglycemia**: **Plasma glucose > 600 mg/dL**
+    - **Hyperosmolarity**: 
+        - **Effective serum osmolality > 300 mOsm/kg** (2 * Na + glucose) 
+        - OR **Total serum osmolality > 320 mOsm/kg** (2 * Na + glucose + BUN)
+    - **No significant ketosis**
+    - **No acidosis**

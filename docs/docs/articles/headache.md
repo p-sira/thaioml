@@ -17,25 +17,24 @@ review_status: draft
 *[CVST]: [Cerebral venous sinus thrombosis]
 *[IIH]: [Idiopathic intracranial hypertension]
 
-Must be considered in order:
-1. Thunderclap headache: SAH, ICH, CVST, [pituitary apoplexy]
-2. Secondary headache: as in thunderclap headache, meningitis, tumor, abscess, [temporal arteritis], [glaucoma], [trigeminal neuralgia], IIH
-3. Primary headache: tension, migraine, cluster, other primary
+## Evaluation
 
-## Onset
+- **Diagnostic Priority** (Must be considered in order):
+    - **Thunderclap headache**: **SAH**, **ICH**, **CVST**, [pituitary apoplexy]
+    - **Secondary headache**: All thunderclap causes, **meningitis**, tumor, abscess, [temporal arteritis], [glaucoma], [trigeminal neuralgia], **IIH**
+    - **Primary headache**: **Tension**, **migraine**, **cluster**, other primary
 
-- Acute onset: likely secondary
-- Chronic onset (>6 months): likely primary
-- Young onset: likely primary
-- Adult onset (>50 yr): likely secondary
+- **Onset Characteristics**
+    - **Acute onset**: Likely **secondary** etiology
+    - **Chronic onset** (>6 months): Likely **primary** etiology
+    - **Young onset**: Likely **primary** etiology
+    - **Adult onset** (>50 yr): Likely **secondary** etiology
 
-## Aggravating Factors
+- **Aggravating Factors**
+    - **Upright position**: Suggests **low CSF volume**, intraventricular mass
+    - **Supine, Valsalva, bending, coughing**: Suggests **increased ICP**
 
-- Upright: low CSF volume, intraventricular mass
-- Supine, Valsalva, bending, coughing: increased ICP
-
-## Primary Headache
-
-### Tension Headache
-### Migraine Headache
-### Cluster Headache
+- **Primary Headache Subtypes**
+    - **Tension Headache**
+    - **Migraine Headache**
+    - **Cluster Headache**

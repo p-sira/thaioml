@@ -13,12 +13,16 @@ review_status: draft
 ---
 # Lacunar Stroke
 
-## Lacunar Syndromes
+## Presentation
 
-| Syndrome | Symptoms | Localization |
-|---|---|---|
-| Pure motor hemiparesis | Contralateral hemiparesis (face, arm, leg) | |
-| Pure sensory stroke | Contralateral hemiparesthesia ||
-| Sensorimotor | Contralateral hemiparesis + hemiparesthesia ||
-| Dysarthria/clumsy hand | Slurred speech, contralateral hand clumpsiness ||
-| Ataxic hemiparesis | Contralateral limb ataxia, mild contralateral weakness ||
+- **Classic Lacunar Syndromes**
+    - **Pure Motor Hemiparesis**
+        - Symptoms: **Contralateral hemiparesis** (face, arm, leg)
+    - **Pure Sensory Stroke**
+        - Symptoms: **Contralateral hemiparesthesia**
+    - **Sensorimotor Stroke**
+        - Symptoms: **Contralateral hemiparesis** + **hemiparesthesia**
+    - **Dysarthria-Clumsy Hand Syndrome**
+        - Symptoms: **Slurred speech**, **contralateral hand clumsiness**
+    - **Ataxic Hemiparesis**
+        - Symptoms: **Contralateral limb ataxia**, **mild contralateral weakness**

@@ -10,9 +10,14 @@ description: >-
 When working with medical articles in the `docs/docs/articles/` directory, adhere strictly to these guidelines:
 
 ## 1. Content and Formatting
+- **High-Yield Format:** All articles MUST adopt a strictly bulleted and high-yield writing style:
+  - **Bulleted Hierarchy:** Use concise, hierarchical bullet points. Do NOT write long paragraphs.
+  - **Standardized Sections:** Disease articles must strictly use these section headers: Introduction, Pathophysiology, Presentation, Evaluation, Treatment, Complications.
+  - **High-Yield First:** Prioritize testable, high-yield facts, specifically including callouts for the Thai National Licensing Exam (NL).
+  - **Emphasis:** Heavily bold key terms, pathognomonic findings, and crucial concepts in every sentence to allow rapid skimming. Do not bold generic category labels (e.g., Mechanism, Causes, Symptoms).
+  - **Integrated Visuals:** Integrate clinical images and `mermaid` flowcharts directly within the bullet hierarchy where relevant, instead of placing them in separate figure sections.
 - **Language:** Main content must be in English. Mnemonics are allowed to be solely in Thai. Contributors are invited to translate pages to Thai later.
 - **Priority:** Thai medical knowledge and guidelines MUST be prioritized over US or other data.
-- **Figures:** Flowcharts should be built using Mermaid (`mermaid` codeblocks). Image figures (png/jpg) are allowed but should ideally be accompanied by mermaid diagrams to help AI systems parse them.
 
 ## 2. YAML Frontmatter Schema
 Every article MUST contain this exact metadata structure at the top of the file:
@@ -49,4 +54,4 @@ When agents or frontend widgets interact with the SNOMED lookup system (e.g., vi
 3. **Validation:** The system extracts the first active concept, guaranteeing 100% ID accuracy before returning it to the user.
 
 ## 5. Editorial CMS Workflow
-The GitHub repository acts as the backend for Decap CMS. For the exact editorial workflow (Contributor -> Reviewer -> Editor) and proxy approval rules, you MUST read the canonical guidelines at `docs/docs/guidelines/editorial-process.md` using the `view_file` tool before taking action.
+The GitHub repository acts as the backend for Decap CMS. For the exact editorial workflow (Contributor -> Reviewer -> Editor) and proxy approval rules, you MUST read the canonical guidelines at `docs/docs/guidelines/author-guideline.md`, `docs/docs/guidelines/reviewer-guideline.md`, and `docs/docs/guidelines/editor-guideline.md` using the `view_file` tool before taking action.

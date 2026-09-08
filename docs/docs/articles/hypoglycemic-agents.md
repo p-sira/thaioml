@@ -13,60 +13,42 @@ review_status: draft
 ---
 # Hypoglycemic Agents
 
-## Groups
+## Medication Classes
 
-1. Biguanide - metformin
-2. Sulfonylurea - glibenclamide, glipizide, gliclazide
-3. Thiazolidinedione - pioglitazone 
-4. DPP4 inhibitor - sitagliptin, gemiglitin
-5. SGLT2 inhibitor - empagliflozin, dapagliflozin, canagliflozin
-6. Alpha glucosidase inhibitor - acarbose
-7. GLP-1 receptor agonist - liraglutide, semaglutide
+- **Biguanides** (e.g., **Metformin**)
+    - Mechanism: **Insulin sensitizer**
+    - Efficacy: **High**
+    - Dosing: Initial **500-850 mg bid or tid**; Max **2000 mg/day**
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** **Renal dose adjustment** required:
+      > - **eGFR < 45**: Max dose 1000 mg
+      > - **eGFR < 30**: **Contraindicated**
+    - Side effects: **GI irritation** (N/V, diarrhea, metallic taste), **lactic acidosis**, **vitamin B12 deficiency**
+    - Weight profile: **Weight neutral** or **weight loss**
 
-## Biguanide
+- **Sulfonylureas** (e.g., **Glibenclamide**, **Glipizide**, **Gliclazide**)
+    - Mechanism: **Insulin secretagogue**
+    - Efficacy: **High**
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** High risk of **hypoglycemia** and **weight gain**
 
-- Insulin sensitizer
-- High efficacy
-- Metformin
-    * Initial dose 500-850 mg bid or tid
-    * Max dose 2000 mg/day
-    * Renal dose adjustment
-        - eGFR < 45: Max dose 1000 mg
-        - eGFR < 30: Contraindicated
-- Side effects: GI irritation (N/V, diarrhea, metallic taste), lactic acidosis, vit B12 deficiency
-- Weight neutral/weight loss
+- **Thiazolidinediones** (e.g., **Pioglitazone**)
+    - Mechanism: **PPAR-gamma agonist**
+    - Efficacy: **Moderate to high**
+    - Side effects: **Salt-water retention**, **edema**, **heart failure**, **weight gain**, **fracture risk**
 
-## Sulfonylurea
+- **DPP4 Inhibitors** (e.g., **Sitagliptin**, **Gemigliptin**)
+    - Efficacy: **Moderate**
+    - Advantages: **Low risk of hypoglycemia**
+    - Side effects: Rare but include **bullous pemphigoid** and **pancreatitis**
 
-- Insulin secretagogue
-- High-efficacy
-- Examples: Glibenclamide, glipizide, gliclazide
-- Side effects: Hypoglycemia, weight gain
+- **SGLT2 Inhibitors** (e.g., **Empagliflozin**, **Dapagliflozin**, **Canagliflozin**)
+    - Efficacy: **Moderate**
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** Provide **renal and cardiovascular benefits**, **reduce heart failure risk**, promote **weight loss**, and lower **BP**
+    - Side effects: **UTI**, hypovolemia, **euglycemic DKA**, **Fournier's gangrene**
 
-## Thiazolidinedione
-
-- PPAR-gamma agonist
-- Moderate-high efficacy
-- Examples: Pioglitazone
-- Side effects: Salt-water retention, edema, heart failure, weight gain, fracture risk
-
-## DPP4 Inhibitor
-
-- Moderate efficacy
-- Examples: Sitagliptin, gemigliptin
-- Advantages: Low-risk of hypoglycemia
-- Side effects (rare): Bullous pemphigoid, pancreatitis
-
-## SGLT2 Inhibitor
-
-- Moderate efficacy
-- Examples: Empagliflozin, dapagliflozin, canagliflozin
-- Advantages: Weight loss, BP reduction, renal benefits, CV benefits, reduce HF risk
-- Side effects: UTI, hypovolemia, euglycemic DKA, Fournier's gangrene
-
-## GLP-1 Receptor Agonist
-
-- High efficacy
-- Examples: Liraglutide, semaglutide
-- Advantages: Weight loss, BP reduction, CV benefits, decrease albuminuria, slow CKD progression
-- Side effects: GI irritation (N/V), pancreatitis, C-cell hyperplasia, medullary thyroid cancer
+- **GLP-1 Receptor Agonists** (e.g., **Liraglutide**, **Semaglutide**)
+    - Efficacy: **High**
+    - Advantages: **Weight loss**, BP reduction, CV benefits, decrease albuminuria, slow CKD progression
+    - Side effects: **GI irritation** (N/V), **pancreatitis**, **C-cell hyperplasia**, **medullary thyroid cancer**

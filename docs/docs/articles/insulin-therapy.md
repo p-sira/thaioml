@@ -16,33 +16,29 @@ review_status: draft
 
 ## Types of Insulin
 
-- Long-acting: glargin (Lantus), detemir, degludec
-- Intermediate-acting: protaminated insulins: NPH, aspart protamine
-- Short-acting: regular insulin (RI)
-- Rapid-acting: aspart, lispro, glulisine
+- **Long-acting**: **Glargine** (Lantus), **Detemir**, **Degludec**
+- **Intermediate-acting**: Protaminated insulins (**NPH**, **Aspart protamine**)
+- **Short-acting**: **Regular insulin (RI)**
+- **Rapid-acting**: **Aspart**, **Lispro**, **Glulisine**
 
-## Insulin Management
+## Treatment
 
-TDD = B + P + C
+- **Total Daily Dose (TDD)** = Basal (B) + Prandial/bolus (P) + Correction (C)
 
-* B: Basal
-* P: Prandial (bolus)
-* C: Correction
+- **Starting Dose**
+    - Initial calculation: **0.6–1 unit/kg/day**
+        - Adjust based on insulin resistance
+        - In **insulin-sensitive** patients, use **0.25–0.3 u/kg/day**
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** Divide total dose into **50% Basal** and **50% Prandial** (can adjust as needed)
 
-### Starting Dose
-
-- Start insulin at 0.6-1 unit/kg/day
-  - May increase or decrease over these numbers depending on insulin resistance
-  - In insulin sensitive patient, use 0.25-0.3 u/kg
-- Divide dose into 0.5 basal + 0.5 prandial
-  - Can be adjusted to appropriate fraction
-
-### Correction Dose
-
-- Used to calculate 'extra'
-- Calculate `Correction Scale = 1500/TDD` for regular or `1700/TDD` for rapid-acting insulin.
-  - E.g., a correcting scale of 10 (= 10:1) means 1 units of insulin should lower 10 mg/dL of blood glucose.
-- Calculate `Correction Dose = (Current BG - Target BG) / Correction Scale`.
-  - In general, target BG = 80 - 180 mg/dL
-- Administer the correction dose as bolus (prandial)
-- Repeat BG at 2-3 hours
+- **Correction Dose**
+    - Used to calculate extra insulin needed for hyperglycemia
+    - **Correction Scale**:
+        - Regular insulin: **1500 / TDD**
+        - Rapid-acting insulin: **1700 / TDD**
+        - *Example:* A scale of 10 (10:1) means 1 unit lowers BG by 10 mg/dL.
+    - **Correction Dose Formula**: `(Current BG - Target BG) / Correction Scale`
+        - General **Target BG**: **80–180 mg/dL**
+    - Administration: Give as a **bolus (prandial)**
+    - Follow-up: **Repeat BG at 2–3 hours**

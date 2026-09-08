@@ -12,60 +12,50 @@ review_status: draft
 ---
 # Language Disorder
 
-## Broca Aphasia
+## Presentation
 
-- Also called expressive aphasia or motor aphasia
-- Broca's area (frontal cortex of the dominant hemisphere)
-- Nonfluent (including writing), poor repetition, good comprehension
+- **Broca Aphasia**
+    - Synonyms: **Expressive aphasia**, **motor aphasia**
+    - Localization: **Broca's area** (frontal cortex of the dominant hemisphere)
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** **Nonfluent** (including writing), **poor repetition**, **good comprehension**
 
-## Wernicke Aphasia
+- **Wernicke Aphasia**
+    - Synonyms: **Sensory aphasia**
+    - Localization: **Wernicke's area** (posterior superior temporal gyrus of the dominant hemisphere)
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** **Fluent**, **poor comprehension**, **poor repetition**
+    - Gestures and pantomime **do not improve** communication
 
-- Also called sensory aphasia
-- Wernicke's area (posterior superior temporal gyrus of the dominant hemisphere)
-- Fluent, poor comprehension, poor repetition
-- Gestures and pantomime do not improve communication
+- **Global Aphasia**
+    - Localization: **Left fronto-parieto-temporal area**
+    - Symptoms: **Complete loss** of all language modalities
 
-## Global Aphasia
+- **Transcortical Aphasias** (Hallmark: **Intact repetition**)
+    - **Transcortical Motor Aphasia**
+        - Symptoms: **Nonfluent**, **intact repetition**, **good comprehension**
+    - **Transcortical Sensory Aphasia**
+        - Symptoms: **Fluent**, **poor comprehension**, **intact repetition**
 
-- Left fronto-parieto-temporal area
-- Complete loss of all language modalities
+- **Pure Alexia**
+    - Synonyms: **Alexia without agraphia**
+    - Localization: **Splenium** of the corpus callosum or **fusiform gyrus**
 
-## Transcortical Aphasia
+- **Alexia with Agraphia**
+    - Localization: **Angular gyrus**
 
-- Intact repetition
+- **Conduction Aphasia**
+    - Symptoms: **Fluent**, **good comprehension**, **poor repetition**
+    - Localization: **Arcuate fasciculus**
 
-### Transcortical Motor Aphasia
+- **Pure Word Deafness**
+    - Symptoms: Hear words as a **foreign language**
+    - Localization: Bilateral **Heschl gyri** (superior temporal cortex)
 
-- Nonfluent, intact repetition, good comprehension
+- **Anomic Aphasia**
+    - Localization: **Angular gyrus** involvement
 
-### Transcortical Sensory Aphasia
-
-- Fluent, poor comprehension, intact repetition
-
-## Pure Alexia
-
-- Also called alexia without agraphia
-- Splenium of the corpus callosum or fusiform gyrus
-
-## Alexia with Agraphia
-
-- Angular gyrus
-
-## Conduction Aphasia
-
-- Fluent, good comprehesion, poor repetition
-- Arcuate fasciculus
-
-## Pure Word Deafness
-
-- **Hear** words as a foreign language
-- Bilateral Heschl gyri (superior temporal cortex)
-
-## Anomic Aphasia
-
-- Angular gyrus involvement
-
-## Gerstmann Syndrome
-
-- Acalculia, dysgraphia, finger agnosia, left-right disorientation
-- Angular gyrus
+- **Gerstmann Syndrome**
+    - > [!IMPORTANT]
+      > **High-Yield (NL):** Tetrad of **Acalculia**, **dysgraphia**, **finger agnosia**, **left-right disorientation**
+    - Localization: **Angular gyrus**
