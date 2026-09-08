@@ -53,7 +53,8 @@ class ThaiOMLLinkerPlugin(BasePlugin):
         terms = sorted(snomed_links.keys(), key=len, reverse=True)
 
         for term in terms:
-            snomed_id = str(snomed_links[term])
+            snomed_id_raw = str(snomed_links[term])
+            snomed_id = snomed_id_raw.split("|")[0].strip()
             url = self.snomed_index.get(snomed_id)
 
             is_stub = False

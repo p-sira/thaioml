@@ -61,36 +61,42 @@ def init_rag():
         huggingfacehub_api_token=settings.huggingface_api_key_embedding,
     )
 
-    vector_store = PGVector(
-        connection=settings.database_url,
-        embeddings=embeddings,
-        collection_name="thaioml_docs",
-        use_jsonb=True,
-    )
-    retriever = vector_store.as_retriever(search_kwargs={"k": 4})
+    try:
+        vector_store = PGVector(
+            connection=settings.database_url,
+            embeddings=embeddings,
+            collection_name="thaioml_docs",
+            use_jsonb=True,
+        )
+        retriever = vector_store.as_retriever(search_kwargs={"k": 4})
 
-    llm = ChatOpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=SecretStr(settings.openrouter_api_key_rag),
-        model=settings.openrouter_model_rag,
-    )
+        llm = ChatOpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=SecretStr(settings.openrouter_api_key_rag),
+            model=settings.openrouter_model_rag,
+        )
 
-    template = """Answer the question based only on the following context. Do not make up any information that is not in the context. Answer in Thai when the user ask in Thai, explicitly state so, or based on the context where appropriate, such as specific mnemonics:
+        template = """Answer the question based only on the following context. Do not make up any information that is not in the context. Answer in Thai when the user ask in Thai, explicitly state so, or based on the context where appropriate, such as specific mnemonics:
 {context}
 
 Question: {question}
 """
-    prompt = PromptTemplate.from_template(template)
+        prompt = PromptTemplate.from_template(template)
 
-    def format_docs(docs):
-        return "\n\n".join(doc.page_content for doc in docs)
+        def format_docs(docs):
+            return "\n\n".join(doc.page_content for doc in docs)
 
-    rag_chain = (
-        {"context": retriever | format_docs, "question": RunnablePassthrough()}
-        | prompt
-        | llm
-        | StrOutputParser()
-    )
+        rag_chain = (
+            {"context": retriever | format_docs, "question": RunnablePassthrough()}
+            | prompt
+            | llm
+            | StrOutputParser()
+        )
+    except Exception as e:
+        print(
+            f"Warning: Failed to initialize RAG components (e.g., database connection error). RAG query endpoint will fail. Error: {e}"
+        )
+        rag_chain = None
 
 
 @app.on_event("startup")
@@ -197,4 +203,87 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
             id=str(valid_concept["code"]), term=valid_concept["display"]
         )
     except Exception as e:  # noqa: BLE001
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+class AutoLinkRequest(BaseModel):
+    body: str
+
+
+class AutoLinkResponse(BaseModel):
+    links: dict[str, str]
+
+
+@app.post("/auto-link", response_model=AutoLinkResponse)
+def auto_link(request: AutoLinkRequest):
+    if not settings.openrouter_api_key_lookup:
+        raise HTTPException(
+            status_code=500,
+            detail="OpenRouter API key missing.",
+        )
+    try:
+        snomed_llm = ChatOpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=SecretStr(settings.openrouter_api_key_lookup),
+            model=settings.openrouter_model_lookup,
+            temperature=0.0,
+        )
+
+        prompt_text = f"""You are a medical terminology extraction system. 
+Analyze the following markdown text and extract clinically significant terms (abbreviations, diseases, drugs, procedures). 
+For each extracted term, predict the exact, canonical English SNOMED CT term name.
+Limit to at most 10 key terms.
+Output ONLY a valid JSON array of objects with keys "original_text" and "canonical_snomed_term".
+Do not wrap in markdown blocks, just return raw JSON.
+
+Text:
+{request.body[:4000]}
+"""
+
+        response = snomed_llm.invoke(prompt_text)
+        content = response.content.strip()
+
+        # Parse JSON
+        import json
+        import urllib.parse
+        import urllib.request
+
+        try:
+            if content.startswith("```json"):
+                content = content[7:-3]
+            elif content.startswith("```"):
+                content = content[3:-3]
+            extracted_terms = json.loads(content.strip())
+        except json.JSONDecodeError:
+            print(f"Failed to parse LLM output: {{content}}")
+            extracted_terms = []
+
+        final_links = {}
+        for item in extracted_terms:
+            orig = item.get("original_text")
+            canon = item.get("canonical_snomed_term")
+            if not orig or not canon:
+                continue
+
+            try:
+                encoded_term = urllib.parse.quote(canon)
+                url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
+                req = urllib.request.Request(
+                    url, headers={"Accept": "application/json"}
+                )
+                with urllib.request.urlopen(req) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+
+                expansion = data.get("expansion", {})
+                contains = expansion.get("contains", [])
+
+                for concept in contains:
+                    if concept.get("inactive") is not True:
+                        final_links[orig] = f"{concept['code']} | {concept['display']}"
+                        break
+            except Exception as e:
+                print(f"Error resolving {canon}: {e}")
+
+        return AutoLinkResponse(links=final_links)
+    except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
