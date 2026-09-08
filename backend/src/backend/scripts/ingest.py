@@ -9,18 +9,8 @@ from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
 )
-from pydantic_settings import BaseSettings, SettingsConfigDict
 
-
-class Settings(BaseSettings):
-    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/thaioml"
-    huggingface_api_key: str = ""
-    model_config = SettingsConfigDict(
-        env_file="../.env", env_file_encoding="utf-8", extra="ignore"
-    )
-
-
-settings = Settings()
+from backend.core.config import settings
 
 
 def parse_frontmatter(content: str):
@@ -114,13 +104,13 @@ def load_documents(base_path: str):
 
 
 def main():
-    if not settings.huggingface_api_key:
-        print("Error: HUGGINGFACE_API_KEY is not set.")
+    if not settings.huggingface_api_key_embedding:
+        print("Error: HUGGINGFACE_API_KEY_EMBEDDING is not set.")
         return
 
     print("Loading and splitting documents...")
     docs_base_path = os.path.abspath(
-        os.path.join(os.path.dirname(__file__), "../docs/docs")
+        os.path.join(os.path.dirname(__file__), "../../../../docs/docs")
     )
     docs = load_documents(docs_base_path)
     print(f"Loaded {len(docs)} chunks from markdown files.")
@@ -128,7 +118,7 @@ def main():
     print("Initializing embeddings and vector store...")
     embeddings = HuggingFaceEndpointEmbeddings(
         model="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-        huggingfacehub_api_token=settings.huggingface_api_key,
+        huggingfacehub_api_token=settings.huggingface_api_key_embedding,
     )
 
     collection_name = "thaioml_docs"

@@ -17,7 +17,7 @@ dev-cms:
 
 dev-backend:
 	@echo "Starting FastAPI backend..."
-	cd backend && .venv/bin/uvicorn main:app --reload --port 8080
+	cd backend && uv run uvicorn backend.main:app --reload --port 8080
 
 dev:
 	@echo "To run everything manually, we recommend opening this folder in a Devcontainer, or running 'make dev-docs', 'make dev-cms', and 'make dev-backend' in separate terminals."

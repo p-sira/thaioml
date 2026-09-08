@@ -29,7 +29,7 @@ class ThaiOMLLinkerPlugin(BasePlugin):
                                 if frontmatter and "id" in frontmatter:
                                     snomed_id = str(frontmatter["id"])
                                     self.snomed_index[snomed_id] = file.src_uri
-                        except Exception as e:
+                        except Exception as e:  # noqa: BLE001
                             print(
                                 f"[thaioml-linker] Error parsing frontmatter in {file.src_path}: {e}"
                             )
@@ -67,7 +67,7 @@ class ThaiOMLLinkerPlugin(BasePlugin):
                 r"(`[^`]*`|\[[^\]]*\]\([^\)]*\))|(\b" + re.escape(term) + r"\b)"
             )
 
-            def replacer(match):
+            def replacer(match, url=url, is_stub=is_stub):
                 if match.group(1):
                     return match.group(1)
                 elif match.group(2):

@@ -92,7 +92,7 @@ def update_mkdocs_nav(mkdocs_file, generated_nav):
 
     # Add dummy constructor to ignore mkdocs python tags
     yaml.SafeLoader.add_constructor(None, lambda loader, node: None)
-    
+
     with open(mkdocs_file, "r", encoding="utf-8") as f:
         config = yaml.safe_load(f) or {}
 
