@@ -10,6 +10,8 @@ class Settings(BaseSettings):
     # SNOMED Lookup Feature
     openrouter_api_key_lookup: str = ""
     openrouter_model_lookup: str = "qwen/qwen-2.5-72b-instruct:free"
+    snomed_db_download_url: str = ""
+    snomed_db_auth_token: str = ""
 
     model_config = SettingsConfigDict(
         env_file="../.env", env_file_encoding="utf-8", extra="ignore"

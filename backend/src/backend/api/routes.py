@@ -1,5 +1,8 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
+from backend.core.db import get_db
 
 from backend.services.rag import rag_service
 from backend.services.snomed import auto_link_terms, suggest_snomed_term
@@ -46,9 +49,9 @@ class SnomedSuggestResponse(BaseModel):
 
 
 @router.post("/snomed-suggest", response_model=SnomedSuggestResponse)
-def snomed_suggest(request: SnomedSuggestRequest):
+def snomed_suggest(request: SnomedSuggestRequest, db: Session = Depends(get_db)):
     try:
-        concept_id, display_term = suggest_snomed_term(request.query)
+        concept_id, display_term = suggest_snomed_term(request.query, db)
         return SnomedSuggestResponse(id=concept_id, term=display_term)
     except ValueError as e:
         if "missing" in str(e).lower():
@@ -67,9 +70,9 @@ class AutoLinkResponse(BaseModel):
 
 
 @router.post("/auto-link", response_model=AutoLinkResponse)
-def auto_link(request: AutoLinkRequest):
+def auto_link(request: AutoLinkRequest, db: Session = Depends(get_db)):
     try:
-        links = auto_link_terms(request.body)
+        links = auto_link_terms(request.body, db)
         return AutoLinkResponse(links=links)
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))

@@ -22,12 +22,14 @@ dependencies = [
     "python-dotenv>=1.2.3",
     "pyyaml>=6.0.3",
     "ruff>=0.16.6",
+    "sqlalchemy>=2.0.52",
     "uvicorn[standard]>=0.52.4",
 ]
 
 [project.scripts]
 backend = "backend.main:main"
-ingest = "backend.scripts.ingest:main"
+ingest = "backend.scripts.ingest_snomed:main"
+pull-db = "backend.scripts.pull_db:main"
 
 [build-system]
 requires = ["uv_build>=0.12.10,<0.13.0"]

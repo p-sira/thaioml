@@ -1,14 +1,15 @@
 import json
-import urllib.parse
-import urllib.request
 
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
+from sqlalchemy import select
+from sqlalchemy.orm import Session
 
 from backend.core.config import settings
+from backend.models.snomed import SnomedDescription
 
 
-def suggest_snomed_term(query: str) -> tuple[str, str]:
+def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:
     if not settings.openrouter_api_key_lookup:
         raise ValueError("OpenRouter API key missing.")
 
@@ -31,31 +32,22 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
     if canonical_term.startswith("'") and canonical_term.endswith("'"):
         canonical_term = canonical_term[1:-1]
 
-    encoded_term = urllib.parse.quote(canonical_term)
-    url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=5"
+    # Query the local database using pg_trgm similarity
+    stmt = (
+        select(SnomedDescription)
+        .where(SnomedDescription.active == True)
+        .order_by(SnomedDescription.term.op("<->")(canonical_term))
+        .limit(1)
+    )
+    result = db.execute(stmt).scalars().first()
 
-    req = urllib.request.Request(url, headers={"Accept": "application/json"})
-    with urllib.request.urlopen(req) as resp:
-        data = json.loads(resp.read().decode("utf-8"))
-
-    expansion = data.get("expansion", {})
-    contains = expansion.get("contains", [])
-
-    valid_concept = None
-    for concept in contains:
-        # Skip inactive concepts
-        if concept.get("inactive") is True:
-            continue
-        valid_concept = concept
-        break
-
-    if not valid_concept:
+    if not result:
         raise ValueError(f"No active SNOMED concept found for term: {canonical_term}")
 
-    return str(valid_concept["code"]), valid_concept["display"]
+    return str(result.concept_id), result.term
 
 
-def auto_link_terms(body: str) -> dict[str, str]:
+def auto_link_terms(body: str, db: Session) -> dict[str, str]:
     if not settings.openrouter_api_key_lookup:
         raise ValueError("OpenRouter API key missing.")
 
@@ -98,19 +90,15 @@ Text:
             continue
 
         try:
-            encoded_term = urllib.parse.quote(canon)
-            url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
-            req = urllib.request.Request(url, headers={"Accept": "application/json"})
-            with urllib.request.urlopen(req) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-
-            expansion = data.get("expansion", {})
-            contains = expansion.get("contains", [])
-
-            for concept in contains:
-                if concept.get("inactive") is not True:
-                    final_links[orig] = f"{concept['code']} | {concept['display']}"
-                    break
+            stmt = (
+                select(SnomedDescription)
+                .where(SnomedDescription.active == True)
+                .order_by(SnomedDescription.term.op("<->")(canon))
+                .limit(1)
+            )
+            result = db.execute(stmt).scalars().first()
+            if result:
+                final_links[orig] = f"{result.concept_id} | {result.term}"
         except Exception as e:  # noqa: BLE001
             print(f"Error resolving {canon}: {e}")
 

@@ -18,7 +18,7 @@ docker compose -f .devcontainer/docker-compose.yml up db -d
 ```
 *Note: Connection string is always `postgresql://postgres:postgres@localhost:5432/thaioml`*
 
-**Graceful Degradation:** The backend now gracefully handles a missing `pgvector` database connection. If the database is offline, the RAG query endpoints will fail, but the SNOMED auto-linker and suggester (`/auto-link`, `/snomed-suggest`) will continue to function normally.
+**Database Dependency:** All major backend features, including RAG querying and SNOMED auto-linking/suggestions, now require a live connection to the `pgvector` Postgres database. SNOMED CT lookups rely on local tables (`snomed_concepts`, `snomed_descriptions`) populated from RF2 files, rather than an external terminology server.
 
 ## 2. Running the Backend Server
 The backend is managed with `uv`. To start the FastAPI server:
@@ -28,8 +28,8 @@ make dev-backend
 *(This translates to `cd backend && uv run uvicorn main:app --reload --port 8080`)*
 
 The server will be available at `http://localhost:8080`. You can access the interactive Swagger UI at `http://localhost:8080/docs` to test endpoints:
-- `POST /auto-link`: AI-powered SNOMED term extraction and linkage (uses OpenRouter + CSIRO FHIR API).
-- `POST /snomed-suggest`: Single term resolution.
+- `POST /auto-link`: AI-powered SNOMED term extraction and linkage (uses OpenRouter + local Postgres).
+- `POST /snomed-suggest`: Single term resolution (queries local Postgres via pg_trgm).
 - (RAG ingestion and search endpoints)
 
 ## 3. Ingestion Rules
