@@ -1,49 +1,74 @@
-:root {
+:root,
+[data-md-color-scheme="leuko"] {
   /* Light Theme - Bespoke Slate/Zinc Monochrome */
-  --md-primary-fg-color:        #ffffff;
+  --md-primary-fg-color: #ffffff;
   --md-primary-fg-color--light: #f8fafc;
-  --md-primary-fg-color--dark:  #f1f5f9;
-  --md-primary-bg-color:        #0f172a;
+  --md-primary-fg-color--dark: #f1f5f9;
+  --md-primary-bg-color: #0f172a;
 
-  --md-default-bg-color:        #ffffff;
+  --md-default-bg-color: #ffffff;
   --md-default-bg-color--light: #f8fafc;
-  --md-default-fg-color:        #334155;
+  --md-default-fg-color: #334155;
   --md-default-fg-color--light: #64748b;
-  --md-default-fg-color--dark:  #0f172a;
-  
+  --md-default-fg-color--dark: #0f172a;
+
   /* Default Neutral Accent */
-  --md-accent-fg-color:         #64748b; 
+  --md-accent-fg-color: #64748b;
   --md-accent-fg-color--transparent: rgba(100, 116, 139, 0.1);
-  --md-accent-bg-color:         #ffffff;
+  --md-accent-bg-color: #ffffff;
 
   /* Card Backgrounds */
-  --md-typeset-color:           #334155;
-  --md-typeset-a-color:         var(--md-accent-fg-color);
-  --md-code-bg-color:           #f8fafc;
+  --md-typeset-color: #334155;
+  --md-typeset-a-color: var(--md-accent-fg-color);
+  --md-code-bg-color: #f8fafc;
 }
 
-[data-md-color-scheme="slate"] {
+[data-md-color-scheme="darkroom"] {
   /* Dark Theme - Bespoke Slate/Zinc Monochrome */
-  --md-primary-fg-color:        #0f172a;
+  --md-primary-fg-color: #0f172a;
   --md-primary-fg-color--light: #1e293b;
-  --md-primary-fg-color--dark:  #020617;
-  --md-primary-bg-color:        #f1f5f9;
+  --md-primary-fg-color--dark: #020617;
+  --md-primary-bg-color: #f1f5f9;
 
-  --md-default-bg-color:        #0f172a;
+  --md-default-bg-color: #0f172a;
   --md-default-bg-color--light: #1e293b;
-  --md-default-fg-color:        #cbd5e1;
+  --md-default-fg-color: #cbd5e1;
   --md-default-fg-color--light: #94a3b8;
-  --md-default-fg-color--dark:  #f8fafc;
-  
+  --md-default-fg-color--dark: #f8fafc;
+
   /* Default Neutral Accent */
-  --md-accent-fg-color:         #94a3b8; 
+  --md-accent-fg-color: #94a3b8;
   --md-accent-fg-color--transparent: rgba(148, 163, 184, 0.1);
-  --md-accent-bg-color:         #0f172a;
+  --md-accent-bg-color: #0f172a;
 
   /* Card Backgrounds */
-  --md-typeset-color:           #cbd5e1;
-  --md-typeset-a-color:         var(--md-accent-fg-color);
-  --md-code-bg-color:           #1e293b;
+  --md-typeset-color: #cbd5e1;
+  --md-typeset-a-color: var(--md-accent-fg-color);
+  --md-code-bg-color: #1e293b;
+}
+
+[data-md-color-scheme="progressnote"] {
+  /* Warm Theme - Progressnote (Yellow paper) */
+  --md-primary-fg-color: #fefce8;
+  --md-primary-fg-color--light: #fef9c3;
+  --md-primary-fg-color--dark: #fef08a;
+  --md-primary-bg-color: #422006;
+
+  --md-default-bg-color: #fefce8;
+  --md-default-bg-color--light: #fef9c3;
+  --md-default-fg-color: #422006;
+  --md-default-fg-color--light: #78350f;
+  --md-default-fg-color--dark: #2d1604;
+
+  /* Default Neutral Accent */
+  --md-accent-fg-color: #c2410c;
+  --md-accent-fg-color--transparent: rgba(194, 65, 12, 0.1);
+  --md-accent-bg-color: #fefce8;
+
+  /* Card Backgrounds */
+  --md-typeset-color: #422006;
+  --md-typeset-a-color: var(--md-accent-fg-color);
+  --md-code-bg-color: #fef9c3;
 }
 
 /* Base styles for the color picker grid */
@@ -84,7 +109,7 @@
   height: 12px;
   background-color: white;
   border-radius: 50%;
-  box-shadow: 0 0 2px rgba(0,0,0,0.5);
+  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
 }
 
 /* 
@@ -111,7 +136,6 @@
 
 .md-typeset a:hover {
   color: var(--md-accent-fg-color);
-  filter: brightness(1.2); /* Slight hover effect */
+  filter: brightness(1.2);
+  /* Slight hover effect */
 }
-
-

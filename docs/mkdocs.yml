@@ -11,7 +11,7 @@ theme:
   palette:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
-      scheme: default
+      scheme: leuko
       primary: custom
       accent: custom
       toggle:
@@ -19,11 +19,18 @@ theme:
         name: Switch to Darkroom
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
-      scheme: slate
+      scheme: darkroom
       primary: custom
       accent: custom
       toggle:
         icon: material/brightness-4
+        name: Switch to Progressnote
+    # Palette toggle for progressnote mode
+    - scheme: progressnote
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/book-open-page-variant
         name: Switch to Leuko
   features:
     - navigation.tabs
