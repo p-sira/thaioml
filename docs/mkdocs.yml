@@ -2,6 +2,10 @@ site_name: ThaiOML (Open Medical Library of Thailand)
 site_url: https://www.thaioml.org
 site_description: Community-maintained, expert-reviewed medical education database.
 
+plugins:
+  - search
+  - thaioml-linker
+
 theme:
   name: material
   palette:

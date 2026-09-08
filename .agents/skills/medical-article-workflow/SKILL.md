@@ -39,6 +39,8 @@ tags:
   - [e.g., autoimmune]
 review_status: [draft, pending, or reviewed]
 last_medical_review: [YYYY-MM-DD, optional]
+snomed_links:
+  "[Exact text to link]": "[SNOMED CT Concept ID]" # e.g. "ASA": "387207008"
 ---
 ```
 
@@ -55,3 +57,9 @@ When agents or frontend widgets interact with the SNOMED lookup system (e.g., vi
 
 ## 5. Editorial CMS Workflow
 The GitHub repository acts as the backend for Decap CMS. For the exact editorial workflow (Contributor -> Reviewer -> Editor) and proxy approval rules, you MUST read the canonical guidelines at `docs/docs/guidelines/author-guideline.md`, `docs/docs/guidelines/reviewer-guideline.md`, and `docs/docs/guidelines/editor-guideline.md` using the `view_file` tool before taking action.
+
+## 6. AI Article Linking & Disambiguation
+When drafting or editing articles, abide by the following rules for linking clinical terminology and abbreviations:
+- **No Manual Linking:** Authors should write text naturally (e.g., `give ASA and check EKG`) and avoid manually adding markdown links for internal terms.
+- **AI Disambiguation:** An AI assistant (or the author via Decap CMS) will populate the `snomed_links` block in the YAML frontmatter. This block maps exact strings from the text to their corresponding SNOMED CT Concept IDs.
+- **Auto-linking:** The `thaioml_linker` MkDocs plugin automatically replaces these strings with links during the static site build. If the target article does not exist, it will safely fallback to a stub link (e.g., `/stub/[SNOMED_ID].html`).
