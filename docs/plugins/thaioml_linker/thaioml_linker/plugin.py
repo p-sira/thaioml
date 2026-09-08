@@ -10,6 +10,7 @@ from mkdocs.structure.files import Files
 
 class ThaiOMLLinkerPlugin(BasePlugin):
     def __init__(self):
+        super().__init__()
         self.snomed_index = {}  # snomed_id -> url
 
     def on_files(self, files: Files, config: Config):
@@ -72,9 +73,6 @@ class ThaiOMLLinkerPlugin(BasePlugin):
                     return match.group(1)
                 elif match.group(2):
                     original_text = match.group(2)
-
-                    if is_stub:
-                        return f"[{original_text}](/{url})"
 
                     # Calculate relative URL from current page to target URL
                     page_dir = posixpath.dirname(page.file.src_uri)
