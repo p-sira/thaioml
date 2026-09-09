@@ -9,12 +9,12 @@ This document describes the architectural principles for handling shared fronten
 
 ## 1. The Standard Resolution Flow for Theme Preferences
 
-ThaiOML unifies the appearance of the static library site and the web application through a shared Theme Resolution Flow. This standardizes how theme logic (dark/light/sepia) and accent colors are applied across all repositories, maintaining a "Single Source of Truth" for settings while eliminating Flash of Unstyled Content (FOUC) and ensuring cross-device synchronization.
+ThaiOML unifies the appearance of the static library site and the web application through a shared Theme Resolution Flow. This standardizes how theme logic (dark/light/sepia) is applied across all repositories, maintaining a "Single Source of Truth" for settings while eliminating Flash of Unstyled Content (FOUC) and ensuring cross-device synchronization.
 
 ### Architectural Layers
 
 1. **Local Cookies (The Performance Layer)**
-   - **Implementation:** Cookies bound to the base `.thaioml.org` domain (e.g., `thaioml-theme`, `thaioml-accent-color`).
+   - **Implementation:** Cookies bound to the base `.thaioml.org` domain (e.g., `thaioml-theme`).
    - **Why it's used:** Speed. Reading from local cookies allows both the static site and the webapp to apply the theme synchronously during the initial HTML parse (or React hydration). This prevents the "flash of inaccurate theme"—like a blinding white screen for a dark-mode user—while the app waits for an API response.
    - **Scope:** All users, including anonymous visitors. The use of base domain cookies allows cross-subdomain sharing (e.g., between `www.thaioml.org` and `app.thaioml.org`).
 
