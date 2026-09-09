@@ -13,6 +13,16 @@
   </div>
 </div>
 
+<div style="display: flex; gap: 1rem; margin: 2rem 0; padding: 1.5rem; background-color: var(--md-default-bg-color); border: 1px solid var(--md-default-fg-color--lightest); border-radius: 8px;">
+  <div>
+    <h3 style="margin-top: 0;">Help Expand the Library</h3>
+    <p style="margin-bottom: 0;">ThaiOML is community-maintained. Join our editors to improve and create clinical articles.</p>
+  </div>
+  <div style="display: flex; align-items: center; margin-left: auto;">
+    <a href="http://localhost:3000/contribute" class="md-button md-button--primary">Contribute</a>
+  </div>
+</div>
+
 ---
 
 ## Purpose

@@ -1,10 +1,13 @@
 import { UserButton } from '@clerk/nextjs'
-import { auth } from '@clerk/nextjs/server'
+import { currentUser } from '@clerk/nextjs/server'
 import Link from 'next/link'
 
 export default async function Home() {
-  const { userId } = await auth()
-  const isSignedIn = !!userId
+  const user = await currentUser()
+  const isSignedIn = !!user
+  
+  const roles = (user?.publicMetadata?.roles as string[]) || []
+  const hasCmsPermission = roles.includes('editor') || roles.includes('admin')
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -18,7 +21,10 @@ export default async function Home() {
         </div>
         <div>
           {isSignedIn ? (
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-6">
+              <Link href={hasCmsPermission ? "http://localhost:8000/admin/" : "/contribute"} className="text-sm font-medium text-slate-700 hover:text-blue-600">
+                Contribute
+              </Link>
               <Link href="/profile" className="text-sm font-medium text-slate-700 hover:text-blue-600">
                 My Profile
               </Link>
