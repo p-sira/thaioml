@@ -1,9 +1,8 @@
-from typing import Generator
-
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, declarative_base, sessionmaker
+from collections.abc import Generator
 
 from backend.core.config import settings
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session, declarative_base, sessionmaker
 
 # Create SQLAlchemy engine
 # SQLAlchemy requires the dialect to be properly formatted (e.g. postgresql+psycopg)

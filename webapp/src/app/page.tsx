@@ -46,21 +46,14 @@ export default async function Home() {
               Search for medical guidelines, clinical trials, or protocols using natural language.
             </p>
             
-            <div className="w-full relative shadow-sm hover:shadow-md transition-shadow duration-200 rounded-full bg-background border border-foreground/20">
-              <input
-                type="text"
-                placeholder="E.g., What are the latest guidelines for treating hypertension?"
-                className="w-full px-6 py-4 rounded-full outline-none text-foreground bg-transparent placeholder-foreground/50"
-                disabled
-              />
-              <button disabled className="absolute right-2 top-2 bottom-2 px-6 bg-blue-600 text-white rounded-full font-bold hover:bg-blue-700 disabled:opacity-50 transition">
-                Search
-              </button>
-            </div>
-            
-            <p className="text-sm text-foreground/50 mt-4">
-              AI Backend Integration is coming soon...
-            </p>
+            <Link href="/chat" className="w-full relative shadow-sm hover:shadow-md transition-shadow duration-200 rounded-full bg-background border border-foreground/20 block text-left group">
+              <div className="w-full px-6 py-4 rounded-full text-foreground/50">
+                E.g., What are the latest guidelines for treating hypertension?
+              </div>
+              <div className="absolute right-2 top-2 bottom-2 px-6 bg-blue-600 text-white rounded-full font-bold group-hover:bg-blue-700 transition flex items-center justify-center">
+                Open Chat
+              </div>
+            </Link>
           </div>
         ) : (
           <div className="text-center max-w-lg">

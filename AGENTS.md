@@ -8,6 +8,7 @@ Welcome to the Open Medical Library of Thailand (ThaiOML) workspace. As an AI pa
 * **Static First:** The public website is statically generated (via MkDocs). There are NO dynamic database queries happening at runtime for the frontend. 
 * **Separation of Concerns:** The static frontend (`docs/`) and the AI search/RAG backend (`backend/`) are decoupled. Publishing must NEVER depend on the AI systems.
 * **Python Tooling:** You MUST strictly use `uv` for all Python dependency management and environments across the repository (both frontend docs and backend). The use of standard `pip` is banned.
+* **Auth & Identity:** Clerk is the single source of truth for identity and roles. See `docs/docs/guidelines/auth-architecture.md` for rules on Next.js API JWT templates and FastAPI role dependencies.
 
 ## 2. Agent Skills
 To save your context window, detailed procedures have been extracted into Skills. If you need to perform any of the following tasks, you MUST load the respective skill before modifying files:

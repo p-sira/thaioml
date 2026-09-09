@@ -20,5 +20,10 @@ class SnomedDescription(Base):
     active = Column(Boolean, nullable=False, default=True)
 
     __table_args__ = (
-        Index("trgm_idx_snomed_term", "term", postgresql_ops={"term": "gin_trgm_ops"}, postgresql_using="gin"),
+        Index(
+            "trgm_idx_snomed_term",
+            "term",
+            postgresql_ops={"term": "gin_trgm_ops"},
+            postgresql_using="gin",
+        ),
     )

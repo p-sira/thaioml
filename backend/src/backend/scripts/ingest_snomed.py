@@ -1,11 +1,9 @@
 import csv
-import sys
 from pathlib import Path
 
-from sqlalchemy import insert, text
-
-from backend.core.db import Base, engine, get_db
+from backend.core.db import Base, engine
 from backend.models.snomed import SnomedConcept, SnomedDescription
+from sqlalchemy import insert, text
 
 
 def create_tables():
@@ -29,10 +27,9 @@ def ingest_concepts(file_path: Path):
     with open(file_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
         for row in reader:
-            concepts.append({
-                "concept_id": int(row["id"]),
-                "active": row["active"] == "1"
-            })
+            concepts.append(
+                {"concept_id": int(row["id"]), "active": row["active"] == "1"}
+            )
             if len(concepts) >= 10000:
                 with engine.begin() as conn:
                     conn.execute(insert(SnomedConcept), concepts)
@@ -53,13 +50,15 @@ def ingest_descriptions(file_path: Path):
     with open(file_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
         for row in reader:
-            descriptions.append({
-                "id": int(row["id"]),
-                "concept_id": int(row["conceptId"]),
-                "term": row["term"],
-                "type_id": int(row["typeId"]),
-                "active": row["active"] == "1"
-            })
+            descriptions.append(
+                {
+                    "id": int(row["id"]),
+                    "concept_id": int(row["conceptId"]),
+                    "term": row["term"],
+                    "type_id": int(row["typeId"]),
+                    "active": row["active"] == "1",
+                }
+            )
             if len(descriptions) >= 10000:
                 with engine.begin() as conn:
                     conn.execute(insert(SnomedDescription), descriptions)
@@ -72,8 +71,12 @@ def ingest_descriptions(file_path: Path):
 
 def main():
     data_dir = Path(__file__).resolve().parent.parent.parent.parent / "data"
-    concept_file = data_dir / "sct2_Concept_Snapshot_INT_20230731.txt"  # Adjust filename as needed
-    desc_file = data_dir / "sct2_Description_Snapshot-en_INT_20230731.txt"  # Adjust filename as needed
+    concept_file = (
+        data_dir / "sct2_Concept_Snapshot_INT_20230731.txt"
+    )  # Adjust filename as needed
+    desc_file = (
+        data_dir / "sct2_Description_Snapshot-en_INT_20230731.txt"
+    )  # Adjust filename as needed
 
     create_tables()
 
@@ -81,7 +84,9 @@ def main():
     # ingest_concepts(concept_file)
     # ingest_descriptions(desc_file)
 
-    print("Note: Update the filenames in ingest_snomed.py to match your actual RF2 files.")
+    print(
+        "Note: Update the filenames in ingest_snomed.py to match your actual RF2 files."
+    )
 
 
 if __name__ == "__main__":

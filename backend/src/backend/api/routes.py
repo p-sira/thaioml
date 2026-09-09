@@ -1,12 +1,10 @@
+from backend.core.auth import require_role
+from backend.core.db import get_db
+from backend.services.rag import rag_service
+from backend.services.snomed import auto_link_terms, suggest_snomed_term
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-
-from backend.core.db import get_db
-
-from backend.services.rag import rag_service
-from backend.services.snomed import auto_link_terms, suggest_snomed_term
-from backend.core.auth import require_role
 
 router = APIRouter()
 
@@ -17,6 +15,16 @@ class QueryRequest(BaseModel):
 
 class QueryResponse(BaseModel):
     answer: str
+
+
+class ChatMessage(BaseModel):
+    role: str
+    content: str
+
+
+class ChatRequest(BaseModel):
+    messages: list[ChatMessage]
+    session_id: str | None = None
 
 
 @router.get("/")
@@ -32,10 +40,49 @@ def health_check():
 @router.post("/query", response_model=QueryResponse)
 def query_system(
     request: QueryRequest,
-    user_data: dict = Depends(require_role(["org:researcher", "org:author", "org:admin", "researcher", "author", "admin"]))
+    user_data: dict = Depends(
+        require_role(
+            [
+                "org:researcher",
+                "org:author",
+                "org:admin",
+                "researcher",
+                "author",
+                "admin",
+            ]
+        )
+    ),
 ):
     try:
         answer = rag_service.query(request.query)
+        return QueryResponse(answer=answer)
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:  # noqa: BLE001
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.post("/chat", response_model=QueryResponse)
+def chat_system(
+    request: ChatRequest,
+    user_data: dict = Depends(
+        require_role(
+            [
+                "org:researcher",
+                "org:author",
+                "org:admin",
+                "researcher",
+                "author",
+                "admin",
+            ]
+        )
+    ),
+):
+    try:
+        messages_dict = [
+            {"role": msg.role, "content": msg.content} for msg in request.messages
+        ]
+        answer = rag_service.chat(messages_dict)
         return QueryResponse(answer=answer)
     except RuntimeError as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -56,7 +103,9 @@ class SnomedSuggestResponse(BaseModel):
 def snomed_suggest(
     request: SnomedSuggestRequest,
     db: Session = Depends(get_db),
-    user_data: dict = Depends(require_role(["org:author", "org:admin", "author", "admin"]))
+    user_data: dict = Depends(
+        require_role(["org:author", "org:admin", "author", "admin"])
+    ),
 ):
     try:
         concept_id, display_term = suggest_snomed_term(request.query, db)
@@ -81,7 +130,9 @@ class AutoLinkResponse(BaseModel):
 def auto_link(
     request: AutoLinkRequest,
     db: Session = Depends(get_db),
-    user_data: dict = Depends(require_role(["org:author", "org:admin", "author", "admin"]))
+    user_data: dict = Depends(
+        require_role(["org:author", "org:admin", "author", "admin"])
+    ),
 ):
     try:
         links = auto_link_terms(request.body, db)
