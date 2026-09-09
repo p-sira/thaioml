@@ -1,6 +1,7 @@
 'use server'
 
 import { auth, clerkClient } from '@clerk/nextjs/server'
+import { cookies } from 'next/headers'
 
 export async function updateThemeSettings(theme: string, accent: string) {
   const authObj = await auth()
@@ -18,5 +19,21 @@ export async function updateThemeSettings(theme: string, accent: string) {
       theme,
       accent,
     },
+  })
+
+  const cookieStore = await cookies()
+  // Ensure the server sets the cookie so layout.tsx gets the updated value immediately on refresh
+  const isProd = process.env.NODE_ENV === 'production'
+  cookieStore.set('thaioml-theme', theme, { 
+    path: '/', 
+    domain: isProd ? '.thaioml.org' : undefined,
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 365 
+  })
+  cookieStore.set('thaioml-accent-color', accent, { 
+    path: '/', 
+    domain: isProd ? '.thaioml.org' : undefined,
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 365 
   })
 }

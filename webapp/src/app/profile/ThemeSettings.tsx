@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 import { updateThemeSettings } from '../actions/theme'
 
 const ACCENTS = [
@@ -17,9 +18,9 @@ const ACCENTS = [
 ]
 
 const THEMES = [
-  { id: 'leuko', name: 'Leuko (Light)' },
+  { id: 'leuko', name: 'Leuko' },
   { id: 'darkroom', name: 'Darkroom' },
-  { id: 'progressnote', name: 'Progressnote (Sepia)' },
+  { id: 'progressnote', name: 'Progressnote' },
 ]
 
 // Note: Using document.cookie for cross-subdomain sharing (e.g. thaioml.org and app.thaioml.org)
@@ -43,6 +44,7 @@ export default function ThemeSettings({
   const [accent, setAccent] = useState(initialAccent)
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState('')
+  const router = useRouter()
 
   const handleSave = async () => {
     setIsSaving(true)
@@ -51,13 +53,14 @@ export default function ThemeSettings({
       // 1. Save to cookies synchronously
       setCookie('thaioml-theme', theme)
       setCookie('thaioml-accent-color', accent)
-      
+
       // 2. Dispatch custom event for ThemeProvider to pick up instantly without reload
       window.dispatchEvent(new Event('theme-change'))
 
       // 3. Save to Clerk metadata asynchronously
       await updateThemeSettings(theme, accent)
-      
+
+      router.refresh()
       setMessage('Preferences saved successfully.')
     } catch (error) {
       setMessage('Failed to save preferences.')
@@ -69,20 +72,19 @@ export default function ThemeSettings({
 
   return (
     <div className="p-6 max-w-xl">
-      <h2 className="text-xl font-bold text-slate-800 mb-6">Display Settings</h2>
-      
+      <h2 className="text-xl font-bold text-foreground mb-6">Display Settings</h2>
+
       <div className="mb-8">
-        <h3 className="text-sm font-semibold text-slate-700 mb-3">Theme</h3>
+        <h3 className="text-sm font-semibold text-foreground/80 mb-3">Theme</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {THEMES.map((t) => (
             <button
               key={t.id}
               onClick={() => setTheme(t.id)}
-              className={`p-3 border rounded-lg text-sm font-medium transition ${
-                theme === t.id 
-                  ? 'border-blue-600 bg-blue-50 text-blue-700' 
-                  : 'border-slate-200 hover:border-slate-300 text-slate-700'
-              }`}
+              className={`p-3 border rounded-lg text-sm font-medium transition ${theme === t.id
+                ? 'border-blue-600 bg-blue-600/10 text-blue-600'
+                : 'border-foreground/20 hover:border-foreground/30 text-foreground/80'
+                }`}
             >
               {t.name}
             </button>
@@ -91,18 +93,17 @@ export default function ThemeSettings({
       </div>
 
       <div className="mb-8">
-        <h3 className="text-sm font-semibold text-slate-700 mb-3">Accent Color</h3>
+        <h3 className="text-sm font-semibold text-foreground/80 mb-3">Accent Color</h3>
         <div className="flex flex-wrap gap-3">
           {ACCENTS.map((a) => (
             <button
               key={a.hex}
               onClick={() => setAccent(a.hex)}
               title={a.name}
-              className={`w-10 h-10 rounded-full border-2 transition-all ${
-                accent.toLowerCase() === a.hex.toLowerCase() 
-                  ? 'border-slate-900 scale-110 shadow-sm' 
-                  : 'border-transparent hover:scale-105'
-              }`}
+              className={`w-10 h-10 rounded-full border-2 transition-all ${accent.toLowerCase() === a.hex.toLowerCase()
+                ? 'border-foreground scale-110 shadow-sm'
+                : 'border-transparent hover:scale-105'
+                }`}
               style={{ backgroundColor: a.hex }}
             />
           ))}
@@ -113,7 +114,7 @@ export default function ThemeSettings({
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-6 py-2 bg-slate-900 text-white font-medium rounded-md hover:bg-slate-800 disabled:opacity-50 transition"
+          className="px-6 py-2 bg-foreground text-background font-medium rounded-md hover:opacity-90 disabled:opacity-50 transition"
         >
           {isSaving ? 'Saving...' : 'Save Preferences'}
         </button>
