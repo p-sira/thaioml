@@ -1,11 +1,6 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import { clerkMiddleware } from '@clerk/nextjs/server'
 
-// Protect the profile page, but leave the rest open for now (e.g. AI Search might need auth, but we can do that in the page itself)
-const isProtectedRoute = createRouteMatcher(['/profile(.*)'])
-
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) await auth.protect()
-})
+export default clerkMiddleware()
 
 export const config = {
   matcher: [
