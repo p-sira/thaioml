@@ -1,72 +1,81 @@
-import { UserButton } from '@clerk/nextjs'
-import { currentUser } from '@clerk/nextjs/server'
 import Link from 'next/link'
+import { goToRandomArticle } from './actions/randomArticle'
+import { Search, Sparkles } from 'lucide-react'
 
 export default async function Home() {
-  const user = await currentUser()
-  const isSignedIn = !!user
-  
-  const roles = (user?.publicMetadata?.roles as string[]) || []
-  const hasCmsPermission = roles.includes('editor') || roles.includes('admin')
-
   return (
-    <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between py-4 px-6 border-b border-foreground/10 bg-background">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold text-blue-600">ThaiOML Webapp</h1>
-          <a href="http://localhost:8000" className="text-sm text-foreground/60 hover:text-foreground transition">
-            &larr; Back to Static Library
-          </a>
-        </div>
-        <div>
-          {isSignedIn ? (
-            <div className="flex items-center gap-6">
-              <Link href={hasCmsPermission ? "http://localhost:8000/admin/" : "/contribute"} className="text-sm font-medium text-foreground/80 hover:text-blue-600">
-                Contribute
-              </Link>
-              <UserButton userProfileMode="navigation" userProfileUrl="/profile" />
-            </div>
-          ) : (
-            <Link href="/sign-in" className="px-4 py-2 bg-blue-600 text-white rounded-full font-medium text-sm hover:bg-blue-700 transition">
-              Sign In
-            </Link>
-          )}
-        </div>
-      </header>
+    <div className="flex-1 flex flex-col items-center bg-background min-h-screen">
+      {/* Main Hero / Search Area */}
+      <main className="flex-1 flex flex-col items-center justify-center w-full max-w-4xl px-6 py-20 text-center">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight mb-2">
+          Open Medical Library of Thailand
+        </h1>
+        <p className="text-lg text-foreground/70 mb-10">
+          The largest open-source medical knowledge base for healthcare professionals.
+        </p>
 
-      {/* Main Content (Consensus-style stub) */}
-      <main className="flex-1 flex flex-col items-center justify-center p-6 bg-transparent">
-        {isSignedIn ? (
-          <div className="max-w-2xl w-full flex flex-col items-center text-center space-y-6">
-            <h2 className="text-4xl font-extrabold text-foreground tracking-tight">
-              Ask the Library
-            </h2>
-            <p className="text-lg text-foreground/70">
-              Search for medical guidelines, clinical trials, or protocols using natural language.
-            </p>
-            
-            <Link href="/chat" className="w-full relative shadow-sm hover:shadow-md transition-shadow duration-200 rounded-full bg-background border border-foreground/20 block text-left group">
-              <div className="w-full px-6 py-4 rounded-full text-foreground/50">
-                E.g., What are the latest guidelines for treating hypertension?
-              </div>
-              <div className="absolute right-2 top-2 bottom-2 px-6 bg-blue-600 text-white rounded-full font-bold group-hover:bg-blue-700 transition flex items-center justify-center">
-                Open Chat
-              </div>
-            </Link>
+        {/* Search Box */}
+        <form action="http://localhost:8000/" method="GET" className="w-full max-w-2xl relative shadow-sm hover:shadow-md transition-shadow duration-200 rounded-full border border-foreground/20 bg-background focus-within:ring-2 focus-within:ring-foreground/20 focus-within:border-foreground/40">
+          <div className="flex items-center px-6 py-4">
+            <Search className="w-5 h-5 text-foreground/50 mr-3" />
+            <input
+              type="text"
+              name="q"
+              placeholder="Search guidelines, clinical trials, or articles..."
+              className="flex-1 bg-transparent outline-none text-foreground placeholder:text-foreground/50"
+            />
           </div>
-        ) : (
-          <div className="text-center max-w-lg">
-            <h2 className="text-3xl font-bold text-foreground mb-4">Welcome to ThaiOML AI Search</h2>
-            <p className="text-foreground/70 mb-8">
-              Please sign in to access the advanced clinical search tools, edit your profile, or use the prompt interface.
-            </p>
-            <Link href="/sign-in" className="px-8 py-3 bg-blue-600 text-white rounded-full font-bold shadow hover:bg-blue-700 transition text-lg">
-              Sign In to Continue
-            </Link>
+        </form>
+
+        {/* Trending Searches & Action Buttons */}
+        <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-6">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground/50">Trending:</span>
+            <div className="flex gap-2">
+              <Link href="http://localhost:8000/?q=hypertension" className="px-3 py-1 rounded-full bg-foreground/5 text-foreground/70 text-sm hover:bg-foreground/10 transition">
+                Hypertension
+              </Link>
+              <Link href="http://localhost:8000/?q=diabetes" className="px-3 py-1 rounded-full bg-foreground/5 text-foreground/70 text-sm hover:bg-foreground/10 transition">
+                Diabetes
+              </Link>
+            </div>
           </div>
-        )}
+          
+          <div className="hidden sm:block text-foreground/20">•</div>
+
+          <form action={goToRandomArticle}>
+            <button
+              type="submit"
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-foreground/5 text-foreground hover:bg-foreground/10 transition text-sm font-medium"
+            >
+              <Sparkles className="w-4 h-4 text-blue-500" />
+              I'm feeling lucky
+            </button>
+          </form>
+        </div>
       </main>
+
+      {/* Contributors and Sponsors */}
+      <section className="w-full py-16 border-t border-foreground/10 bg-foreground/5">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <h3 className="text-lg font-semibold text-foreground/80 mb-6">Supported by Contributors & Sponsors</h3>
+          <div className="flex flex-wrap justify-center items-center gap-8 mb-8 opacity-60 grayscale">
+            {/* Placeholder for organization logos */}
+            <div className="h-8 w-32 bg-foreground/20 rounded-md"></div>
+            <div className="h-8 w-24 bg-foreground/20 rounded-md"></div>
+            <div className="h-8 w-40 bg-foreground/20 rounded-md"></div>
+            <div className="h-8 w-28 bg-foreground/20 rounded-md"></div>
+          </div>
+          <p className="text-sm text-foreground/60">
+            Contact us for an opportunity to collaborate.
+          </p>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="w-full py-8 text-center text-sm text-foreground/50 border-t border-foreground/10 bg-background">
+        <p>© {new Date().getFullYear()} ThaiOML. All rights reserved.</p>
+      </footer>
     </div>
   )
 }

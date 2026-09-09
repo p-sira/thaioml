@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkThemeProvider } from "@/components/ClerkThemeProvider";
 import { cookies } from "next/headers";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import Navbar from "@/components/Navbar";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -48,7 +49,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
               `,
             }}
           />
-          <ThemeProvider>{children}</ThemeProvider>
+          <ThemeProvider>
+            <Navbar />
+            {children}
+          </ThemeProvider>
         </body>
       </html>
     </ClerkThemeProvider>

@@ -38,6 +38,7 @@ def get_current_user(
             signing_key.key,
             algorithms=["RS256"],
             options={"verify_aud": False},  # Set to True if we enforce audience
+            leeway=60,  # Add leeway for clock skew between frontend and backend
         )
         return data
     except jwt.exceptions.PyJWKClientError as error:
