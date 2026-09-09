@@ -30,6 +30,22 @@ export default function ThemeSettings({
   const [message, setMessage] = useState('')
   const router = useRouter()
 
+  // Apply theme for preview when selected
+  useEffect(() => {
+    document.body.setAttribute('data-md-color-scheme', theme)
+    
+    // Cleanup function to revert to initial theme if component unmounts without saving
+    // Note: The handleSave function dispatches 'theme-change' which re-reads the cookie,
+    // but if we just navigate away, we want to revert to the saved state.
+    return () => {
+      // We read the cookie to revert to the saved state, or fallback to initialTheme
+      const savedTheme = document.cookie.match('(^|;) ?thaioml-theme=([^;]*)(;|$)');
+      const themeToRevertTo = savedTheme ? savedTheme[2] : initialTheme;
+      document.body.setAttribute('data-md-color-scheme', themeToRevertTo)
+    }
+  }, [theme, initialTheme])
+
+
   const handleSave = async () => {
     setIsSaving(true)
     setMessage('')

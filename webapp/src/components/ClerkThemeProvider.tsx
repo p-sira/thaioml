@@ -29,6 +29,11 @@ export function ClerkThemeProvider({
       appearance={{
         baseTheme: theme === 'darkroom' ? dark : undefined,
       }}
+      localization={{
+        userButton: {
+          action__manageAccount: "Settings",
+        }
+      }}
     >
       {children}
     </ClerkProvider>

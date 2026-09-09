@@ -25,10 +25,7 @@ export default async function Home() {
               <Link href={hasCmsPermission ? "http://localhost:8000/admin/" : "/contribute"} className="text-sm font-medium text-foreground/80 hover:text-blue-600">
                 Contribute
               </Link>
-              <Link href="/profile" className="text-sm font-medium text-foreground/80 hover:text-blue-600">
-                My Profile
-              </Link>
-              <UserButton />
+              <UserButton userProfileMode="navigation" userProfileUrl="/profile" />
             </div>
           ) : (
             <Link href="/sign-in" className="px-4 py-2 bg-blue-600 text-white rounded-full font-medium text-sm hover:bg-blue-700 transition">
