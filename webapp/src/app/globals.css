@@ -1,30 +1,17 @@
 @import "tailwindcss";
-
-:root,
-[data-md-color-scheme="leuko"] {
-  --background: #ffffff;
-  --foreground: #334155;
-}
-
-[data-md-color-scheme="darkroom"] {
-  --background: #0f172a;
-  --foreground: #cbd5e1;
-}
-
-[data-md-color-scheme="progressnote"] {
-  --background: #fefce8;
-  --foreground: #422006;
-}
+@import "../../../../docs/docs/stylesheets/custom-theme.css";
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-background: var(--md-default-bg-color);
+  --color-foreground: var(--md-default-fg-color);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--md-default-bg-color);
+  color: var(--md-default-fg-color);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+
