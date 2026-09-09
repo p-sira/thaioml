@@ -47,7 +47,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     initialized.current = true
 
     const applyCurrent = () => {
-      const theme = getCookie('thaioml-theme') || 'leuko'
+      let theme = getCookie('thaioml-theme');
+      if (!theme) {
+        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'darkroom' : 'leuko';
+      }
       applyThemeVariables(theme)
     }
 

@@ -29,8 +29,25 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <html
         lang="en"
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+        suppressHydrationWarning
       >
-        <body className="min-h-full flex flex-col" data-md-color-scheme={theme}>
+        <body className="min-h-full flex flex-col" data-md-color-scheme={theme} suppressHydrationWarning>
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  try {
+                    var match = document.cookie.match('(^|;) ?thaioml-theme=([^;]*)(;|$)');
+                    var theme = match ? match[2] : null;
+                    if (!theme) {
+                      theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'darkroom' : 'leuko';
+                    }
+                    document.body.setAttribute('data-md-color-scheme', theme);
+                  } catch (e) {}
+                })();
+              `,
+            }}
+          />
           <ThemeProvider>{children}</ThemeProvider>
         </body>
       </html>
