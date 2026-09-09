@@ -71,7 +71,9 @@ def main():
         ]
 
         print("Running pg_restore. This may take a few minutes...")
-        result = subprocess.run(restore_cmd, capture_output=True, text=True)
+        result = subprocess.run(
+            restore_cmd, capture_output=True, text=True, check=False
+        )
 
         if result.returncode != 0:
             print("Database restoration failed!")
@@ -87,7 +89,7 @@ def main():
     except URLError as e:
         print(f"\nURL Error: {e.reason}")
         sys.exit(1)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"\nAn unexpected error occurred: {e}")
         sys.exit(1)
     finally:

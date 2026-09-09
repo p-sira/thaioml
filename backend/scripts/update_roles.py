@@ -17,7 +17,7 @@ def update_university_roles(domain: str, new_role: str):
     # The Clerk Backend API lets us list users
     try:
         users = clerk.users.list(limit=100)
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"Failed to fetch users: {e}")
         sys.exit(1)
 

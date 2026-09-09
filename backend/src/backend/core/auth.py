@@ -53,7 +53,7 @@ def get_current_user(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail=f"Decode Error: {error!s}",
         )
-    except Exception as error:
+    except Exception as error:  # noqa: BLE001
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(error))
 
 
@@ -63,7 +63,7 @@ def require_role(allowed_roles: list[str]):
     Checks Clerk's `org_role` or custom `roles` array in the JWT claims.
     """
 
-    def role_checker(user_data: dict = Depends(get_current_user)):
+    def role_checker(user_data: Annotated[dict, Depends(get_current_user)]):
         # Clerk typically sets org_role (e.g., "org:admin") for the active organization
         org_role = user_data.get("org_role")
 

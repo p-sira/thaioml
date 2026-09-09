@@ -71,10 +71,10 @@ def ingest_descriptions(file_path: Path):
 
 def main():
     data_dir = Path(__file__).resolve().parent.parent.parent.parent / "data"
-    concept_file = (
+    _concept_file = (
         data_dir / "sct2_Concept_Snapshot_INT_20230731.txt"
     )  # Adjust filename as needed
-    desc_file = (
+    _desc_file = (
         data_dir / "sct2_Description_Snapshot-en_INT_20230731.txt"
     )  # Adjust filename as needed
 

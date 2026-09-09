@@ -1,3 +1,5 @@
+from typing import Annotated
+
 from backend.core.auth import require_role
 from backend.core.db import get_db
 from backend.services.rag import rag_service
@@ -40,18 +42,21 @@ def health_check():
 @router.post("/query", response_model=QueryResponse)
 def query_system(
     request: QueryRequest,
-    user_data: dict = Depends(
-        require_role(
-            [
-                "org:researcher",
-                "org:author",
-                "org:admin",
-                "researcher",
-                "author",
-                "admin",
-            ]
-        )
-    ),
+    user_data: Annotated[
+        dict,
+        Depends(
+            require_role(
+                [
+                    "org:researcher",
+                    "org:author",
+                    "org:admin",
+                    "researcher",
+                    "author",
+                    "admin",
+                ]
+            )
+        ),
+    ],
 ):
     try:
         answer = rag_service.query(request.query)
@@ -65,18 +70,21 @@ def query_system(
 @router.post("/chat", response_model=QueryResponse)
 def chat_system(
     request: ChatRequest,
-    user_data: dict = Depends(
-        require_role(
-            [
-                "org:researcher",
-                "org:author",
-                "org:admin",
-                "researcher",
-                "author",
-                "admin",
-            ]
-        )
-    ),
+    user_data: Annotated[
+        dict,
+        Depends(
+            require_role(
+                [
+                    "org:researcher",
+                    "org:author",
+                    "org:admin",
+                    "researcher",
+                    "author",
+                    "admin",
+                ]
+            )
+        ),
+    ],
 ):
     try:
         messages_dict = [
@@ -102,10 +110,10 @@ class SnomedSuggestResponse(BaseModel):
 @router.post("/snomed-suggest", response_model=SnomedSuggestResponse)
 def snomed_suggest(
     request: SnomedSuggestRequest,
-    db: Session = Depends(get_db),
-    user_data: dict = Depends(
-        require_role(["org:author", "org:admin", "author", "admin"])
-    ),
+    db: Annotated[Session, Depends(get_db)],
+    user_data: Annotated[
+        dict, Depends(require_role(["org:author", "org:admin", "author", "admin"]))
+    ],
 ):
     try:
         concept_id, display_term = suggest_snomed_term(request.query, db)
@@ -129,10 +137,10 @@ class AutoLinkResponse(BaseModel):
 @router.post("/auto-link", response_model=AutoLinkResponse)
 def auto_link(
     request: AutoLinkRequest,
-    db: Session = Depends(get_db),
-    user_data: dict = Depends(
-        require_role(["org:author", "org:admin", "author", "admin"])
-    ),
+    db: Annotated[Session, Depends(get_db)],
+    user_data: Annotated[
+        dict, Depends(require_role(["org:author", "org:admin", "author", "admin"]))
+    ],
 ):
     try:
         links = auto_link_terms(request.body, db)

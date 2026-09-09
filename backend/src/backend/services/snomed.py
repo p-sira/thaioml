@@ -44,7 +44,7 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
             .limit(1)
         )
         result = db.execute(stmt).scalars().first()
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"Warning: Local DB query failed ({e}). Falling back to CSIRO API.")
         db_error = True
 
@@ -134,7 +134,7 @@ Text:
                     .limit(1)
                 )
                 result = db.execute(stmt).scalars().first()
-            except Exception as db_e:
+            except Exception as db_e:  # noqa: BLE001
                 print(f"Local DB query failed for {canon}: {db_e}")
                 db_error = True
 
