@@ -75,7 +75,9 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
         return str(valid_concept["code"]), valid_concept["display"]
     else:
         if not result:
-            raise ValueError(f"No active SNOMED concept found for term: {canonical_term}")
+            raise ValueError(
+                f"No active SNOMED concept found for term: {canonical_term}"
+            )
         return str(result.concept_id), result.term
 
 
@@ -140,7 +142,9 @@ Text:
                 # Fallback to CSIRO API
                 encoded_term = urllib.parse.quote(canon)
                 url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
-                req = urllib.request.Request(url, headers={"Accept": "application/json"})
+                req = urllib.request.Request(
+                    url, headers={"Accept": "application/json"}
+                )
                 with urllib.request.urlopen(req) as resp:
                     data = json.loads(resp.read().decode("utf-8"))
 
