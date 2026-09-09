@@ -1,9 +1,7 @@
-import { UserProfile } from '@clerk/nextjs'
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import ThemeSettings from './ThemeSettings'
-import { Palette } from 'lucide-react'
+import UserProfileClient from './UserProfileClient'
 
 export default async function ProfilePage() {
   const user = await currentUser()
@@ -24,11 +22,7 @@ export default async function ProfilePage() {
       </header>
       
       <main className="flex justify-center flex-1">
-        <UserProfile routing="hash">
-          <UserProfile.Page label="Display Settings" labelIcon={<Palette className="w-4 h-4" />} url="theme-settings">
-            <ThemeSettings initialTheme={currentTheme} initialAccent={currentAccent} />
-          </UserProfile.Page>
-        </UserProfile>
+        <UserProfileClient currentTheme={currentTheme} currentAccent={currentAccent} />
       </main>
     </div>
   )
