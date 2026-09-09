@@ -59,7 +59,6 @@ The `require_role` dependency in `backend/core/auth.py` handles the authorizatio
 @router.post("/chat")
 def chat_system(
     request: ChatRequest,
-    user_data: dict = Depends(require_role(["org:researcher", "author", "admin"]))
-):
-    ...
+    user_data: dict = Depends(require_role(["org:researcher", "author", "admin"])),
+): ...
 ```
