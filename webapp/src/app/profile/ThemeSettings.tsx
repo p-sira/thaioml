@@ -34,7 +34,7 @@ export default function ThemeSettings({
   useEffect(() => {
     document.body.setAttribute('data-md-color-scheme', theme)
     window.dispatchEvent(new Event('theme-change'))
-    
+
     // Cleanup function to revert to initial theme if component unmounts without saving
     // Note: The handleSave function dispatches 'theme-change' which re-reads the cookie,
     // but if we just navigate away, we want to revert to the saved state.
@@ -72,17 +72,17 @@ export default function ThemeSettings({
   }
 
   return (
-    <div className="p-6 max-w-xl">
-      <h2 className="text-xl font-bold text-foreground mb-6">Display Settings</h2>
+    <div className="p-6 max-w-xl transition-colors duration-300">
+      <h2 className="text-xl font-bold text-foreground mb-6 transition-colors duration-300">Display Settings</h2>
 
       <div className="mb-8">
-        <h3 className="text-sm font-semibold text-foreground/80 mb-3">Theme</h3>
+        <h3 className="text-sm font-semibold text-foreground/80 mb-3 transition-colors duration-300">Theme</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {THEMES.map((t) => (
             <button
               key={t.id}
               onClick={() => setTheme(t.id)}
-              className={`p-3 border rounded-lg text-sm font-medium transition ${theme === t.id
+              className={`p-3 border rounded-lg text-sm font-medium transition-all duration-300 ${theme === t.id
                 ? 'border-blue-600 bg-blue-600/10 text-blue-600'
                 : 'border-foreground/20 hover:border-foreground/30 text-foreground/80'
                 }`}
@@ -97,7 +97,7 @@ export default function ThemeSettings({
         <button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-6 py-2 bg-foreground text-background font-medium rounded-md hover:opacity-90 disabled:opacity-50 transition"
+          className="px-6 py-2 bg-foreground text-background font-medium rounded-md hover:opacity-90 disabled:opacity-50 transition-all duration-300"
         >
           {isSaving ? 'Saving...' : 'Save Preferences'}
         </button>
