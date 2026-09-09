@@ -25,24 +25,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     if (!isLoaded || !user) return
 
     const dbTheme = user.publicMetadata?.theme as string | undefined
-    const dbAccent = user.publicMetadata?.accent as string | undefined
 
-    if (dbTheme || dbAccent) {
+    if (dbTheme) {
       const localTheme = getCookie('thaioml-theme')
-      const localAccent = getCookie('thaioml-accent-color')
 
       let updated = false
       if (dbTheme && dbTheme !== localTheme) {
         setCookie('thaioml-theme', dbTheme)
         updated = true
       }
-      if (dbAccent && dbAccent !== localAccent) {
-        setCookie('thaioml-accent-color', dbAccent)
-        updated = true
-      }
 
       if (updated) {
-        applyThemeVariables(dbTheme || localTheme || 'leuko', dbAccent || localAccent || '#64748b')
+        applyThemeVariables(dbTheme || localTheme || 'leuko')
       }
     }
   }, [user, isLoaded])
@@ -54,8 +48,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const applyCurrent = () => {
       const theme = getCookie('thaioml-theme') || 'leuko'
-      const accent = getCookie('thaioml-accent-color') || '#64748b'
-      applyThemeVariables(theme, accent)
+      applyThemeVariables(theme)
     }
 
     applyCurrent()
@@ -67,21 +60,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-function applyThemeVariables(theme: string, hex: string) {
+function applyThemeVariables(theme: string) {
   // We apply CSS variables that align with Mkdocs Material for consistency across apps
   document.body.setAttribute('data-md-color-scheme', theme)
-  
-  if (hex) {
-    document.documentElement.style.setProperty('--md-accent-fg-color', hex)
-    let r = 0, g = 0, b = 0
-    if (hex.length === 7) {
-      r = parseInt(hex.substring(1, 3), 16)
-      g = parseInt(hex.substring(3, 5), 16)
-      b = parseInt(hex.substring(5, 7), 16)
-    }
-    document.documentElement.style.setProperty(
-      '--md-accent-fg-color--transparent', 
-      `rgba(${r}, ${g}, ${b}, 0.1)`
-    )
-  }
 }

@@ -10,7 +10,6 @@ export default async function ProfilePage() {
   }
   
   const currentTheme = (user?.publicMetadata?.theme as string) || 'leuko'
-  const currentAccent = (user?.publicMetadata?.accent as string) || '#64748b'
 
   return (
     <div className="min-h-screen flex flex-col p-4">
@@ -22,7 +21,7 @@ export default async function ProfilePage() {
       </header>
       
       <main className="flex justify-center flex-1">
-        <UserProfileClient currentTheme={currentTheme} currentAccent={currentAccent} />
+        <UserProfileClient currentTheme={currentTheme} />
       </main>
     </div>
   )
