@@ -2,13 +2,12 @@ import json
 import urllib.parse
 import urllib.request
 
+from backend.core.config import settings
+from backend.models.snomed import SnomedDescription
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 from sqlalchemy import select
 from sqlalchemy.orm import Session
-
-from backend.core.config import settings
-from backend.models.snomed import SnomedDescription
 
 
 def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:
@@ -36,6 +35,7 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
 
     # Query the local database using pg_trgm similarity
     result = None
+    db_error = False
     try:
         stmt = (
             select(SnomedDescription)
@@ -46,8 +46,9 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
         result = db.execute(stmt).scalars().first()
     except Exception as e:
         print(f"Warning: Local DB query failed ({e}). Falling back to CSIRO API.")
+        db_error = True
 
-    if not result:
+    if db_error:
         print(f"Local DB miss for '{canonical_term}'. Falling back to CSIRO API.")
         encoded_term = urllib.parse.quote(canonical_term)
         url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
@@ -67,11 +68,15 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
             break
 
         if not valid_concept:
-            raise ValueError(f"No active SNOMED concept found for term: {canonical_term}")
+            raise ValueError(
+                f"No active SNOMED concept found for term: {canonical_term}"
+            )
 
         return str(valid_concept["code"]), valid_concept["display"]
-
-    return str(result.concept_id), result.term
+    else:
+        if not result:
+            raise ValueError(f"No active SNOMED concept found for term: {canonical_term}")
+        return str(result.concept_id), result.term
 
 
 def auto_link_terms(body: str, db: Session) -> dict[str, str]:
@@ -118,6 +123,7 @@ Text:
 
         try:
             result = None
+            db_error = False
             try:
                 stmt = (
                     select(SnomedDescription)
@@ -128,10 +134,9 @@ Text:
                 result = db.execute(stmt).scalars().first()
             except Exception as db_e:
                 print(f"Local DB query failed for {canon}: {db_e}")
+                db_error = True
 
-            if result:
-                final_links[orig] = f"{result.concept_id} | {result.term}"
-            else:
+            if db_error:
                 # Fallback to CSIRO API
                 encoded_term = urllib.parse.quote(canon)
                 url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
@@ -146,6 +151,9 @@ Text:
                     if concept.get("inactive") is not True:
                         final_links[orig] = f"{concept['code']} | {concept['display']}"
                         break
+            else:
+                if result:
+                    final_links[orig] = f"{result.concept_id} | {result.term}"
         except Exception as e:  # noqa: BLE001
             print(f"Error resolving {canon}: {e}")
 
