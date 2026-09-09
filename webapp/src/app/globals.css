@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import "../../../../docs/docs/stylesheets/custom-theme.css";
+@import "../../../docs/docs/stylesheets/custom-theme.css";
 
 @theme inline {
   --color-background: var(--md-default-bg-color);
