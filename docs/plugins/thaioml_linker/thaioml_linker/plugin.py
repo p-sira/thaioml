@@ -3,9 +3,9 @@ import posixpath
 import re
 
 import yaml
-from mkdocs.config import Config
-from mkdocs.plugins import BasePlugin
-from mkdocs.structure.files import Files
+from mkdocs.config import Config  # type: ignore
+from mkdocs.plugins import BasePlugin  # type: ignore
+from mkdocs.structure.files import Files  # type: ignore
 
 
 class ThaiOMLLinkerPlugin(BasePlugin):

@@ -16,7 +16,7 @@ def update_university_roles(domain: str, new_role: str):
     # but here we fetch the first 100 for simplicity)
     # The Clerk Backend API lets us list users
     try:
-        users = clerk.users.list(limit=100)
+        users = clerk.users.list(request={"limit": 100})
     except Exception as e:  # noqa: BLE001
         print(f"Failed to fetch users: {e}")
         sys.exit(1)
@@ -48,7 +48,9 @@ def update_university_roles(domain: str, new_role: str):
                 print(
                     f"Updating {primary_email} (ID: {user.id}) to include role '{new_role}'..."
                 )
-                clerk.users.update(user_id=user.id, public_metadata=current_metadata)
+                clerk.users.update_metadata(
+                    user_id=user.id, public_metadata=current_metadata
+                )
                 updated_count += 1
             else:
                 print(

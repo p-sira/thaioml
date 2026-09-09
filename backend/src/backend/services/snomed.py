@@ -78,7 +78,7 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
             raise ValueError(
                 f"No active SNOMED concept found for term: {canonical_term}"
             )
-        return str(result.concept_id), result.term
+        return str(result.concept_id), str(result.term)
 
 
 def auto_link_terms(body: str, db: Session) -> dict[str, str]:

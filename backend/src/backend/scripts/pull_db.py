@@ -22,6 +22,7 @@ def main():
         # If you set up Cloudflare Access or a simple bearer token worker
         req.add_header("Authorization", f"Bearer {settings.snomed_db_auth_token}")
 
+    temp_path = None
     try:
         # Create a temporary file to hold the downloaded dump
         fd, temp_path = tempfile.mkstemp(suffix=".dump")
@@ -94,7 +95,7 @@ def main():
         sys.exit(1)
     finally:
         # Always clean up the temporary file
-        if os.path.exists(temp_path):
+        if temp_path and os.path.exists(temp_path):
             os.remove(temp_path)
 
 
