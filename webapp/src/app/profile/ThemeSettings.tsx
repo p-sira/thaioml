@@ -33,6 +33,7 @@ export default function ThemeSettings({
   // Apply theme for preview when selected
   useEffect(() => {
     document.body.setAttribute('data-md-color-scheme', theme)
+    window.dispatchEvent(new Event('theme-change'))
     
     // Cleanup function to revert to initial theme if component unmounts without saving
     // Note: The handleSave function dispatches 'theme-change' which re-reads the cookie,
@@ -42,6 +43,7 @@ export default function ThemeSettings({
       const savedTheme = document.cookie.match('(^|;) ?thaioml-theme=([^;]*)(;|$)');
       const themeToRevertTo = savedTheme ? savedTheme[2] : initialTheme;
       document.body.setAttribute('data-md-color-scheme', themeToRevertTo)
+      window.dispatchEvent(new Event('theme-change'))
     }
   }, [theme, initialTheme])
 

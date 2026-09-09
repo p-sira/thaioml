@@ -16,8 +16,9 @@ export function ClerkThemeProvider({
 
   useEffect(() => {
     const handleThemeChange = () => {
+      const bodyTheme = document.body.getAttribute('data-md-color-scheme')
       const match = document.cookie.match('(^|;) ?thaioml-theme=([^;]*)(;|$)')
-      const currentTheme = match ? match[2] : 'leuko'
+      const currentTheme = bodyTheme || (match ? match[2] : 'leuko')
       setTheme(currentTheme)
       
       // Delay slightly to ensure ThemeProvider has updated the body attribute
@@ -25,10 +26,11 @@ export function ClerkThemeProvider({
         const styles = getComputedStyle(document.body)
         setThemeVariables({
           colorBackground: styles.getPropertyValue('--md-default-bg-color').trim() || undefined,
-          colorText: styles.getPropertyValue('--md-default-fg-color').trim() || undefined,
-          colorTextSecondary: styles.getPropertyValue('--md-default-fg-color--light').trim() || undefined,
-          colorInputBackground: styles.getPropertyValue('--md-code-bg-color').trim() || undefined,
-          colorInputText: styles.getPropertyValue('--md-default-fg-color').trim() || undefined,
+          colorForeground: styles.getPropertyValue('--md-default-fg-color').trim() || undefined,
+          colorMutedForeground: styles.getPropertyValue('--md-default-fg-color--light').trim() || undefined,
+          colorInput: styles.getPropertyValue('--md-code-bg-color').trim() || undefined,
+          colorInputForeground: styles.getPropertyValue('--md-default-fg-color').trim() || undefined,
+          colorPrimary: styles.getPropertyValue('--md-accent-fg-color').trim() || undefined,
         })
       }, 50)
     }
