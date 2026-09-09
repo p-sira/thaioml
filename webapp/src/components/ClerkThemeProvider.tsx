@@ -37,6 +37,15 @@ export function ClerkThemeProvider({
           colorInput: 'var(--md-code-bg-color)',
           colorInputForeground: 'var(--md-default-fg-color)',
           colorPrimary: 'var(--md-accent-fg-color)',
+          colorNeutral: 'var(--md-default-fg-color)',
+        },
+        elements: {
+          userButtonPopoverActionButton: {
+            color: 'var(--md-default-fg-color)',
+          },
+          userButtonPopoverActionButtonIconBox: {
+            color: 'var(--md-default-fg-color)',
+          }
         }
       }}
       localization={{
