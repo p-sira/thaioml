@@ -1,4 +1,6 @@
 import json
+import urllib.parse
+import urllib.request
 
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
@@ -33,16 +35,41 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
         canonical_term = canonical_term[1:-1]
 
     # Query the local database using pg_trgm similarity
-    stmt = (
-        select(SnomedDescription)
-        .where(SnomedDescription.active == True)
-        .order_by(SnomedDescription.term.op("<->")(canonical_term))
-        .limit(1)
-    )
-    result = db.execute(stmt).scalars().first()
+    result = None
+    try:
+        stmt = (
+            select(SnomedDescription)
+            .where(SnomedDescription.active == True)
+            .order_by(SnomedDescription.term.op("<->")(canonical_term))
+            .limit(1)
+        )
+        result = db.execute(stmt).scalars().first()
+    except Exception as e:
+        print(f"Warning: Local DB query failed ({e}). Falling back to CSIRO API.")
 
     if not result:
-        raise ValueError(f"No active SNOMED concept found for term: {canonical_term}")
+        print(f"Local DB miss for '{canonical_term}'. Falling back to CSIRO API.")
+        encoded_term = urllib.parse.quote(canonical_term)
+        url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
+
+        req = urllib.request.Request(url, headers={"Accept": "application/json"})
+        with urllib.request.urlopen(req) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+
+        expansion = data.get("expansion", {})
+        contains = expansion.get("contains", [])
+
+        valid_concept = None
+        for concept in contains:
+            if concept.get("inactive") is True:
+                continue
+            valid_concept = concept
+            break
+
+        if not valid_concept:
+            raise ValueError(f"No active SNOMED concept found for term: {canonical_term}")
+
+        return str(valid_concept["code"]), valid_concept["display"]
 
     return str(result.concept_id), result.term
 
@@ -90,15 +117,35 @@ Text:
             continue
 
         try:
-            stmt = (
-                select(SnomedDescription)
-                .where(SnomedDescription.active == True)
-                .order_by(SnomedDescription.term.op("<->")(canon))
-                .limit(1)
-            )
-            result = db.execute(stmt).scalars().first()
+            result = None
+            try:
+                stmt = (
+                    select(SnomedDescription)
+                    .where(SnomedDescription.active == True)
+                    .order_by(SnomedDescription.term.op("<->")(canon))
+                    .limit(1)
+                )
+                result = db.execute(stmt).scalars().first()
+            except Exception as db_e:
+                print(f"Local DB query failed for {canon}: {db_e}")
+
             if result:
                 final_links[orig] = f"{result.concept_id} | {result.term}"
+            else:
+                # Fallback to CSIRO API
+                encoded_term = urllib.parse.quote(canon)
+                url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
+                req = urllib.request.Request(url, headers={"Accept": "application/json"})
+                with urllib.request.urlopen(req) as resp:
+                    data = json.loads(resp.read().decode("utf-8"))
+
+                expansion = data.get("expansion", {})
+                contains = expansion.get("contains", [])
+
+                for concept in contains:
+                    if concept.get("inactive") is not True:
+                        final_links[orig] = f"{concept['code']} | {concept['display']}"
+                        break
         except Exception as e:  # noqa: BLE001
             print(f"Error resolving {canon}: {e}")
 
