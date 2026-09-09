@@ -2,6 +2,17 @@
 
 **Open Medical Library of Thailand** ([thaioml.org](https://www.thaioml.org)) is a community-maintained, expert-reviewed medical education database. The contents cater toward medical students.
 
+<div style="display: flex; gap: 1rem; margin: 2rem 0; padding: 1.5rem; background-color: var(--md-default-bg-color); border: 1px solid var(--md-default-fg-color--lightest); border-radius: 8px;">
+  <div>
+    <h3 style="margin-top: 0;">Try the New AI Search (Beta)</h3>
+    <p style="margin-bottom: 0;">Access our advanced natural language clinical search tools and manage your profile.</p>
+  </div>
+  <div style="display: flex; align-items: center; margin-left: auto;">
+    <a href="http://localhost:3000" class="md-button md-button--primary" style="margin-right: 0.5rem;">Launch Webapp</a>
+    <a href="http://localhost:3000/sign-in" class="md-button">Sign In</a>
+  </div>
+</div>
+
 ---
 
 ## Purpose

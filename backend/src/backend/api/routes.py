@@ -6,6 +6,7 @@ from backend.core.db import get_db
 
 from backend.services.rag import rag_service
 from backend.services.snomed import auto_link_terms, suggest_snomed_term
+from backend.core.auth import require_role
 
 router = APIRouter()
 
@@ -29,7 +30,10 @@ def health_check():
 
 
 @router.post("/query", response_model=QueryResponse)
-def query_system(request: QueryRequest):
+def query_system(
+    request: QueryRequest,
+    user_data: dict = Depends(require_role(["org:researcher", "org:author", "org:admin", "researcher", "author", "admin"]))
+):
     try:
         answer = rag_service.query(request.query)
         return QueryResponse(answer=answer)
@@ -49,7 +53,11 @@ class SnomedSuggestResponse(BaseModel):
 
 
 @router.post("/snomed-suggest", response_model=SnomedSuggestResponse)
-def snomed_suggest(request: SnomedSuggestRequest, db: Session = Depends(get_db)):
+def snomed_suggest(
+    request: SnomedSuggestRequest,
+    db: Session = Depends(get_db),
+    user_data: dict = Depends(require_role(["org:author", "org:admin", "author", "admin"]))
+):
     try:
         concept_id, display_term = suggest_snomed_term(request.query, db)
         return SnomedSuggestResponse(id=concept_id, term=display_term)
@@ -70,7 +78,11 @@ class AutoLinkResponse(BaseModel):
 
 
 @router.post("/auto-link", response_model=AutoLinkResponse)
-def auto_link(request: AutoLinkRequest, db: Session = Depends(get_db)):
+def auto_link(
+    request: AutoLinkRequest,
+    db: Session = Depends(get_db),
+    user_data: dict = Depends(require_role(["org:author", "org:admin", "author", "admin"]))
+):
     try:
         links = auto_link_terms(request.body, db)
         return AutoLinkResponse(links=links)

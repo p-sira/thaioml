@@ -2,6 +2,10 @@ site_name: ThaiOML (Open Medical Library of Thailand)
 site_url: https://www.thaioml.org
 site_description: Community-maintained, expert-reviewed medical education database.
 
+repo_name: App & Settings
+repo_url: http://localhost:3000
+repo_icon: material/cog
+
 plugins:
   - search
   - thaioml-linker
@@ -41,6 +45,8 @@ theme:
 
 extra_css:
   - stylesheets/custom-theme.css
+
+
 
 extra_javascript:
   - javascripts/theme-accent.js

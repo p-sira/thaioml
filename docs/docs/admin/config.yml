@@ -1,7 +1,9 @@
 local_backend: true
 backend:
-  name: git-gateway
+  name: github
+  repo: your-github-username/thaioml # TODO: Change to your actual repo
   branch: main
+  base_url: https://your-oauth-proxy.workers.dev # TODO: Change to your Cloudflare OAuth Worker URL
   commit_messages:
     create: 'Create {{collection}} "{{slug}}"'
     update: 'Update {{collection}} "{{slug}}"'
