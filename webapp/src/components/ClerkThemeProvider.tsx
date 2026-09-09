@@ -12,7 +12,6 @@ export function ClerkThemeProvider({
   initialTheme: string
 }) {
   const [theme, setTheme] = useState(initialTheme)
-  const [themeVariables, setThemeVariables] = useState<any>({})
 
   useEffect(() => {
     const handleThemeChange = () => {
@@ -20,19 +19,6 @@ export function ClerkThemeProvider({
       const match = document.cookie.match('(^|;) ?thaioml-theme=([^;]*)(;|$)')
       const currentTheme = bodyTheme || (match ? match[2] : 'leuko')
       setTheme(currentTheme)
-      
-      // Delay slightly to ensure ThemeProvider has updated the body attribute
-      setTimeout(() => {
-        const styles = getComputedStyle(document.body)
-        setThemeVariables({
-          colorBackground: styles.getPropertyValue('--md-default-bg-color').trim() || undefined,
-          colorForeground: styles.getPropertyValue('--md-default-fg-color').trim() || undefined,
-          colorMutedForeground: styles.getPropertyValue('--md-default-fg-color--light').trim() || undefined,
-          colorInput: styles.getPropertyValue('--md-code-bg-color').trim() || undefined,
-          colorInputForeground: styles.getPropertyValue('--md-default-fg-color').trim() || undefined,
-          colorPrimary: styles.getPropertyValue('--md-accent-fg-color').trim() || undefined,
-        })
-      }, 50)
     }
 
     window.addEventListener('theme-change', handleThemeChange)
@@ -44,7 +30,14 @@ export function ClerkThemeProvider({
     <ClerkProvider
       appearance={{
         baseTheme: theme === 'darkroom' ? dark : undefined,
-        variables: themeVariables
+        variables: {
+          colorBackground: 'var(--md-default-bg-color)',
+          colorForeground: 'var(--md-default-fg-color)',
+          colorMutedForeground: 'var(--md-default-fg-color--light)',
+          colorInput: 'var(--md-code-bg-color)',
+          colorInputForeground: 'var(--md-default-fg-color)',
+          colorPrimary: 'var(--md-accent-fg-color)',
+        }
       }}
       localization={{
         userButton: {
