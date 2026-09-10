@@ -6,6 +6,9 @@ repo_name: App & Settings
 repo_url: http://localhost:3000
 repo_icon: material/cog
 
+extra:
+  webapp_url: !ENV [WEBAPP_URL, "http://localhost:3000"]
+
 plugins:
   - search
   - thaioml-linker
