@@ -37,3 +37,18 @@ When a user visits any production ThaiOML application, the frontend must resolve
 4. **Reconcile:** If the database preference differs from the current active cookie (e.g. they changed it on another device), the application overwrites the cookie to match the database truth and updates the live UI.
 
 *Note on Static Sites:* The MkDocs static site does not execute the async fetch layer. It exclusively reads the shared `.thaioml.org` cookie for extreme performance. If an authenticated user changes their settings in the webapp, the updated cookie immediately propagates the new theme to the static site.
+
+## 2. Design Aesthetics & Styling
+
+ThaiOML strictly adheres to a **minimalistic and clean style**. This aesthetic prioritizes content readability and performance over complex visual effects.
+
+- **Authorized Themes:** Development must exclusively utilize the established theme palette (Leuko, Darkroom, Progressnote).
+- **Prohibited Patterns:** Do **not** use glassmorphism (e.g., heavily blurred backgrounds, translucent overlay panels). Stick to flat, solid backgrounds and subtle borders or shadows (as defined by the active theme).
+
+## 3. Application Routing Architecture
+
+The ThaiOML ecosystem is divided structurally between the Next.js Webapp and the MkDocs static site:
+
+- **Webapp as the Landing Page:** The Next.js application serves as the primary entry point, index/landing page, and interactive search interface for ThaiOML. It provides dynamic experiences like the "Ask the Library" chat interface and intelligent global search.
+- **MkDocs as the Content Library:** The static MkDocs site strictly serves the rendered markdown medical articles, guidelines, and static pages (like Contribution and About). 
+- **Integration:** The Next.js webapp intelligently links to the static MkDocs pages. For example, searches on the webapp land users directly into the relevant static `/articles/...` endpoints hosted by MkDocs.
