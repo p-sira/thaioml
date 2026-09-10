@@ -18,21 +18,6 @@ export default async function ContributePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Header */}
-      <header className="flex items-center justify-between py-4 px-6 border-b border-slate-200 bg-white">
-        <div className="flex items-center gap-4">
-          <h1 className="text-xl font-bold text-blue-600">ThaiOML Webapp</h1>
-          <a href="http://localhost:8000" className="text-sm text-slate-500 hover:text-slate-800 transition">
-            &larr; Back to Static Library
-          </a>
-        </div>
-        <div>
-          <Link href="/" className="text-sm font-medium text-slate-700 hover:text-blue-600">
-            Home
-          </Link>
-        </div>
-      </header>
-
       {/* Main Content */}
       <main className="flex-1 flex flex-col items-center justify-center p-6 bg-slate-50">
         <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center">

@@ -19,7 +19,7 @@
     <p style="margin-bottom: 0;">ThaiOML is community-maintained. Join our editors to improve and create clinical articles.</p>
   </div>
   <div style="display: flex; align-items: center; margin-left: auto;">
-    <a href="http://localhost:3000/contribute" class="md-button md-button--primary">Contribute</a>
+    <a href="contribute/" class="md-button md-button--primary">Contribute</a>
   </div>
 </div>
 

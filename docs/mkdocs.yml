@@ -12,6 +12,7 @@ plugins:
 
 theme:
   name: material
+  custom_dir: overrides
   palette:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
@@ -28,8 +29,6 @@ theme:
       primary: custom
       accent: custom
   features:
-    - navigation.tabs
-    - navigation.sections
     - navigation.top
     - search.suggest
     - search.highlight
@@ -41,6 +40,7 @@ extra_css:
 
 extra_javascript:
   - javascripts/theme-accent.js
+  - javascripts/clerk-auth.js
 
 markdown_extensions:
   - pymdownx.superfences:
@@ -57,3 +57,4 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+  - attr_list
