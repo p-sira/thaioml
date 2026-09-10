@@ -3,24 +3,428 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Content Manager</title>
-  <!-- Include the script that enables Netlify Identity on this page. -->
+  <title>Content Manager — ThaiOML</title>
+
+  <!-- ThaiOML Design Language -->
+  <link rel="stylesheet" href="../stylesheets/custom-theme.css" />
+  <script src="../javascripts/theme-accent.js"></script>
+  <script src="../javascripts/clerk-auth.js"></script>
+
+  <style>
+    /* ============================================================
+       ThaiOML × Decap CMS — Precision Theme Override
+       Built from live DOM inspection of Decap CMS 3.x.
+
+       Key confirmed class name fragments (Emotion embeds these
+       stable strings inside the hashed class names):
+         AppHeaderContainer  → our header replaces this (hidden)
+         AppMainContainer    → .e1440w8j1
+         SidebarContainer    → .e1t18l341
+         SidebarNavLink      → .e1t18l340  (.sidebar-active when active)
+         SearchInput         → .e6w847r5
+         SearchInputContainer→ .e6w847r4
+         CardsGrid           → .effeus40
+         ListCardLink        → .effeus49
+         CollectionTopNew    → .ei8nkzc1
+         ViewControlsButton  → .evv1i7c0
+         SortDropdown        → .e1obtllk0
+       ============================================================ */
+
+    /* --- Reset & Base --- */
+    *, *::before, *::after { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background-color: var(--md-default-bg-color) !important;
+      color: var(--md-default-fg-color) !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", Arial, sans-serif !important;
+    }
+
+    /* ── Hide Decap's own header bar (replaced by custom-header below) ── */
+    [class*="AppHeaderContainer"],
+    [class*="AppHeader-"],
+    .e12q65n0 {
+      display: none !important;
+    }
+
+    /* ── Root + App wrapper ── */
+    #nc-root {
+      min-height: calc(100vh - 65px) !important;
+      background-color: var(--md-default-bg-color) !important;
+      color: var(--md-default-fg-color) !important;
+    }
+
+    [class*="AppMainContainer"],
+    .e1440w8j1 {
+      background-color: var(--md-default-bg-color) !important;
+      color: var(--md-default-fg-color) !important;
+    }
+
+    /* Broad catch-all for direct children divs */
+    #nc-root > div,
+    #nc-root > div > div {
+      background-color: var(--md-default-bg-color) !important;
+      color: var(--md-default-fg-color) !important;
+    }
+
+    /* ── Left Sidebar ── */
+    [class*="SidebarContainer"],
+    .e1t18l341 {
+      background-color: var(--md-default-bg-color--light) !important;
+      border-right: 1px solid var(--md-default-fg-color--light) !important;
+      color: var(--md-default-fg-color) !important;
+    }
+
+    [class*="SidebarNavList"] {
+      background-color: transparent !important;
+    }
+
+    /* Sidebar nav links — inactive */
+    [class*="SidebarNavLink"],
+    .e1t18l340 {
+      color: var(--md-default-fg-color--light) !important;
+      background-color: transparent !important;
+      border-radius: 6px !important;
+      text-decoration: none !important;
+      transition: background-color 0.15s, color 0.15s !important;
+    }
+
+    [class*="SidebarNavLink"]:hover,
+    .e1t18l340:hover {
+      background-color: var(--md-accent-fg-color--transparent) !important;
+      color: var(--md-default-fg-color) !important;
+    }
+
+    /* Sidebar active link (Decap adds class "sidebar-active") */
+    .e1t18l340.sidebar-active,
+    [class*="SidebarNavLink"].sidebar-active,
+    [class*="sidebarNavLinkActive"] {
+      background-color: var(--md-accent-fg-color--transparent) !important;
+      color: var(--md-accent-fg-color) !important;
+    }
+
+    /* Sidebar section heading */
+    [class*="SidebarHeading"],
+    [class*="CollectionGroupHeader"] {
+      color: var(--md-default-fg-color--light) !important;
+      background-color: transparent !important;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-size: 0.68rem;
+    }
+
+    /* ── Search Input (in sidebar) ── */
+    [class*="SearchInput"],
+    .e6w847r5 {
+      background-color: var(--md-default-bg-color) !important;
+      color: var(--md-default-fg-color) !important;
+      border: 1px solid var(--md-default-fg-color--light) !important;
+      border-radius: 6px !important;
+      outline: none !important;
+    }
+
+    [class*="SearchInput"]:focus,
+    .e6w847r5:focus {
+      border-color: var(--md-accent-fg-color) !important;
+      box-shadow: 0 0 0 2px var(--md-accent-fg-color--transparent) !important;
+    }
+
+    [class*="SearchInput"]::placeholder,
+    .e6w847r5::placeholder {
+      color: var(--md-default-fg-color--light) !important;
+    }
+
+    [class*="SearchInputContainer"],
+    .e6w847r4 {
+      background-color: transparent !important;
+    }
+
+    /* ── Main Content / Collection area ── */
+    [class*="CollectionTopContainer"],
+    .e1440w8j0 {
+      background-color: var(--md-default-bg-color) !important;
+      border-bottom: 1px solid var(--md-default-fg-color--light) !important;
+    }
+
+    [class*="CollectionContainer"],
+    [class*="MainContainer"] {
+      background-color: var(--md-default-bg-color) !important;
+      color: var(--md-default-fg-color) !important;
+    }
+
+    [class*="CollectionTopContainer"] h1,
+    [class*="CollectionTopContainer"] h2,
+    [class*="CollectionHeader"] h1,
+    [class*="CollectionHeader"] h2 {
+      color: var(--md-default-fg-color--dark) !important;
+    }
+
+    /* ── Cards Grid ── */
+    [class*="CardsGrid"],
+    .effeus40 {
+      background-color: var(--md-default-bg-color) !important;
+    }
+
+    /* ── Individual Article Card ── */
+    [class*="ListCardLink"],
+    .effeus49 {
+      background-color: var(--md-default-bg-color--light) !important;
+      border: 1px solid var(--md-default-fg-color--light) !important;
+      border-radius: 8px !important;
+      color: var(--md-default-fg-color) !important;
+      text-decoration: none !important;
+      transition: border-color 0.2s ease, background-color 0.2s ease !important;
+    }
+
+    [class*="ListCardLink"]:hover,
+    .effeus49:hover {
+      border-color: var(--md-accent-fg-color) !important;
+      background-color: var(--md-accent-fg-color--transparent) !important;
+    }
+
+    [class*="ListCardLink"] *,
+    .effeus49 * {
+      color: var(--md-default-fg-color) !important;
+    }
+
+    /* ── "+ Articles" New Entry Button ── */
+    [class*="CollectionTopNewButton"],
+    .ei8nkzc1 {
+      background-color: var(--md-default-fg-color) !important;
+      color: var(--md-default-bg-color) !important;
+      border-radius: 6px !important;
+      border: none !important;
+      font-weight: 600 !important;
+      transition: opacity 0.2s !important;
+    }
+
+    [class*="CollectionTopNewButton"]:hover,
+    .ei8nkzc1:hover {
+      opacity: 0.8 !important;
+    }
+
+    /* ── View Toggle Buttons (list / grid icons) ── */
+    [class*="ViewControlsButton"],
+    .evv1i7c0 {
+      background-color: transparent !important;
+      color: var(--md-default-fg-color--light) !important;
+      border: 1px solid transparent !important;
+      border-radius: 4px !important;
+    }
+
+    [class*="ViewControlsButton"]:hover,
+    .evv1i7c0:hover {
+      border-color: var(--md-default-fg-color--light) !important;
+      color: var(--md-default-fg-color) !important;
+    }
+
+    /* Sort dropdown trigger */
+    .e1obtllk0 {
+      color: var(--md-default-fg-color--light) !important;
+      background-color: transparent !important;
+    }
+
+    /* Dropdown menus */
+    [class*="DropdownList"],
+    [class*="DropdownContainer"],
+    [class*="StyledDropdown"] {
+      background-color: var(--md-default-bg-color--light) !important;
+      border: 1px solid var(--md-default-fg-color--light) !important;
+      border-radius: 8px !important;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    [class*="DropdownItem"] {
+      background-color: transparent !important;
+      color: var(--md-default-fg-color) !important;
+    }
+
+    [class*="DropdownItem"]:hover {
+      background-color: var(--md-accent-fg-color--transparent) !important;
+    }
+
+    /* ── Editor View ── */
+    [class*="EditorContainer"],
+    [class*="EditorPanel"],
+    [class*="EditorWithPreview"],
+    [class*="SplitPane"] {
+      background-color: var(--md-default-bg-color) !important;
+    }
+
+    [class*="EditorControlBar"],
+    [class*="EditorToolbar"] {
+      background-color: var(--md-default-bg-color--light) !important;
+      border-bottom: 1px solid var(--md-default-fg-color--light) !important;
+    }
+
+    [class*="FieldWrapper"],
+    [class*="ControlContainer"] {
+      background-color: var(--md-default-bg-color) !important;
+    }
+
+    [class*="ControlLabel"],
+    [class*="LabelComponent"],
+    [class*="FieldLabel"] {
+      color: var(--md-default-fg-color--light) !important;
+      font-size: 0.75rem !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.05em !important;
+    }
+
+    input[type="text"], input[type="email"], input[type="url"],
+    input[type="number"], input[type="date"], input[type="datetime-local"],
+    textarea, select,
+    [class*="StyledTextInput"],
+    [class*="StyledSelect"],
+    [class*="StyledTextArea"] {
+      background-color: var(--md-default-bg-color--light) !important;
+      color: var(--md-default-fg-color) !important;
+      border: 1px solid var(--md-default-fg-color--light) !important;
+      border-radius: 6px !important;
+    }
+
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--md-accent-fg-color) !important;
+      outline: none !important;
+      box-shadow: 0 0 0 2px var(--md-accent-fg-color--transparent) !important;
+    }
+
+    /* Save / Publish button in editor */
+    [class*="PublishControlsButton"],
+    [class*="PublishButton"],
+    button[class*="primary"] {
+      background-color: var(--md-default-fg-color) !important;
+      color: var(--md-default-bg-color) !important;
+      border-radius: 6px !important;
+      border: none !important;
+    }
+
+    /* ── Notifications / Toast ── */
+    [class*="NotifList"],
+    [class*="Toast"],
+    [class*="Notification"] {
+      background-color: var(--md-default-bg-color--light) !important;
+      color: var(--md-default-fg-color) !important;
+      border: 1px solid var(--md-default-fg-color--light) !important;
+      border-radius: 8px !important;
+    }
+
+    /* ── Preview Iframe ── */
+    iframe {
+      background-color: var(--md-default-bg-color) !important;
+    }
+
+    /* ── Global text catch-all (scoped to CMS root) ── */
+    #nc-root h1, #nc-root h2, #nc-root h3,
+    #nc-root h4, #nc-root h5, #nc-root h6 {
+      color: var(--md-default-fg-color--dark) !important;
+    }
+
+    #nc-root p, #nc-root span,
+    #nc-root label, #nc-root small {
+      color: var(--md-default-fg-color) !important;
+    }
+
+    /* General links within the CMS (not cards, not sidebar nav, not our header buttons) */
+    #nc-root a:not([class*="ListCardLink"]):not(.effeus49):not(.custom-btn):not(.e1t18l340) {
+      color: var(--md-accent-fg-color) !important;
+    }
+
+    /* SVG icons — let them inherit theme text color */
+    #nc-root svg {
+      fill: currentColor;
+    }
+  </style>
+
+  <!-- Netlify Identity Widget -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
-  <!-- Setup Manual Init so we can register widgets before starting CMS -->
+  <!-- ── ThaiOML Shared Navigation Header ── -->
+  <header class="md-header" data-md-component="header"
+          style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <nav class="custom-header" aria-label="Header">
+      <div class="custom-header-section">
+        <a href="http://localhost:3000/" title="ThaiOML" class="logo-link"
+           style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+          <img src="http://localhost:3000/logo.svg" alt="logo" class="logo-img" />
+          <span class="logo-text">ThaiOML</span>
+        </a>
+      </div>
+      <div class="custom-header-section custom-header-center">
+        <a href="http://localhost:3000/chat" class="nav-link">Ask the Library</a>
+        <a href="../contribute/" class="nav-link">Contribute</a>
+        <a href="../about/" class="nav-link">About</a>
+      </div>
+      <div class="custom-header-section custom-header-right" id="clerk-auth-container">
+        <a href="http://localhost:3000/sign-in" class="custom-btn" id="clerk-sign-in-btn">Sign In</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ── Decap CMS mounts here ── -->
+  <div id="nc-root"></div>
+
+  <!-- Manual init so widgets can register before CMS starts -->
   <script>
     window.CMS_MANUAL_INIT = true;
   </script>
-  <!-- Include the script that builds the page and powers Decap CMS -->
+
+  <!-- Decap CMS core -->
   <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script>
-  
-  <!-- Load the custom SNOMED widget (plain JS, uses CMS-provided createClass/h) -->
+
+  <!-- Custom SNOMED widget (uses CMS-provided createClass/h) -->
   <script src="snomed-widget.js"></script>
 
-  <!-- Initialize CMS after widget is registered -->
+  <!-- Initialize CMS & register preview styles -->
   <script>
-    CMS.init();
+    // Dynamically pull all MkDocs stylesheets so the preview pane is an
+    // exact CSS replica of the live site (hashed filenames included).
+    fetch('../')
+      .then(res => res.text())
+      .then(html => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+          CMS.registerPreviewStyle(link.href);
+        });
+      })
+      .catch(err => {
+        console.warn('Could not load MkDocs stylesheets for preview:', err);
+        CMS.registerPreviewStyle('../stylesheets/custom-theme.css');
+      })
+      .finally(() => {
+        CMS.init();
+      });
+
+    // ── Sync theme into the preview iframe every second ──
+    // The iframe is sandboxed so it can't inherit from the parent window.
+    // We push the active color-scheme attribute and accent CSS vars in.
+    setInterval(() => {
+      const iframe = document.querySelector('iframe');
+      if (!iframe || !iframe.contentDocument) return;
+
+      const scheme = document.body.getAttribute('data-md-color-scheme');
+      if (scheme) {
+        iframe.contentDocument.body.setAttribute('data-md-color-scheme', scheme);
+        iframe.contentDocument.documentElement.setAttribute('data-md-color-scheme', scheme);
+      }
+
+      const root = document.documentElement;
+      const accent = root.style.getPropertyValue('--md-accent-fg-color');
+      const accentT = root.style.getPropertyValue('--md-accent-fg-color--transparent');
+
+      if (accent) {
+        iframe.contentDocument.documentElement.style
+          .setProperty('--md-accent-fg-color', accent);
+      }
+      if (accentT) {
+        iframe.contentDocument.documentElement.style
+          .setProperty('--md-accent-fg-color--transparent', accentT);
+      }
+    }, 1000);
   </script>
 </body>
 </html>
