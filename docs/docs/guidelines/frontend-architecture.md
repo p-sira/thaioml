@@ -45,10 +45,13 @@ ThaiOML strictly adheres to a **minimalistic and clean style**. This aesthetic p
 - **Authorized Themes:** Development must exclusively utilize the established theme palette (Leuko, Darkroom, Progressnote).
 - **Prohibited Patterns:** Do **not** use glassmorphism (e.g., heavily blurred backgrounds, translucent overlay panels). Stick to flat, solid backgrounds and subtle borders or shadows (as defined by the active theme).
 
-## 3. Application Routing Architecture
+## 3. Application Routing Architecture & UX
 
-The ThaiOML ecosystem is divided structurally between the Next.js Webapp and the MkDocs static site:
+The ThaiOML ecosystem is divided structurally between the Next.js Webapp and the MkDocs static site, but presents a **unified user experience**.
 
-- **Webapp as the Landing Page:** The Next.js application serves as the primary entry point, index/landing page, and interactive search interface for ThaiOML. It provides dynamic experiences like the "Ask the Library" chat interface and intelligent global search.
+- **Webapp as the Main Focus:** The Next.js application serves as the definitive core interface, primary entry point, index/landing page, and interactive search interface for ThaiOML. It provides dynamic experiences like the "Ask the Library" chat interface and intelligent global search.
+- **Unified Navigation:** Both the MkDocs static site and the Webapp share an identical top navigation bar. This ensures users feel they are within a single application, regardless of whether they are viewing static markdown or interacting with dynamic Next.js routes.
+- **Search-Centric Discovery:** The traditional left-hand directory navigation in MkDocs is intentionally removed. Users are encouraged to browse the content library via global search, intelligent search suggestions, and inline hyperlinks within the medical articles.
+- **Right-Hand TOC:** A brief Table of Contents is preserved on the right side of MkDocs articles for quick page-level navigation.
 - **MkDocs as the Content Library:** The static MkDocs site strictly serves the rendered markdown medical articles, guidelines, and static pages (like Contribution and About). 
 - **Integration:** The Next.js webapp intelligently links to the static MkDocs pages. For example, searches on the webapp land users directly into the relevant static `/articles/...` endpoints hosted by MkDocs.

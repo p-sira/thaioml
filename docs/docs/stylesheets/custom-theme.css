@@ -139,3 +139,146 @@
   filter: brightness(1.2);
   /* Slight hover effect */
 }
+
+/* Hide the left sidebar globally */
+.md-sidebar.md-sidebar--primary {
+  display: none !important;
+}
+
+/* Allow the custom header to size naturally, overriding Material's fixed 48px height */
+.md-header {
+  height: auto !important;
+}
+
+/* Ensure the main content takes up appropriate space */
+@media screen and (min-width: 1220px) {
+  .md-sidebar.md-sidebar--secondary {
+    display: block;
+  }
+}
+
+/* Custom Header Styling (matching Next.js webapp) */
+.custom-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 32px;
+  background-color: var(--md-default-bg-color);
+  border-bottom: 1px solid var(--md-accent-fg-color--transparent);
+}
+.custom-header-section {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 33.333%;
+}
+.custom-header-center {
+  justify-content: center;
+  gap: 16px;
+}
+@media screen and (min-width: 1024px) {
+  .custom-header-center {
+    gap: 24px;
+  }
+}
+.custom-header-right {
+  justify-content: flex-end;
+}
+.nav-link {
+  color: var(--md-default-fg-color);
+  opacity: 0.7;
+  text-decoration: none;
+  transition: opacity 0.2s, color 0.2s;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.nav-link.md-header__button {
+  display: inline-block !important;
+}
+.nav-link:hover {
+  opacity: 1;
+}
+.logo-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--md-default-fg-color);
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.logo-link:hover {
+  opacity: 0.8;
+}
+.logo-text {
+  font-size: 20px;
+  font-weight: 700;
+}
+.logo-img {
+  width: 32px;
+  height: 32px;
+}
+.custom-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: var(--md-default-fg-color);
+  color: var(--md-default-bg-color) !important;
+  border-radius: 6px;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.custom-btn:hover {
+  opacity: 0.9;
+}
+.clerk-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--md-accent-fg-color--transparent);
+}
+
+/* Make MkDocs Search behave like a modal dropdown on desktop */
+@media screen and (min-width: 76.25em) {
+  .md-search {
+    display: none !important;
+    position: absolute !important;
+    top: calc(100% + 8px) !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 600px !important;
+    background: var(--md-default-bg-color);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border: 1px solid var(--md-accent-fg-color--transparent);
+    border-radius: 8px;
+    z-index: 100;
+  }
+  
+  /* Show search dropdown when the toggle is checked */
+  [data-md-toggle="search"]:checked ~ .md-header .md-search,
+  [data-md-toggle="search"]:checked ~ .md-search {
+    display: block !important;
+  }
+
+  /* Style the inner components of the search to fit the modal */
+  .md-search__inner {
+    width: 100% !important;
+    float: none !important;
+    padding: 0 !important;
+  }
+  
+  .md-search__form {
+    border-radius: 8px 8px 0 0 !important;
+    background: var(--md-default-bg-color--light) !important;
+  }
+  
+  .md-search__output {
+    position: relative !important;
+    width: 100% !important;
+    top: 0 !important;
+    border-radius: 0 0 8px 8px !important;
+  }
+}

@@ -13,12 +13,9 @@ export default async function ProfilePage() {
 
   return (
     <div className="min-h-screen flex flex-col p-4">
-      <header className="flex items-center justify-between py-4 border-b border-foreground/10 mb-8 max-w-5xl w-full mx-auto">
+      <div className="mb-8 max-w-5xl w-full mx-auto pt-4">
         <h1 className="text-2xl font-bold text-foreground">Your Profile</h1>
-        <Link href="/" className="text-blue-600 hover:underline font-medium">
-          &larr; Back to AI Search
-        </Link>
-      </header>
+      </div>
       
       <main className="flex justify-center flex-1">
         <UserProfileClient currentTheme={currentTheme} />
