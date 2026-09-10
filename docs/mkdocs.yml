@@ -32,7 +32,6 @@ theme:
       primary: custom
       accent: custom
   features:
-    - navigation.tabs
     - navigation.instant
     - navigation.instant.progress
     - navigation.top
