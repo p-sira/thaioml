@@ -10,7 +10,7 @@
 
     <!-- Middle: Navigation Links -->
     <div class="custom-header-section custom-header-center">
-      <label for="__search" class="nav-link md-header__button" title="Search">
+      <label for="__search" class="nav-link md-header__button search-btn" title="Search" aria-label="Search">
         Search
       </label>
       <a href="/chat" class="nav-link">Ask the Library</a>
@@ -25,7 +25,10 @@
   </nav>
 
   <!-- Search Modal required by Material -->
-  {% if "search" in config.plugins %}
-    {% include "partials/search.html" %}
+  {% if "material/search" in config.plugins %}
+  {% set search = config.plugins["material/search"] | attr("config") %}
+  {% if search.enabled %}
+  {% include "partials/search.html" %}
+  {% endif %}
   {% endif %}
 </header>
