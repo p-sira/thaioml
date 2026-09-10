@@ -28,12 +28,12 @@ export default async function Navbar() {
           <span className="hidden xl:inline">Ask the Library</span>
           <span className="xl:hidden">Ask</span>
         </Link>
-        <Link href="http://localhost:8000/contribute/" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
+        <a href="/contribute/" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
           Contribute
-        </Link>
-        <Link href="http://localhost:8000/about/" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
+        </a>
+        <a href="/about/" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
           About
-        </Link>
+        </a>
       </div>
 
       {/* Right: Profile / Auth */}

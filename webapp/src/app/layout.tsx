@@ -32,6 +32,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
         suppressHydrationWarning
       >
+        <head>
+          <meta name="view-transition" content="same-origin" />
+        </head>
         <body className="min-h-full flex flex-col" data-md-color-scheme={theme} suppressHydrationWarning>
           <script
             dangerouslySetInnerHTML={{

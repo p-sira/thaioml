@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="view-transition" content="same-origin" />
   <title>Content Manager — ThaiOML</title>
 
   <!-- ThaiOML Design Language -->
@@ -347,19 +348,19 @@
           style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
     <nav class="custom-header" aria-label="Header">
       <div class="custom-header-section">
-        <a href="http://localhost:3000/" title="ThaiOML" class="logo-link"
+        <a href="/" title="ThaiOML" class="logo-link"
            style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
-          <img src="http://localhost:3000/logo.svg" alt="logo" class="logo-img" />
+          <img src="/logo.svg" alt="logo" class="logo-img" />
           <span class="logo-text">ThaiOML</span>
         </a>
       </div>
       <div class="custom-header-section custom-header-center">
-        <a href="http://localhost:3000/chat" class="nav-link">Ask the Library</a>
+        <a href="/chat" class="nav-link">Ask the Library</a>
         <a href="../contribute/" class="nav-link">Contribute</a>
         <a href="../about/" class="nav-link">About</a>
       </div>
       <div class="custom-header-section custom-header-right" id="clerk-auth-container">
-        <a href="http://localhost:3000/sign-in" class="custom-btn" id="clerk-sign-in-btn">Sign In</a>
+        <a href="/sign-in" class="custom-btn" id="clerk-sign-in-btn">Sign In</a>
       </div>
     </nav>
   </header>
