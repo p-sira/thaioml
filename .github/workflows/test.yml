@@ -69,11 +69,12 @@ jobs:
 
       - name: Start Services
         env:
-          # Format-valid dummy keys for CI (base64 of "ci-test.clerk.accounts.dev$")
-          # Replace with GitHub Secrets for tests that require real auth:
-          #   ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_Y2ktdGVzdC5jbGVyay5hY2NvdW50cy5kZXYk"
-          CLERK_SECRET_KEY: "sk_test_Y2ktdGVzdC1zZWNyZXQtZm9yLWNpLW9ubHk"
+          # Disable Clerk in CI — skips ClerkProvider and clerkMiddleware so the
+          # app renders fully without hitting a non-existent Clerk backend.
+          # To test authenticated flows, replace with real keys from GitHub Secrets:
+          #   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          #   CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+          NEXT_PUBLIC_CLERK_ENABLED: "false"
           NEXT_PUBLIC_POSTHOG_KEY: "phc_dummykeyforci123456789"
           POSTHOG_API_KEY: "phc_dummykeyforci123456789"
           POSTHOG_KEY: "phc_dummykeyforci123456789"

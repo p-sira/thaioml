@@ -4,10 +4,10 @@ import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
 import { useEffect, useState } from 'react'
 
-// Only mount ClerkProvider when a real key is present.
-// With a dummy/missing key (e.g., CI), skip it so the app hydrates
-// without hitting a non-existent Clerk backend.
-const HAS_CLERK = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY?.match(/^pk_(test|live)_[A-Za-z0-9+/]+=*$/)
+// Only mount ClerkProvider when explicitly enabled via env var.
+// Set NEXT_PUBLIC_CLERK_ENABLED=false in CI to skip Clerk entirely
+// so the app hydrates without hitting a non-existent Clerk backend.
+const HAS_CLERK = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false'
 
 export function ClerkThemeProvider({
   children,
