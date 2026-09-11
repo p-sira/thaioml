@@ -1,7 +1,7 @@
 'use server'
 
 import { auth, clerkClient } from '@clerk/nextjs/server'
-import { cookies } from 'next/headers'
+import { cookies, headers } from 'next/headers'
 
 export async function updateThemeSettings(theme: string) {
   const authObj = await auth()
@@ -21,11 +21,15 @@ export async function updateThemeSettings(theme: string) {
   })
 
   const cookieStore = await cookies()
-  // Ensure the server sets the cookie so layout.tsx gets the updated value immediately on refresh
-  const isProd = process.env.NODE_ENV === 'production'
+  const headersList = await headers()
+  const host = headersList.get('host') || ''
+  
+  // Set cross-subdomain cookie for production, otherwise bind to exact hostname
+  const domain = host.includes('thaioml.org') ? '.thaioml.org' : undefined
+
   cookieStore.set('thaioml-theme', theme, { 
     path: '/', 
-    domain: isProd ? '.thaioml.org' : undefined,
+    domain,
     sameSite: 'lax',
     maxAge: 60 * 60 * 24 * 365 
   })

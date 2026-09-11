@@ -8,8 +8,8 @@
     <p style="margin-bottom: 0;">Access our advanced natural language clinical search tools and manage your profile.</p>
   </div>
   <div style="display: flex; align-items: center; margin-left: auto;">
-    <a href="http://localhost:3000" class="md-button md-button--primary" style="margin-right: 0.5rem;">Launch Webapp</a>
-    <a href="http://localhost:3000/sign-in" class="md-button">Sign In</a>
+    <a href="/" class="md-button md-button--primary" style="margin-right: 0.5rem;">Launch Webapp</a>
+    <a href="/sign-in" class="md-button">Sign In</a>
   </div>
 </div>
 

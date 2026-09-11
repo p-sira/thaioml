@@ -14,9 +14,8 @@ const THEMES = [
 function setCookie(name: string, value: string, days: number = 365) {
   const d = new Date()
   d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000))
-  // We use Domain=.thaioml.org in production or just standard cookie path=/ for local dev
-  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  const domainString = isLocal ? '' : `domain=.${window.location.hostname.replace(/^[^.]+\./g, '')};`
+  // Set cross-subdomain cookie for production, otherwise bind to exact hostname
+  const domainString = window.location.hostname.includes('thaioml.org') ? 'domain=.thaioml.org;' : ''
   document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;${domainString}SameSite=Lax`
 }
 

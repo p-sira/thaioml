@@ -15,14 +15,11 @@ export default async function Navbar() {
   const isSignedIn = !!user;
 
   return (
-    <nav className="w-full flex items-center justify-between py-4 px-8 bg-background border-b border-foreground/10">
+    <nav className="w-full flex items-center justify-between py-2 px-8 bg-background border-b border-foreground/10">
       {/* Left: Logo & Text */}
       <div className="flex items-center gap-3 w-1/3">
         <Link href="/" className="flex items-center gap-3 group">
-          <Image src="/logo.svg" loading="eager" alt="ThaiOML Logo" width={32} height={32} className="group-hover:opacity-80 transition" />
-          <span className="text-xl font-bold text-foreground group-hover:text-foreground/80 transition">
-            ThaiOML
-          </span>
+          <Image src="/logo.svg" loading="eager" alt="ThaiOML Logo" width={64} height={64} className="group-hover:opacity-80 transition" />
         </Link>
       </div>
 

@@ -4,13 +4,14 @@
     <div class="custom-header-section">
       <a href="/" title="{{ config.site_name | e }}" class="logo-link">
         <img src="/logo.svg" alt="logo" class="logo-img" />
-        <span class="logo-text">ThaiOML</span>
       </a>
     </div>
 
     <!-- Middle: Navigation Links -->
     <div class="custom-header-section custom-header-center">
-      <label for="__search" class="nav-link md-header__button search-btn {% if page and page.is_homepage %}active{% endif %}" title="Search" aria-label="Search">
+      <label for="__search"
+        class="nav-link md-header__button search-btn {% if page and page.is_homepage %}active{% endif %}" title="Search"
+        aria-label="Search">
         Search
       </label>
       <a href="/chat" class="nav-link {% if page and 'chat' in page.url %}active{% endif %}">Ask the Library</a>

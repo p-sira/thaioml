@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,15 +33,20 @@
        ============================================================ */
 
     /* --- Reset & Base --- */
-    *, *::before, *::after { box-sizing: border-box; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
 
-    html, body {
+    html,
+    body {
       margin: 0;
       padding: 0;
       background-color: var(--md-default-bg-color) !important;
       color: var(--md-default-fg-color) !important;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-                   "Helvetica Neue", Arial, sans-serif !important;
+        "Helvetica Neue", Arial, sans-serif !important;
     }
 
     /* ── Hide Decap's own header bar (replaced by custom-header below) ── */
@@ -64,8 +70,8 @@
     }
 
     /* Broad catch-all for direct children divs */
-    #nc-root > div,
-    #nc-root > div > div {
+    #nc-root>div,
+    #nc-root>div>div {
       background-color: var(--md-default-bg-color) !important;
       color: var(--md-default-fg-color) !important;
     }
@@ -274,9 +280,14 @@
       letter-spacing: 0.05em !important;
     }
 
-    input[type="text"], input[type="email"], input[type="url"],
-    input[type="number"], input[type="date"], input[type="datetime-local"],
-    textarea, select,
+    input[type="text"],
+    input[type="email"],
+    input[type="url"],
+    input[type="number"],
+    input[type="date"],
+    input[type="datetime-local"],
+    textarea,
+    select,
     [class*="StyledTextInput"],
     [class*="StyledSelect"],
     [class*="StyledTextArea"] {
@@ -286,7 +297,9 @@
       border-radius: 6px !important;
     }
 
-    input:focus, textarea:focus, select:focus {
+    input:focus,
+    textarea:focus,
+    select:focus {
       border-color: var(--md-accent-fg-color) !important;
       outline: none !important;
       box-shadow: 0 0 0 2px var(--md-accent-fg-color--transparent) !important;
@@ -318,13 +331,19 @@
     }
 
     /* ── Global text catch-all (scoped to CMS root) ── */
-    #nc-root h1, #nc-root h2, #nc-root h3,
-    #nc-root h4, #nc-root h5, #nc-root h6 {
+    #nc-root h1,
+    #nc-root h2,
+    #nc-root h3,
+    #nc-root h4,
+    #nc-root h5,
+    #nc-root h6 {
       color: var(--md-default-fg-color--dark) !important;
     }
 
-    #nc-root p, #nc-root span,
-    #nc-root label, #nc-root small {
+    #nc-root p,
+    #nc-root span,
+    #nc-root label,
+    #nc-root small {
       color: var(--md-default-fg-color) !important;
     }
 
@@ -342,16 +361,16 @@
   <!-- Netlify Identity Widget -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
+
 <body>
   <!-- ── ThaiOML Shared Navigation Header ── -->
   <header class="md-header" data-md-component="header"
-          style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    style="position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
     <nav class="custom-header" aria-label="Header">
       <div class="custom-header-section">
         <a href="/" title="ThaiOML" class="logo-link"
-           style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
+          style="display: flex; align-items: center; gap: 0.5rem; text-decoration: none;">
           <img src="/logo.svg" alt="logo" class="logo-img" />
-          <span class="logo-text">ThaiOML</span>
         </a>
       </div>
       <div class="custom-header-section custom-header-center">
@@ -428,4 +447,5 @@
     }, 1000);
   </script>
 </body>
+
 </html>

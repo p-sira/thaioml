@@ -37,7 +37,7 @@ test.describe('Key Workflows', () => {
     // Or it automatically logs in depending on Decap version. We wait for a button or the UI.
     const loginButton = page.getByRole('button', { name: /login/i });
     if (await loginButton.isVisible()) {
-        await loginButton.click();
+      await loginButton.click();
     }
 
     // Verify we land on the Collections page and can see the Articles collection

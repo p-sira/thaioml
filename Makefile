@@ -14,7 +14,7 @@ setup:
 
 dev-docs:
 	@echo "Starting MkDocs..."
-	cd docs && uv run mkdocs serve
+	cd docs && uv run mkdocs serve -a localhost:8000
 
 dev-cms:
 	@echo "Starting Decap CMS proxy..."
