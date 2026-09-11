@@ -4,7 +4,15 @@
   {{ super() }}
   <meta name="view-transition" content="same-origin" />
   <meta name="posthog-key" content="{{ config.extra.posthog_key }}" />
+  <meta name="posthog-host" content="{{ config.extra.posthog_host }}" />
   {% if page and page.file.src_path not in ['index.md', 'about.md', 'contribute.md'] %}
   <meta name="robots" content="noai, noimageai" />
   {% endif %}
+{% endblock %}
+
+{% block footer %}
+  {{ super() }}
+  <div style="text-align: center; padding-bottom: 20px; font-size: 0.8rem; opacity: 0.7;">
+    <a href="#" onclick="window.resetCookieConsent && window.resetCookieConsent(); return false;" style="color: inherit; text-decoration: underline;">Privacy & Cookie Settings</a>
+  </div>
 {% endblock %}

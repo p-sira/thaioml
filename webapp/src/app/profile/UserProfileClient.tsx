@@ -2,7 +2,8 @@
 
 import { UserProfile } from '@clerk/nextjs'
 import ThemeSettings from './ThemeSettings'
-import { Palette } from 'lucide-react'
+import PrivacySettings from './PrivacySettings'
+import { Palette, Cookie } from 'lucide-react'
 
 export default function UserProfileClient({
   currentTheme
@@ -17,6 +18,13 @@ export default function UserProfileClient({
         url="theme-settings"
       >
         <ThemeSettings initialTheme={currentTheme} />
+      </UserProfile.Page>
+      <UserProfile.Page 
+        label="Privacy Settings" 
+        labelIcon={<Cookie className="w-4 h-4" />} 
+        url="privacy-settings"
+      >
+        <PrivacySettings />
       </UserProfile.Page>
     </UserProfile>
   )

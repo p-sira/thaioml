@@ -29,7 +29,7 @@ export function ClerkThemeProvider({
   return (
     <ClerkProvider
       appearance={{
-        baseTheme: theme === 'darkroom' ? dark : undefined,
+        theme: theme === 'darkroom' ? dark : undefined,
         variables: {
           colorBackground: 'var(--md-default-bg-color)',
           colorForeground: 'var(--md-default-fg-color)',

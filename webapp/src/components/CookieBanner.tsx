@@ -3,11 +3,23 @@
 import { useState, useEffect } from 'react'
 import posthog from 'posthog-js'
 
+function getConsentCookie() {
+  if (typeof document === 'undefined') return null
+  const match = document.cookie.match(new RegExp('(^| )cookie_consent=([^;]+)'))
+  if (match) return match[2]
+  return null
+}
+
+function setConsentCookie(value: string) {
+  const domainStr = window.location.hostname.includes('thaioml.org') ? '; domain=.thaioml.org' : ''
+  document.cookie = `cookie_consent=${value}; path=/; max-age=15552000${domainStr}`
+}
+
 export function CookieBanner() {
   const [show, setShow] = useState(false)
 
   useEffect(() => {
-    const consent = localStorage.getItem('cookie_consent')
+    const consent = getConsentCookie()
     if (!consent) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setShow(true)
@@ -17,13 +29,14 @@ export function CookieBanner() {
   }, [])
 
   const accept = () => {
-    localStorage.setItem('cookie_consent', 'granted')
+    setConsentCookie('granted')
     posthog.opt_in_capturing()
+    posthog.capture('$pageview')
     setShow(false)
   }
 
   const decline = () => {
-    localStorage.setItem('cookie_consent', 'denied')
+    setConsentCookie('denied')
     setShow(false)
   }
 

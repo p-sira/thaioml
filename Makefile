@@ -1,5 +1,8 @@
 .PHONY: dev-docs dev-cms dev-backend setup
 
+-include .env
+export
+
 setup:
 	@echo "Setting up frontend dependencies..."
 	npm install
