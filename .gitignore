@@ -13,7 +13,6 @@ site/
 
 # Node
 node_modules/
-package-lock.json
 
 # IDEs
 .vscode/
