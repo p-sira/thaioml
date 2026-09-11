@@ -58,12 +58,12 @@ test.describe('Key Workflows', () => {
     await searchInput.fill('hypertension');
     await searchInput.press('Enter');
 
-    // Wait for the URL to change to the MkDocs site on port 8000
-    await page.waitForURL('http://localhost:8000/?q=hypertension', { timeout: 10000 });
+    // Wait for the URL to change to the search page on port 3000
+    await page.waitForURL('http://localhost:3000/search/?q=hypertension', { timeout: 10000 });
 
     // We can't strictly test the search results load without waiting for the MkDocs index,
     // but the URL change verifies the routing is correct.
-    expect(page.url()).toContain('8000/?q=hypertension');
+    expect(page.url()).toContain('3000/search/?q=hypertension');
   });
 
   test('I am feeling lucky redirection', async ({ page }) => {
@@ -75,9 +75,9 @@ test.describe('Key Workflows', () => {
 
     // Verify that we are redirected to a random article in the Docs
     // MkDocs always appends a trailing slash, so check for /articles/ path segment
-    await page.waitForURL(url => url.href.includes('8000/articles/'), { timeout: 10000 });
+    await page.waitForURL(url => url.href.includes('3000/articles/'), { timeout: 10000 });
 
-    expect(page.url()).toContain('8000');
+    expect(page.url()).toContain('3000');
   });
 
 });
