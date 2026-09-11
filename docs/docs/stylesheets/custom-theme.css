@@ -163,9 +163,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 32px;
+  padding: 8px 32px;
   background-color: var(--md-default-bg-color);
-  border-bottom: 1px solid var(--md-accent-fg-color--transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--md-default-fg-color) 10%, transparent);
 }
 .custom-header-section {
   display: flex;
@@ -224,8 +224,8 @@
   font-weight: 700;
 }
 .logo-img {
-  width: 32px;
-  height: 32px;
+  width: 64px;
+  height: 64px;
 }
 
 [data-md-color-scheme="darkroom"] .logo-img,
