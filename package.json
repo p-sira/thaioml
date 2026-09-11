@@ -7,7 +7,9 @@
     "dev:docs": "cd docs && mkdocs serve"
   },
   "dependencies": {
-    "decap-server": "^3.0.0",
-    "puppeteer": "^25.10.0"
+    "decap-server": "^3.0.0"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.63.0"
   }
 }

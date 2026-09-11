@@ -1,0 +1,82 @@
+import { test, expect } from '@playwright/test';
+
+test.describe('Key Workflows', () => {
+
+  test('Ask the Library chat workflow', async ({ page }) => {
+    // Navigate to the Next.js webapp chat page
+    await page.goto('http://localhost:3000/chat');
+    
+    // Mock the backend API call to avoid hitting the actual LLM and VectorDB
+    await page.route('/api/chat', async route => {
+      const json = { answer: "This is a mocked response from the AI." };
+      await route.fulfill({ json });
+    });
+
+    // Verify the UI loaded
+    await expect(page.getByRole('heading', { name: 'Ask the Library' })).toBeVisible();
+
+    // Type a message
+    const textarea = page.getByPlaceholder('Ask a medical question...');
+    await textarea.fill('Hello, Library!');
+    
+    // Send the message
+    await page.getByRole('button').click();
+
+    // Verify the user message is displayed
+    await expect(page.getByText('Hello, Library!')).toBeVisible();
+
+    // Verify the mocked AI response is displayed
+    await expect(page.getByText('This is a mocked response from the AI.')).toBeVisible();
+  });
+
+  test('Decap CMS editor loading', async ({ page }) => {
+    // Navigate to the CMS hosted on the MkDocs frontend
+    await page.goto('http://localhost:8000/admin/');
+    
+    // In local_backend mode, there is usually a login button that bypasses OAuth
+    // Or it automatically logs in depending on Decap version. We wait for a button or the UI.
+    const loginButton = page.getByRole('button', { name: /login/i });
+    if (await loginButton.isVisible()) {
+        await loginButton.click();
+    }
+
+    // Verify we land on the Collections page and can see the Articles collection
+    // Wait for the side navigation or header
+    await expect(page.getByRole('heading', { name: 'Collections' })).toBeVisible({ timeout: 10000 });
+    
+    // The "Articles" collection should be present
+    await expect(page.getByText('Articles', { exact: true })).toBeVisible();
+  });
+
+  test('Cross-app search redirection', async ({ page }) => {
+    // Start on the Webapp landing page
+    await page.goto('http://localhost:3000');
+    
+    // Fill the search box
+    const searchInput = page.getByPlaceholder(/Search guidelines/i);
+    await searchInput.fill('hypertension');
+    await searchInput.press('Enter');
+
+    // Wait for the URL to change to the MkDocs site on port 8000
+    await page.waitForURL('http://localhost:8000/?q=hypertension');
+    
+    // We can't strictly test the search results load without waiting for the MkDocs index,
+    // but the URL change verifies the routing is correct.
+    expect(page.url()).toContain('8000/?q=hypertension');
+  });
+
+  test('I am feeling lucky redirection', async ({ page }) => {
+    // Start on the Webapp landing page
+    await page.goto('http://localhost:3000');
+    
+    // Click the "I'm feeling lucky" button
+    await page.getByRole('button', { name: /I'm feeling lucky/i }).click();
+
+    // Verify that we are redirected to a random article in the Docs
+    // The server action returns a Redirect to `http://localhost:8000/...`
+    await page.waitForURL(url => url.href.includes('8000') && !url.href.endsWith('/'));
+    
+    expect(page.url()).toContain('8000');
+  });
+
+});

@@ -31,3 +31,18 @@ dev:
 dev-all:
 	@echo "Starting all services (Docs, CMS, Backend, Webapp)..."
 	@trap 'echo "Stopping services..."; kill 0' SIGINT EXIT; $(MAKE) dev-docs & $(MAKE) dev-backend & $(MAKE) dev-cms & $(MAKE) dev-webapp & wait
+
+test-backend:
+	@echo "Running backend unit tests..."
+	cd backend && uv run pytest
+
+test-webapp:
+	@echo "Running webapp unit tests..."
+	cd webapp && npm run test
+
+test-e2e:
+	@echo "Running Playwright E2E smoke tests..."
+	npx playwright test
+
+test: test-backend test-webapp
+	@echo "Unit testing complete. For E2E tests, make sure servers are running and run 'make test-e2e'"
