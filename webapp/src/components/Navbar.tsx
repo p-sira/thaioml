@@ -4,7 +4,13 @@ import { UserButton } from '@clerk/nextjs';
 import { currentUser } from '@clerk/nextjs/server';
 
 export default async function Navbar() {
-  const user = await currentUser();
+  let user = null;
+  try {
+    user = await currentUser();
+  } catch {
+    // Clerk unavailable (e.g., CI environment with dummy keys).
+    // Treat as signed-out; the page still renders normally.
+  }
   const isSignedIn = !!user;
 
   return (
