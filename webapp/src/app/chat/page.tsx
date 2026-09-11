@@ -3,6 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Loader2, User, Bot, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { usePostHog } from 'posthog-js/react';
 
 const PLACEHOLDERS = [
   "How does paracetamol work?",
@@ -22,6 +23,7 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const posthog = usePostHog();
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -40,6 +42,7 @@ export default function ChatPage() {
   useEffect(() => {
     if (messages.length > 0 || input.length > 0) {
       // Stop animation and reset to empty placeholder if user is typing or has sent a message
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDisplayText("");
       return;
     }
@@ -81,6 +84,10 @@ export default function ChatPage() {
     setInput("");
     setError(null);
     setIsLoading(true);
+
+    if (posthog) {
+      posthog.capture('ask_library_query_submitted', { query_length: input.trim().length });
+    }
 
     try {
       const response = await fetch("/api/chat", {

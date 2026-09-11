@@ -1,9 +1,10 @@
 import csv
 from pathlib import Path
 
+from sqlalchemy import insert, text
+
 from backend.core.db import Base, engine
 from backend.models.snomed import SnomedConcept, SnomedDescription
-from sqlalchemy import insert, text
 
 
 def create_tables():

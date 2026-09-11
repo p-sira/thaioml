@@ -2,12 +2,13 @@ import json
 import urllib.parse
 import urllib.request
 
-from backend.core.config import settings
-from backend.models.snomed import SnomedDescription
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 from sqlalchemy import select
 from sqlalchemy.orm import Session
+
+from backend.core.config import settings
+from backend.models.snomed import SnomedDescription
 
 
 def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:

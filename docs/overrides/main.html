@@ -3,6 +3,7 @@
 {% block extrahead %}
   {{ super() }}
   <meta name="view-transition" content="same-origin" />
+  <meta name="posthog-key" content="{{ config.extra.posthog_key }}" />
   {% if page and page.file.src_path not in ['index.md', 'about.md', 'contribute.md'] %}
   <meta name="robots" content="noai, noimageai" />
   {% endif %}

@@ -1,10 +1,11 @@
 from unittest.mock import patch
 
 import pytest
+from fastapi.testclient import TestClient
+
 from backend.core.auth import get_current_user
 from backend.core.db import get_db
 from backend.main import app
-from fastapi.testclient import TestClient
 
 
 def override_get_current_user():

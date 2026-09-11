@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkThemeProvider } from "@/components/ClerkThemeProvider";
 import { cookies } from "next/headers";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { PostHogProvider } from "@/components/PostHogProvider";
+import { CookieBanner } from "@/components/CookieBanner";
 import Navbar from "@/components/Navbar";
 import "./globals.css";
 
@@ -53,8 +55,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           />
           <ThemeProvider>
-            <Navbar />
-            {children}
+            <PostHogProvider>
+              <Navbar />
+              {children}
+              <CookieBanner />
+            </PostHogProvider>
           </ThemeProvider>
         </body>
       </html>

@@ -19,6 +19,7 @@ To save your context window, detailed procedures have been extracted into Skills
 * **Testing the RAG Pipeline:** Use the `rag-pipeline-runbook` skill for instructions on running the local FastAPI server and `pgvector` container.
 * **Frontend Architecture:** Use the `frontend-architecture-workflow` skill. It explains how to handle theme resolution and cross-app state synchronization.
 * **Updating Principles & Designs:** If the user mentions a new design, principle, or workflow, you MUST use the `update-design-principles` skill to properly document it in the system.
+* **Telemetry & Analytics:** Use the `telemetry-architecture-workflow` skill to ensure compliance with the privacy-first PostHog architecture across MkDocs, Next.js, and FastAPI.
 
 ## 3. Governance Context
 * ThaiOML is an independent organization. Branches (like specific medical schools) operate under this unified structure.

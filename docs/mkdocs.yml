@@ -8,6 +8,7 @@ repo_icon: material/cog
 
 extra:
   webapp_url: !ENV [WEBAPP_URL, "http://localhost:3000"]
+  posthog_key: !ENV [POSTHOG_KEY, "YOUR_POSTHOG_API_KEY"]
 
 plugins:
   - search
@@ -46,6 +47,7 @@ extra_css:
 extra_javascript:
   - javascripts/theme-accent.js
   - javascripts/clerk-auth.js
+  - javascripts/analytics.js
 
 markdown_extensions:
   - pymdownx.superfences:

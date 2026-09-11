@@ -1,14 +1,22 @@
+import os
 from typing import Annotated
+
+from fastapi import APIRouter, Depends, HTTPException
+from posthog import Posthog
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 from backend.core.auth import require_role
 from backend.core.db import get_db
 from backend.services.rag import rag_service
 from backend.services.snomed import auto_link_terms, suggest_snomed_term
-from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
 
 router = APIRouter()
+posthog = Posthog(
+    project_api_key=os.environ.get("POSTHOG_API_KEY", "disabled"),
+    host=os.environ.get("POSTHOG_HOST", "https://app.posthog.com"),
+    disabled=not os.environ.get("POSTHOG_API_KEY"),
+)
 
 
 class QueryRequest(BaseModel):
@@ -60,6 +68,11 @@ def query_system(
 ):
     try:
         answer = rag_service.query(request.query)
+        posthog.capture(
+            user_data.get("sub", "anonymous"),
+            "ask_library_query_submitted",
+            {"query": request.query},
+        )
         return QueryResponse(answer=answer)
     except RuntimeError as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -91,6 +104,11 @@ def chat_system(
             {"role": msg.role, "content": msg.content} for msg in request.messages
         ]
         answer = rag_service.chat(messages_dict)
+        posthog.capture(
+            user_data.get("sub", "anonymous"),
+            "ask_library_chat_submitted",
+            {"num_messages": len(messages_dict)},
+        )
         return QueryResponse(answer=answer)
     except RuntimeError as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -117,6 +135,11 @@ def snomed_suggest(
 ):
     try:
         concept_id, display_term = suggest_snomed_term(request.query, db)
+        posthog.capture(
+            user_data.get("sub", "anonymous"),
+            "title_check_performed",
+            {"query": request.query, "found_concept_id": concept_id},
+        )
         return SnomedSuggestResponse(id=concept_id, term=display_term)
     except ValueError as e:
         if "missing" in str(e).lower():
@@ -144,6 +167,11 @@ def auto_link(
 ):
     try:
         links = auto_link_terms(request.body, db)
+        posthog.capture(
+            user_data.get("sub", "anonymous"),
+            "auto_link_used",
+            {"num_links_found": len(links)},
+        )
         return AutoLinkResponse(links=links)
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
