@@ -61,6 +61,11 @@ jobs:
         run: npx playwright install-deps chromium
 
       - name: Start Services
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_dummykeyforci123456789"
+          CLERK_SECRET_KEY: "sk_test_dummykeyforci123456789"
+          NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: "phc_dummykeyforci123456789"
+          NEXT_PUBLIC_POSTHOG_HOST: "https://us.i.posthog.com"
         run: |
           cd docs && npm install && uv sync && (uv run mkdocs serve &)
           cd backend && (uv run uvicorn backend.main:app --port 8080 &)
