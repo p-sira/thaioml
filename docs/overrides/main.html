@@ -3,4 +3,7 @@
 {% block extrahead %}
   {{ super() }}
   <meta name="view-transition" content="same-origin" />
+  {% if page and page.file.src_path not in ['index.md', 'about.md', 'contribute.md'] %}
+  <meta name="robots" content="noai, noimageai" />
+  {% endif %}
 {% endblock %}
