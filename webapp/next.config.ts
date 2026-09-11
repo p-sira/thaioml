@@ -1,10 +1,11 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   /* config options here */
   skipTrailingSlashRedirect: true,
   turbopack: {
-    root: "/home/psira/Code/web/thaioml",
+    root: path.join(__dirname, ".."),
   },
   async rewrites() {
     return {

@@ -19,6 +19,9 @@ jobs:
         with:
           node-version: "24"
           cache: "npm"
+          cache-dependency-path: |
+            package-lock.json
+            webapp/package-lock.json
 
       - name: Install uv
         uses: astral-sh/setup-uv@v10.1.0
@@ -64,7 +67,9 @@ jobs:
         env:
           NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_dummykeyforci123456789"
           CLERK_SECRET_KEY: "sk_test_dummykeyforci123456789"
-          NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: "phc_dummykeyforci123456789"
+          NEXT_PUBLIC_POSTHOG_KEY: "phc_dummykeyforci123456789"
+          POSTHOG_API_KEY: "phc_dummykeyforci123456789"
+          POSTHOG_KEY: "phc_dummykeyforci123456789"
           NEXT_PUBLIC_POSTHOG_HOST: "https://us.i.posthog.com"
         run: |
           (cd docs && npm install && uv sync && uv run mkdocs serve) &
