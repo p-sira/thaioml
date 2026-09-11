@@ -3,14 +3,14 @@ import { test, expect } from '@playwright/test';
 test.describe('Key Workflows', () => {
 
   test('Ask the Library chat workflow', async ({ page }) => {
-    // Navigate to the Next.js webapp chat page
-    await page.goto('http://localhost:3000/chat');
-
-    // Mock the backend API call to avoid hitting the actual LLM and VectorDB
-    await page.route('/api/chat', async route => {
+    // Mock the /api/chat endpoint BEFORE navigating so the intercept is ready.
+    // Use ** glob so it matches regardless of origin.
+    await page.route('**/api/chat', async route => {
       const json = { answer: "This is a mocked response from the AI." };
       await route.fulfill({ json });
     });
+
+    await page.goto('http://localhost:3000/chat');
 
     // Verify the UI loaded — the heading is an <h2> rendered client-side
     await expect(page.getByRole('heading', { name: 'Ask the Library' })).toBeVisible({ timeout: 10000 });
@@ -26,7 +26,7 @@ test.describe('Key Workflows', () => {
     await expect(page.getByText('Hello, Library!')).toBeVisible();
 
     // Verify the mocked AI response is displayed
-    await expect(page.getByText('This is a mocked response from the AI.')).toBeVisible();
+    await expect(page.getByText('This is a mocked response from the AI.')).toBeVisible({ timeout: 10000 });
   });
 
   test('Decap CMS editor loading', async ({ page }) => {
