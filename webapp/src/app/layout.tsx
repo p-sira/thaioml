@@ -19,8 +19,11 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ThaiOML - Open Medical Library",
+  title: "ThaiOML - Open Medical Library of Thailand",
   description: "AI Search and Portal for ThaiOML",
+  icons: {
+    icon: "/favicon.svg",
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

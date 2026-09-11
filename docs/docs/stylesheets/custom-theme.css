@@ -227,6 +227,11 @@
   width: 32px;
   height: 32px;
 }
+
+[data-md-color-scheme="darkroom"] .logo-img,
+[data-md-color-scheme="darkroom"] .theme-logo-invert {
+  filter: invert(1);
+}
 .custom-btn {
   padding: 8px 16px;
   font-size: 14px;

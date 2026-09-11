@@ -19,7 +19,7 @@ export default async function Navbar() {
       {/* Left: Logo & Text */}
       <div className="flex items-center gap-3 w-1/3">
         <Link href="/" className="flex items-center gap-3 group">
-          <Image src="/logo.svg" loading="eager" alt="ThaiOML Logo" width={64} height={64} className="group-hover:opacity-80 transition" />
+          <Image src="/logo.svg" loading="eager" alt="ThaiOML Logo" width={64} height={64} className="theme-logo-invert group-hover:opacity-80 transition" />
         </Link>
       </div>
 
