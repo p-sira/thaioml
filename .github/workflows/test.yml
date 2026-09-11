@@ -65,8 +65,11 @@ jobs:
 
       - name: Start Services
         env:
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_dummykeyforci123456789"
-          CLERK_SECRET_KEY: "sk_test_dummykeyforci123456789"
+          # Format-valid dummy keys for CI (base64 of "ci-test.clerk.accounts.dev$")
+          # Replace with GitHub Secrets for tests that require real auth:
+          #   ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_Y2ktdGVzdC5jbGVyay5hY2NvdW50cy5kZXYk"
+          CLERK_SECRET_KEY: "sk_test_Y2ktdGVzdC1zZWNyZXQtZm9yLWNpLW9ubHk"
           NEXT_PUBLIC_POSTHOG_KEY: "phc_dummykeyforci123456789"
           POSTHOG_API_KEY: "phc_dummykeyforci123456789"
           POSTHOG_KEY: "phc_dummykeyforci123456789"
