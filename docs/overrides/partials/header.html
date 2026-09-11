@@ -10,12 +10,12 @@
 
     <!-- Middle: Navigation Links -->
     <div class="custom-header-section custom-header-center">
-      <label for="__search" class="nav-link md-header__button search-btn" title="Search" aria-label="Search">
+      <label for="__search" class="nav-link md-header__button search-btn {% if page and page.is_homepage %}active{% endif %}" title="Search" aria-label="Search">
         Search
       </label>
-      <a href="/chat" class="nav-link">Ask the Library</a>
-      <a href="/contribute/" class="nav-link">Contribute</a>
-      <a href="/about/" class="nav-link">About</a>
+      <a href="/chat" class="nav-link {% if page and 'chat' in page.url %}active{% endif %}">Ask the Library</a>
+      <a href="/contribute/" class="nav-link {% if page and 'contribute' in page.url %}active{% endif %}">Contribute</a>
+      <a href="/about/" class="nav-link {% if page and 'about' in page.url %}active{% endif %}">About</a>
     </div>
 
     <!-- Right: Profile / Auth -->

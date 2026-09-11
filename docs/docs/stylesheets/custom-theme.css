@@ -195,6 +195,13 @@
   cursor: pointer;
   white-space: nowrap;
 }
+.nav-link.active {
+  opacity: 1;
+  color: var(--md-accent-fg-color);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
+}
 .nav-link.md-header__button {
   display: inline-block !important;
 }

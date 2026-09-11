@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { UserButton } from '@clerk/nextjs';
 import { currentUser } from '@clerk/nextjs/server';
+import NavLinks from './NavLinks';
 
 export default async function Navbar() {
   let user = null;
@@ -26,21 +27,7 @@ export default async function Navbar() {
       </div>
 
       {/* Middle: Navigation Links */}
-      <div className="flex items-center justify-center gap-4 lg:gap-6 w-1/3 text-base font-medium">
-        <Link href="/search/?q=" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
-          Search
-        </Link>
-        <Link href="/chat" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
-          <span className="hidden xl:inline">Ask the Library</span>
-          <span className="xl:hidden">Ask</span>
-        </Link>
-        <a href="/contribute/" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
-          Contribute
-        </a>
-        <a href="/about/" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
-          About
-        </a>
-      </div>
+      <NavLinks />
 
       {/* Right: Profile / Auth */}
       <div className="flex items-center justify-end w-1/3">
