@@ -16,11 +16,13 @@ function getCookie(name: string) {
   return v ? v[2] : null;
 }
 
-export function ThemeProvider({ children }: { children: React.ReactNode }) {
+/**
+ * Inner component that calls useUser() — must only be rendered inside <ClerkProvider>.
+ * Reconciles the user's Clerk publicMetadata theme with the local cookie.
+ */
+function ClerkThemeSync({ children }: { children: React.ReactNode }) {
   const { user, isLoaded } = useUser()
-  const initialized = useRef(false)
 
-  // 1. Reconcile Clerk metadata with Cookies when user data loads
   useEffect(() => {
     if (!isLoaded || !user) return
 
@@ -41,7 +43,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, isLoaded])
 
-  // 2. Synchronous-like application on mount and listen to changes
+  return <>{children}</>
+}
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  const isClerkEnabled = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false'
+  const initialized = useRef(false)
+
+  // Apply theme from cookie / system preference on mount and listen for changes.
+  // This runs regardless of Clerk state.
   useEffect(() => {
     if (initialized.current) return
     initialized.current = true
@@ -56,10 +66,27 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     applyCurrent()
 
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleMediaChange = () => {
+      if (!getCookie('thaioml-theme')) {
+        applyCurrent();
+      }
+    };
+    mediaQuery.addEventListener('change', handleMediaChange);
+
     window.addEventListener('theme-change', applyCurrent)
-    return () => window.removeEventListener('theme-change', applyCurrent)
+    return () => {
+      window.removeEventListener('theme-change', applyCurrent)
+      mediaQuery.removeEventListener('change', handleMediaChange);
+    }
   }, [])
 
+  // When Clerk is enabled, wrap children in ClerkThemeSync to reconcile
+  // publicMetadata theme with the local cookie. When disabled (e.g., CI),
+  // skip it entirely — useUser() must not be called outside ClerkProvider.
+  if (isClerkEnabled) {
+    return <ClerkThemeSync>{children}</ClerkThemeSync>
+  }
   return <>{children}</>
 }
 
