@@ -17,6 +17,8 @@ plugins:
 theme:
   name: material
   custom_dir: overrides
+  favicon: favicon.svg
+  logo: logo.svg
   palette:
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
@@ -41,8 +43,6 @@ theme:
 
 extra_css:
   - stylesheets/custom-theme.css
-
-
 
 extra_javascript:
   - javascripts/theme-accent.js
