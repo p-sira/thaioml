@@ -68,10 +68,10 @@ jobs:
           npx decap-server &
 
           # Wait for services to be ready
-          npx wait-on http-get://localhost:8000
-          npx wait-on http-get://localhost:3000
-          npx wait-on http-get://localhost:8080
-          npx wait-on http-get://localhost:8081/api/v1
+          npx wait-on -t 120000 http-get://127.0.0.1:8000
+          npx wait-on -t 120000 http-get://127.0.0.1:3000
+          npx wait-on -t 120000 http-get://127.0.0.1:8080
+          npx wait-on -t 120000 http-get://127.0.0.1:8081/api/v1
 
       - name: Run Playwright E2E Tests
         run: npx playwright test --project=chromium
