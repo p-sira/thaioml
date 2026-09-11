@@ -67,9 +67,9 @@ jobs:
           NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: "phc_dummykeyforci123456789"
           NEXT_PUBLIC_POSTHOG_HOST: "https://us.i.posthog.com"
         run: |
-          cd docs && npm install && uv sync && (uv run mkdocs serve &)
-          cd backend && (uv run uvicorn backend.main:app --port 8080 &)
-          cd webapp && (npm run dev &)
+          (cd docs && npm install && uv sync && uv run mkdocs serve) &
+          (cd backend && uv run uvicorn backend.main:app --port 8080) &
+          (cd webapp && npm run dev) &
           npx decap-server &
 
           # Wait for services to be ready
