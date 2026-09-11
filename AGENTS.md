@@ -9,7 +9,7 @@ Welcome to the Open Medical Library of Thailand (ThaiOML) workspace. As an AI pa
 * **Separation of Concerns:** The static frontend (`docs/`) and the AI search/RAG backend (`backend/`) are decoupled. Publishing must NEVER depend on the AI systems.
 * **Python Tooling:** You MUST strictly use `uv` for all Python dependency management and environments across the repository (both frontend docs and backend). The use of standard `pip` is banned.
 * **Auth & Identity:** Clerk is the single source of truth for identity and roles. See `docs/docs/guidelines/auth-architecture.md` for rules on Next.js API JWT templates and FastAPI role dependencies.
-* **Environment Configuration:** Never hardcode environment-specific URLs (like `http://localhost:3000`) into templates. Use MkDocs `!ENV` macros in `mkdocs.yml` to define environment variables under `extra:`, and reference them via `config.extra` in templates. This ensures seamless deployments across environments.
+* **Deployment-First Environment Configuration:** NEVER hardcode environment-specific URLs (especially `http://localhost:...`) anywhere in the codebase (Next.js, FastAPI, or MkDocs). Always aim for deployment from the start. Use environment variables (e.g., `NEXT_PUBLIC_API_URL`, FastAPI config files, or MkDocs `!ENV` macros/`config.extra`) to handle environment routing. This ensures seamless, immediate deployments across local, staging, and production environments.
 
 ## 2. Agent Skills
 To save your context window, detailed procedures have been extracted into Skills. If you need to perform any of the following tasks, you MUST load the respective skill before modifying files:

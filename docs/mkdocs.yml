@@ -3,11 +3,11 @@ site_url: https://www.thaioml.org
 site_description: Community-maintained, expert-reviewed medical education database.
 
 repo_name: App & Settings
-repo_url: http://localhost:3000
+repo_url: !ENV [WEBAPP_URL, "https://app.thaioml.org"]
 repo_icon: material/cog
 
 extra:
-  webapp_url: !ENV [WEBAPP_URL, "http://localhost:3000"]
+  webapp_url: !ENV [WEBAPP_URL, "https://app.thaioml.org"]
   posthog_key: !ENV [POSTHOG_KEY, "YOUR_POSTHOG_API_KEY"]
   posthog_host: !ENV [POSTHOG_HOST, "https://us.i.posthog.com"]
 
