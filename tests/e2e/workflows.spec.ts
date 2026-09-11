@@ -19,8 +19,8 @@ test.describe('Key Workflows', () => {
     const textarea = page.getByPlaceholder('Ask a medical question...');
     await textarea.fill('Hello, Library!');
 
-    // Send the message
-    await page.getByRole('button').click();
+    // Send the message — scope to main to avoid cookie banner and dev-tools buttons
+    await page.getByRole('main').getByRole('button').click();
 
     // Verify the user message is displayed
     await expect(page.getByText('Hello, Library!')).toBeVisible();
@@ -74,8 +74,8 @@ test.describe('Key Workflows', () => {
     await page.getByRole('button', { name: /feeling lucky/i }).click();
 
     // Verify that we are redirected to a random article in the Docs
-    // The server action returns a Redirect to `http://localhost:8000/...`
-    await page.waitForURL(url => url.href.includes('8000') && !url.href.endsWith('/'), { timeout: 10000 });
+    // MkDocs always appends a trailing slash, so check for /articles/ path segment
+    await page.waitForURL(url => url.href.includes('8000/articles/'), { timeout: 10000 });
 
     expect(page.url()).toContain('8000');
   });
