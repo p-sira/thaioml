@@ -47,11 +47,20 @@ ThaiOML strictly adheres to a **minimalistic and clean style**. This aesthetic p
 
 ## 3. Application Routing Architecture & UX
 
-The ThaiOML ecosystem is divided structurally between the Next.js Webapp and the MkDocs static site, but presents a **unified user experience**.
+The ThaiOML ecosystem is divided structurally between the Next.js Webapp and the MkDocs static site, but presents a **unified user experience** under a single domain (`www.thaioml.org`).
 
-- **Webapp as the Main Focus:** The Next.js application serves as the definitive core interface, primary entry point, index/landing page, and interactive search interface for ThaiOML. It provides dynamic experiences like the "Ask the Library" chat interface and intelligent global search.
-- **Unified Navigation:** Both the MkDocs static site and the Webapp share an identical top navigation bar. This ensures users feel they are within a single application, regardless of whether they are viewing static markdown or interacting with dynamic Next.js routes.
+- **Unified Domain via Edge Proxy:** The Next.js application acts as the edge router. If a request does not match a dynamic Next.js route (like `/chat` or `/sign-in`), it is automatically proxied to the hidden static MkDocs deployment via `next.config.ts` rewrites. 
+- **Relative Linking:** Because of the unified domain architecture, hardcoding absolute URLs or environment-specific hostnames (like `NEXT_PUBLIC_SITE_URL` or `http://localhost:3000`) is strictly prohibited. All cross-linking between the webapp and the static site MUST use pure relative paths (e.g. `/`, `/about/`, `/articles/...`).
+- **Local Development Mappings:** During local development, the Next.js proxy runs on port `3000`, while the MkDocs server runs on port `8000` in the background. To ensure cross-links work correctly, developers MUST access the site through the Next.js proxy at `http://localhost:3000`. Accessing MkDocs directly at `http://localhost:8000` will break relative links that point back to the webapp.
+- **Webapp as the Main Focus:** The Next.js application serves as the primary entry point, index/landing page, and interactive search interface for ThaiOML. 
 - **Search-Centric Discovery:** The traditional left-hand directory navigation in MkDocs is intentionally removed. Users are encouraged to browse the content library via global search, intelligent search suggestions, and inline hyperlinks within the medical articles.
-- **Right-Hand TOC:** A brief Table of Contents is preserved on the right side of MkDocs articles for quick page-level navigation.
-- **MkDocs as the Content Library:** The static MkDocs site strictly serves the rendered markdown medical articles, guidelines, and static pages (like Contribution and About). 
-- **Integration:** The Next.js webapp intelligently links to the static MkDocs pages. For example, searches on the webapp land users directly into the relevant static `/articles/...` endpoints hosted by MkDocs.
+- **MkDocs as the Content Library:** The static MkDocs site strictly serves the rendered markdown medical articles, guidelines, and static pages (like Contribution and About).
+
+## 4. Common Architecture Pitfalls
+
+Throughout development, we have encountered several edge cases related to this unified architecture. Keep these in mind to avoid regressions:
+
+- **Next.js Route Shadowing (The Search Bug):** If Next.js has a defined page (e.g., `/` via `page.tsx`), the `rewrites()` fallback will NOT proxy that path to MkDocs. This means if you submit a form to `/?q=query`, the MkDocs search modal will never trigger because Next.js handles the `/` route first. **Solution:** We explicitly map cross-app searches to a dedicated proxy endpoint like `/search/` (backed by a blank `search.md` in MkDocs) so Next.js seamlessly hands off the request.
+- **Strict Validation of MkDocs `repo_url`:** The built-in MkDocs `repo_url` configuration strictly enforces absolute URLs (with `http://` or `https://` schemes). It cannot accept relative paths (e.g. `/`). Do not try to hack `repo_url` into a relative internal link; use the custom `header.html` template for internal app navigation instead.
+- **`NEXT_PUBLIC_` Environment Variable Leaks:** Baking absolute URLs (like `NEXT_PUBLIC_SITE_URL`) into the client build breaks cross-environment compatibility if the same build artifact is promoted from staging to production. Relying exclusively on unified relative paths with `rewrites()` eliminates this entire class of bugs.
+- **Node.js `getaddrinfo ENOTFOUND` in Local Proxy:** When configuring the `DOCS_UPSTREAM_URL` for local development, be careful not to accidentally set the proxy destination to the live production URL (e.g., `https://www.thaioml.org`) while testing locally. This will cause Node.js fetch errors or infinite proxy loops. The local upstream should always confidently point to `http://localhost:8000`.

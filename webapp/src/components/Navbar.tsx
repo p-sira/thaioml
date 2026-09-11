@@ -27,7 +27,7 @@ export default async function Navbar() {
 
       {/* Middle: Navigation Links */}
       <div className="flex items-center justify-center gap-4 lg:gap-6 w-1/3 text-base font-medium">
-        <Link href="/" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
+        <Link href="/search/?q=" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">
           Search
         </Link>
         <Link href="/chat" className="text-foreground/70 hover:text-foreground transition whitespace-nowrap">

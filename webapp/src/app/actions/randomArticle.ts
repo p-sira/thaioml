@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation';
 export async function goToRandomArticle() {
   const articlesDir = path.join(process.cwd(), '..', 'docs', 'docs', 'articles');
   
-  let targetUrl = 'http://localhost:8000/';
+  let targetUrl = '/';
 
   try {
     const files = await fs.readdir(articlesDir, { recursive: true });
@@ -23,8 +23,8 @@ export async function goToRandomArticle() {
 
     if (mdFiles.length > 0) {
       const randomFile = mdFiles[Math.floor(Math.random() * mdFiles.length)];
-      // The MkDocs site is served at http://localhost:8000
-      targetUrl = `http://localhost:8000/articles/${randomFile}/`;
+      // The MkDocs site is proxied under the Next.js app
+      targetUrl = `/articles/${randomFile}/`;
     }
   } catch (error) {
     console.error("Failed to read articles directory:", error);

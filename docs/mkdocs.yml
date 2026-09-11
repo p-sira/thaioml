@@ -2,12 +2,11 @@ site_name: ThaiOML (Open Medical Library of Thailand)
 site_url: https://www.thaioml.org
 site_description: Community-maintained, expert-reviewed medical education database.
 
-repo_name: App & Settings
-repo_url: !ENV [WEBAPP_URL, "https://app.thaioml.org"]
-repo_icon: material/cog
+repo_name: GitHub
+repo_url: https://github.com/p-sira/thaioml
+repo_icon: fontawesome/brands/github
 
 extra:
-  webapp_url: !ENV [WEBAPP_URL, "https://app.thaioml.org"]
   posthog_key: !ENV [POSTHOG_KEY, "YOUR_POSTHOG_API_KEY"]
   posthog_host: !ENV [POSTHOG_HOST, "https://us.i.posthog.com"]
 

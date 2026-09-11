@@ -13,7 +13,7 @@ export default async function ContributePage() {
   const hasPermission = roles.includes('editor') || roles.includes('admin')
 
   if (hasPermission) {
-    redirect('http://localhost:8000/admin/')
+    redirect('/admin/')
   }
 
   return (

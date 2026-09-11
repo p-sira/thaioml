@@ -4,7 +4,7 @@
   "description": "Open Medical Library of Thailand",
   "scripts": {
     "dev:cms": "npx decap-server",
-    "dev:docs": "cd docs && mkdocs serve"
+    "dev:docs": "cd docs && mkdocs serve -a localhost:8000"
   },
   "dependencies": {
     "decap-server": "^3.0.0"

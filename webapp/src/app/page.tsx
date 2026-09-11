@@ -15,7 +15,7 @@ export default async function Home() {
         </p>
 
         {/* Search Box */}
-        <form action="http://localhost:8000/" method="GET" className="w-full max-w-2xl relative shadow-sm hover:shadow-md transition-shadow duration-200 rounded-full border border-foreground/20 bg-background focus-within:ring-2 focus-within:ring-foreground/20 focus-within:border-foreground/40">
+        <form action="/search/" method="GET" className="w-full max-w-2xl relative shadow-sm hover:shadow-md transition-shadow duration-200 rounded-full border border-foreground/20 bg-background focus-within:ring-2 focus-within:ring-foreground/20 focus-within:border-foreground/40">
           <div className="flex items-center px-6 py-4">
             <Search className="w-5 h-5 text-foreground/50 mr-3" />
             <input
@@ -32,10 +32,10 @@ export default async function Home() {
           <div className="flex items-center gap-2">
             <span className="text-sm font-medium text-foreground/50">Trending:</span>
             <div className="flex gap-2">
-              <Link href="http://localhost:8000/?q=hypertension" className="px-3 py-1 rounded-full bg-foreground/5 text-foreground/70 text-sm hover:bg-foreground/10 transition">
+              <Link href="/search/?q=hypertension" className="px-3 py-1 rounded-full bg-foreground/5 text-foreground/70 text-sm hover:bg-foreground/10 transition">
                 Hypertension
               </Link>
-              <Link href="http://localhost:8000/?q=diabetes" className="px-3 py-1 rounded-full bg-foreground/5 text-foreground/70 text-sm hover:bg-foreground/10 transition">
+              <Link href="/search/?q=diabetes" className="px-3 py-1 rounded-full bg-foreground/5 text-foreground/70 text-sm hover:bg-foreground/10 transition">
                 Diabetes
               </Link>
             </div>
