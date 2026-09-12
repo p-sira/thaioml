@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { Extension } from '@tiptap/core';
+import { Extension, Editor, Range } from '@tiptap/core';
 import Suggestion from '@tiptap/suggestion';
 import { ReactRenderer } from '@tiptap/react';
 import tippy, { Instance as TippyInstance } from 'tippy.js';
@@ -7,12 +6,21 @@ import { getSnomedSuggestion } from '@/app/actions/medical';
 
 import { 
   forwardRef, 
-  useEffect, 
   useImperativeHandle, 
   useState 
 } from 'react';
 
-const CommandList = forwardRef((props: any, ref) => {
+interface CommandItem {
+  title: string;
+  action: (editor: Editor, range: Range) => void;
+}
+
+interface CommandProps {
+  items: CommandItem[];
+  command: (item: CommandItem) => void;
+}
+
+const CommandList = forwardRef((props: CommandProps, ref) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const selectItem = (index: number) => {
@@ -43,7 +51,7 @@ const CommandList = forwardRef((props: any, ref) => {
   return (
     <div className="bg-white border rounded shadow-lg overflow-hidden w-64 text-sm text-gray-800 z-50 p-1">
       {props.items.length ? (
-        props.items.map((item: any, index: number) => (
+        props.items.map((item: CommandItem, index: number) => (
           <button
             className={`w-full text-left px-2 py-1.5 rounded ${
               index === selectedIndex ? 'bg-blue-100 text-blue-900' : 'hover:bg-gray-100'
@@ -69,7 +77,7 @@ export const SlashCommand = Extension.create({
     return {
       suggestion: {
         char: '/',
-        command: ({ editor, range, props }: any) => {
+        command: ({ editor, range, props }: { editor: Editor, range: Range, props: CommandItem }) => {
           props.action(editor, range);
         },
       },
@@ -87,11 +95,11 @@ export const SlashCommand = Extension.create({
 });
 
 export const getSuggestionOptions = () => ({
-  items: ({ query }: { query: string }) => {
+  items: ({ query }: { query: string }): CommandItem[] => {
     return [
       {
         title: 'Term Search',
-        action: async (editor: any, range: any) => {
+        action: async (editor: Editor, range: Range) => {
           const term = prompt('Enter medical term to search:');
           if (term) {
             editor.chain().focus().deleteRange(range).run();
@@ -107,7 +115,7 @@ export const getSuggestionOptions = () => ({
                 .deleteRange({ from: range.from, to: range.from + placeholder.length })
                 .insertContentAt(range.from, `<a href="snomed:${snomedId}">${concept}</a> `)
                 .run();
-            } catch (e) {
+            } catch {
               editor.chain().deleteRange({ from: range.from, to: range.from + placeholder.length }).run();
               alert('Term search failed. Make sure the RAG backend is running.');
             }
@@ -118,13 +126,13 @@ export const getSuggestionOptions = () => ({
       },
       {
         title: 'Heading 1',
-        action: (editor: any, range: any) => {
+        action: (editor: Editor, range: Range) => {
           editor.chain().focus().deleteRange(range).setNode('heading', { level: 1 }).run();
         },
       },
       {
         title: 'Heading 2',
-        action: (editor: any, range: any) => {
+        action: (editor: Editor, range: Range) => {
           editor.chain().focus().deleteRange(range).setNode('heading', { level: 2 }).run();
         },
       }
@@ -136,7 +144,7 @@ export const getSuggestionOptions = () => ({
     let popup: TippyInstance[];
 
     return {
-      onStart: (props: any) => {
+      onStart: (props: { editor: Editor; clientRect: DOMRect | null }) => {
         component = new ReactRenderer(CommandList, {
           props,
           editor: props.editor,
@@ -147,7 +155,7 @@ export const getSuggestionOptions = () => ({
         }
 
         popup = tippy('body', {
-          getReferenceClientRect: props.clientRect,
+          getReferenceClientRect: () => props.clientRect!,
           appendTo: () => document.body,
           content: component.element,
           showOnCreate: true,
@@ -157,7 +165,7 @@ export const getSuggestionOptions = () => ({
         });
       },
 
-      onUpdate(props: any) {
+      onUpdate(props: { clientRect: DOMRect | null }) {
         component.updateProps(props);
 
         if (!props.clientRect) {
@@ -165,16 +173,17 @@ export const getSuggestionOptions = () => ({
         }
 
         popup[0].setProps({
-          getReferenceClientRect: props.clientRect,
+          getReferenceClientRect: () => props.clientRect!,
         });
       },
 
-      onKeyDown(props: any) {
+      onKeyDown(props: { event: KeyboardEvent }) {
         if (props.event.key === 'Escape') {
           popup[0].hide();
           return true;
         }
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         return (component.ref as any)?.onKeyDown(props);
       },
 

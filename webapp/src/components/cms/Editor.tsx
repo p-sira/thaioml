@@ -3,13 +3,14 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from 'tiptap-markdown';
-import Link from '@tiptap/extension-link';
+
 import { useState } from 'react';
 import matter from 'gray-matter';
 import { saveMarkdownFile } from '@/app/actions/github';
 import { autoLinkContent, getSnomedSuggestion } from '@/app/actions/medical';
 import { SlashCommand, getSuggestionOptions } from './extensions/SlashCommand';
-import { Info, Sparkles, Loader2 } from 'lucide-react';
+import { CommentMark } from './extensions/CommentMark';
+import { Info, Sparkles, Loader2, MessageSquare } from 'lucide-react';
 
 interface EditorProps {
   initialContent: string;
@@ -31,6 +32,7 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
     }
   });
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [frontmatter, setFrontmatter] = useState<Record<string, any>>(() => {
     try {
       return matter(initialContent).data || {};
@@ -41,15 +43,17 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
 
   const editor = useEditor({
     extensions: [
-      StarterKit,
-      Markdown,
-      Link.configure({
-        openOnClick: false,
-        protocols: ['snomed'],
+      StarterKit.configure({
+        link: {
+          openOnClick: false,
+          protocols: ['snomed'],
+        }
       }),
+      Markdown,
       SlashCommand.configure({
         suggestion: getSuggestionOptions(),
       }),
+      CommentMark,
     ],
     content: initialBody,
     editorProps: {
@@ -72,8 +76,7 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
       const fileContent = matter.stringify(markdown, frontmatter);
       await saveMarkdownFile(filePath, fileContent, `Update ${filePath} via ThaiOML Studio`);
       alert('Saved successfully!');
-    } catch (error) {
-      console.error(error);
+    } catch {
       alert('Error saving document');
     } finally {
       setIsSaving(false);
@@ -91,8 +94,7 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
       const linkedMarkdown = typeof result === 'string' ? result : (result.body || markdown);
 
       editor.commands.setContent(linkedMarkdown);
-    } catch (error) {
-      console.error(error);
+    } catch {
       alert('Error running Auto Link. Ensure RAG backend is running.');
     } finally {
       setIsLinking(false);
@@ -117,7 +119,7 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
       } else {
         alert("No specific SNOMED concept could be confidently matched for this title.");
       }
-    } catch (e) {
+    } catch {
       alert("Failed to auto-suggest SNOMED ID. Make sure the RAG backend is running.");
     } finally {
       setIsSuggesting(false);
@@ -154,6 +156,23 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
               className={`px-3 py-1.5 rounded text-sm font-bold ${editor.isActive('heading', { level: 3 }) ? 'bg-slate-200 text-slate-900' : 'text-slate-600 hover:bg-slate-200 hover:text-slate-900'}`}
             >
               H3
+            </button>
+            <button
+              onClick={() => {
+                const previousComment = editor.getAttributes('comment').comment;
+                if (previousComment) {
+                  editor.chain().focus().unsetComment().run();
+                  return;
+                }
+                const text = window.prompt('Enter comment:');
+                if (text) {
+                  editor.chain().focus().setComment(text).run();
+                }
+              }}
+              className={`px-3 py-1.5 rounded text-sm flex items-center justify-center font-medium ${editor.isActive('comment') ? 'bg-yellow-200 text-yellow-900' : 'text-slate-600 hover:bg-slate-200 hover:text-slate-900'}`}
+              title="Add Comment"
+            >
+              <MessageSquare className="w-4 h-4" />
             </button>
 
             <div className="w-px bg-slate-300 mx-1"></div>

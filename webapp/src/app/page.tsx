@@ -52,7 +52,7 @@ export default async function Home() {
               className="flex items-center gap-2 px-4 py-2 rounded-full bg-foreground/5 text-foreground hover:bg-foreground/10 transition text-sm font-medium"
             >
               <Sparkles className="w-4 h-4 text-blue-500" />
-              I'm feeling lucky
+              I&apos;m feeling lucky
             </button>
           </form>
         </div>

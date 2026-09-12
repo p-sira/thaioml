@@ -189,3 +189,49 @@ export async function getMarkdownFile(filePath: string) {
     throw error;
   }
 }
+
+export async function listMarkdownFiles(directoryPath: string) {
+  const user = await currentUser();
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  const octokit = getOctokit();
+
+  // Try fetching from editorial branch first
+  try {
+    const { data } = await octokit.rest.repos.getContent({
+      owner: OWNER,
+      repo: REPO,
+      path: directoryPath,
+      ref: 'editorial'
+    });
+
+    if (Array.isArray(data)) {
+      return { files: data.filter(f => f.type === 'file' && f.name.endsWith('.md')) };
+    }
+  } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'status' in error && (error as { status: number }).status !== 404) {
+      throw error;
+    }
+  }
+
+  // Fallback to fetching from main
+  try {
+    const { data } = await octokit.rest.repos.getContent({
+      owner: OWNER,
+      repo: REPO,
+      path: directoryPath,
+    });
+
+    if (Array.isArray(data)) {
+      return { files: data.filter(f => f.type === 'file' && f.name.endsWith('.md')) };
+    }
+    return { files: [] };
+  } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'status' in error && (error as { status: number }).status === 404) {
+      return { files: [] };
+    }
+    throw error;
+  }
+}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import posthog from 'posthog-js'
 
 function getConsentCookie() {
@@ -17,13 +17,12 @@ function setConsentCookie(value: string) {
 }
 
 export default function PrivacySettings() {
-  const [consent, setConsent] = useState<string | null>(null)
+  const [consent, setConsent] = useState<string | null>(() => {
+    if (typeof document === 'undefined') return null;
+    return getConsentCookie();
+  })
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState('')
-
-  useEffect(() => {
-    setConsent(getConsentCookie())
-  }, [])
 
   const handleSave = () => {
     setIsSaving(true)
