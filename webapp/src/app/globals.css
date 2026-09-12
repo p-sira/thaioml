@@ -8,10 +8,23 @@
   --font-mono: var(--font-geist-mono);
 }
 
+html {
+  font-size: 100% !important; /* Protect Tailwind rem geometry from MkDocs's global 125% override */
+}
+
 body {
   background: var(--md-default-bg-color);
   color: var(--md-default-fg-color);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Map MkDocs internal font variables to Next.js Geist fonts for perfect unification */
+  --md-text-font: var(--font-geist-sans);
+  --md-code-font: var(--font-geist-mono);
 }
 
-
+/* 
+  MkDocs expects a 125% (20px) root font-size. Since we forced it back to 100% (16px) above, 
+  MkDocs will render 20% smaller than intended. We use CSS zoom to mathematically scale 
+  its layout back up to its native size! 
+*/
+.mkdocs-wrapper {
+  zoom: 1.25;
+}

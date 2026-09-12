@@ -57,7 +57,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             }}
           />
         </head>
-        <body className="min-h-full flex flex-col" data-md-color-scheme={theme} suppressHydrationWarning>
+        <body className="min-h-full flex flex-col font-sans bg-background text-foreground" data-md-color-scheme={theme} suppressHydrationWarning>
           <Script
             id="theme-script"
             strategy="beforeInteractive"

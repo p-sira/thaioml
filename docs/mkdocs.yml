@@ -39,8 +39,6 @@ theme:
       primary: custom
       accent: custom
   features:
-    - navigation.instant
-    - navigation.instant.progress
     - navigation.top
     - search.suggest
     - search.highlight
@@ -50,7 +48,6 @@ extra_css:
 
 extra_javascript:
   - javascripts/theme-accent.js
-  - javascripts/clerk-auth.js
   - javascripts/analytics.js
 
 markdown_extensions:

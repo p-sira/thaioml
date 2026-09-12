@@ -16,7 +16,11 @@ export default function NavLinks() {
   };
 
   const getLinkClass = (path: string) => {
-    return `nav-link ${isActive(path) ? 'active' : ''}`;
+    const base = 'text-sm transition-opacity';
+    const active = isActive(path) 
+      ? 'text-foreground font-bold !underline underline-offset-4' 
+      : 'text-foreground opacity-70 hover:opacity-100 font-normal no-underline';
+    return `${base} ${active}`;
   };
 
   return (
