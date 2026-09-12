@@ -31,5 +31,6 @@ collections:
       - {label: "Tags", name: "tags", widget: "list", required: false}
       - {label: "Review Status", name: "review_status", widget: "select", options: ["draft", "pending", "reviewed"]}
       - {label: "Last Medical Review", name: "last_medical_review", widget: "date", format: "YYYY-MM-DD", required: false}
+      - {label: "Contributor License Agreement", name: "cla_agreement", widget: "boolean", default: false, required: true, hint: "I agree to the ThaiOML CLA, granting the ThaiOML Project (and its legal successors or assignees) the right to publish, modify, and sublicense this contribution, while I retain my original copyright. Published under CC-BY-NC 4.0. [Read the full License & CLA](/guidelines/license-and-cla)"}
       - {label: "SNOMED Links", name: "snomed_links", widget: "snomed_linker", required: false}
       - {label: "Body", name: "body", widget: "markdown"}
