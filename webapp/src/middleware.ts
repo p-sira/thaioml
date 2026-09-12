@@ -8,6 +8,12 @@ const isClerkEnabled = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false';
 // This avoids Next.js's rewrite() engine crashing on Python WSGI's Connection: close bug
 const handleProxy = async (req: NextRequest) => {
   const { pathname } = req.nextUrl;
+
+  // Intercept MkDocs livereload polling here so it doesn't hit the Next.js router and log a 404
+  if (pathname.includes('/livereload/')) {
+    return new NextResponse(null, { status: 204 });
+  }
+
   const siteUrl = process.env.DOCS_UPSTREAM_URL || 'http://localhost:8000';
 
   if (
