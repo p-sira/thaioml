@@ -5,6 +5,7 @@
   <meta name="view-transition" content="same-origin" />
   <meta name="posthog-key" content="{{ config.extra.posthog_key }}" />
   <meta name="posthog-host" content="{{ config.extra.posthog_host }}" />
+  <meta name="app-url" content="{{ config.extra.app_url }}" />
   {% if page and page.file.src_path not in ['index.md', 'about.md', 'contribute.md'] %}
   <meta name="robots" content="noai, noimageai" />
   {% endif %}

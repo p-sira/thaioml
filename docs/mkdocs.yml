@@ -8,6 +8,7 @@ repo_url: https://github.com/p-sira/thaioml
 extra:
   posthog_key: !ENV [POSTHOG_KEY, "YOUR_POSTHOG_API_KEY"]
   posthog_host: !ENV [POSTHOG_HOST, "https://us.i.posthog.com"]
+  app_url: !ENV [APP_URL, "http://localhost:3000"]
 
 hooks:
   - hooks/git_version.py

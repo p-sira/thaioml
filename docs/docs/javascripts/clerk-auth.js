@@ -1,5 +1,16 @@
 const publishableKey = "pk_test_YW11c2VkLWhlcm1pdC01ODYuY2xlcmsuYWNjb3VudHMuZGV2JA";
 
+// Derive the Clerk frontend API host from the publishable key.
+// Format: pk_test_<base64(frontendApiHost$)> — strip prefix and trailing "$".
+const clerkFrontendApi = (() => {
+  try {
+    const b64 = publishableKey.replace(/^pk_(test|live)_/, '').replace(/\$$/, '');
+    return atob(b64);
+  } catch {
+    return "amused-hermit-586.clerk.accounts.dev";
+  }
+})();
+
 const startClerk = async () => {
   const Clerk = window.Clerk;
   try {
@@ -11,35 +22,28 @@ const startClerk = async () => {
     if (!authContainer || !signInBtn) return;
 
     if (Clerk.user) {
-      // User is signed in, replace Sign In button with User avatar
+      // User is signed in — hide Sign In button and mount the UserButton avatar.
       signInBtn.style.display = "none";
-      
+
       const username = Clerk.user.username || Clerk.user.id;
-      const profileUrl = "http://localhost:3000/user/" + username;
+      const appUrl = document.querySelector('meta[name="app-url"]')?.content || "http://localhost:3000";
+      const profileUrl = appUrl + "/user/" + username;
 
       const userButtonDiv = document.createElement("div");
       authContainer.appendChild(userButtonDiv);
-      
+
       Clerk.mountUserButton(userButtonDiv, {
         userProfileMode: "navigation",
-        userProfileUrl: "http://localhost:3000/settings",
+        userProfileUrl: appUrl + "/settings",
         appearance: {
           elements: {
-            userButtonPopoverActionButton: {
-              color: 'inherit',
-            },
-            userButtonPopoverActionButtonIconBox: {
-              color: 'inherit',
-            },
-            userButtonPopoverActionButtonText: {
-              color: 'inherit',
-            },
-            userButtonPopoverCustomItem: {
-              color: 'inherit',
-            },
-            userButtonPopoverCustomItemButton: {
-              color: 'inherit',
-            },
+            userButtonPopoverActionButton: { color: 'inherit' },
+            userButtonPopoverActionButtonIconBox: { color: 'inherit' },
+            userButtonPopoverActionButtonText: { color: 'inherit' },
+            userButtonPopoverCustomItem: { color: 'inherit' },
+            userButtonPopoverCustomItemButton: { color: 'inherit' },
+            userButtonPopoverCustomItemButtonText: { color: 'inherit' },
+            userButtonPopoverCustomItemButtonIcon: { color: 'inherit' },
           }
         },
         customMenuItems: [
@@ -51,7 +55,7 @@ const startClerk = async () => {
         ]
       });
     } else {
-      // User is not signed in
+      // User is not signed in.
       signInBtn.style.display = "inline-block";
     }
   } catch (err) {
@@ -63,7 +67,11 @@ const loadClerkScript = () => {
   const script = document.createElement('script');
   script.setAttribute('data-clerk-publishable-key', publishableKey);
   script.async = true;
-  script.src = `https://cdn.jsdelivr.net/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
+  // Use the official Clerk frontend API CDN (derived from the publishable key).
+  // The jsDelivr-proxied clerk.browser.js ships the headless/core-only bundle
+  // and lacks UI components, causing mountUserButton to throw
+  // "Clerk was not loaded with UI components".
+  script.src = `https://${clerkFrontendApi}/npm/@clerk/clerk-js@latest/dist/clerk.browser.js`;
   script.crossOrigin = 'anonymous';
   script.onload = () => startClerk();
   document.body.appendChild(script);
