@@ -1,0 +1,17 @@
+<footer class="custom-footer">
+  <div class="custom-footer-content">
+    <p>© <span id="year"></span> ThaiOML. All rights reserved.</p>
+    <button onclick="openCookieSettings()" class="cookie-settings-btn">
+      Privacy & Cookie Settings
+    </button>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('year').textContent = new Date().getFullYear();
+  function openCookieSettings() {
+    var domainStr = window.location.hostname.includes('thaioml.org') ? '; domain=.thaioml.org' : '';
+    document.cookie = 'cookie_consent=; path=/; max-age=0' + domainStr;
+    window.location.reload();
+  }
+</script>

@@ -294,3 +294,37 @@
     border-radius: 0 0 8px 8px !important;
   }
 }
+
+/* Custom Footer Styling */
+.custom-footer {
+  width: 100%;
+  padding: 32px 0;
+  text-align: center;
+  font-size: 14px;
+  line-height: 20px;
+  color: color-mix(in srgb, var(--md-default-fg-color) 50%, transparent);
+  border-top: 1px solid color-mix(in srgb, var(--md-default-fg-color) 10%, transparent);
+  background-color: var(--md-default-bg-color);
+}
+.custom-footer-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.custom-footer-content p {
+  margin: 0;
+}
+.cookie-settings-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.cookie-settings-btn:hover {
+  color: var(--md-default-fg-color);
+}
