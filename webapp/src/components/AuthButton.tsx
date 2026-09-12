@@ -17,7 +17,18 @@ function InnerAuthButton() {
   const profileUrl = user?.username ? `/user/${user.username}` : `/user/${user?.id}`;
 
   return isSignedIn ? (
-    <UserButton userProfileMode="navigation" userProfileUrl="/settings">
+    <UserButton
+      userProfileMode="navigation"
+      userProfileUrl="/settings"
+      appearance={{
+        elements: {
+          userButtonPopoverCustomItem: { color: 'inherit' },
+          userButtonPopoverCustomItemButton: { color: 'inherit' },
+          userButtonPopoverCustomItemButtonText: { color: 'inherit' },
+          userButtonPopoverCustomItemButtonIcon: { color: 'inherit' },
+        },
+      }}
+    >
       <UserButton.MenuItems>
         <UserButton.Link
           label="Profile"
