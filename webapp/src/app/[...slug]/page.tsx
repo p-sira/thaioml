@@ -8,18 +8,22 @@ interface PageProps {
 }
 
 async function fetchMkdocsPage(slugArray?: string[]) {
-  const siteUrl = process.env.DOCS_UPSTREAM_URL || 'http://localhost:8000';
   const path = slugArray ? slugArray.join('/') : '';
+  
+  // Silently ignore MkDocs livereload polling to prevent 404 console spam
+  if (path.startsWith('livereload/')) {
+    return null;
+  }
+
+  const siteUrl = process.env.DOCS_UPSTREAM_URL || 'http://localhost:8000';
   
   // Always append trailing slash for MkDocs if not empty, otherwise we hit redirects
   const url = `${siteUrl}/${path}${path ? '/' : ''}`;
   
-  console.log('Fetching MkDocs:', url);
   const res = await fetch(url, {
     next: { revalidate: 60 },
   });
 
-  console.log('MkDocs response status:', res.status);
   if (!res.ok) {
     return null;
   }
