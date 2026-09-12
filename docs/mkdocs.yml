@@ -4,7 +4,6 @@ site_description: Community-maintained, expert-reviewed medical education databa
 
 repo_name: GitHub
 repo_url: https://github.com/p-sira/thaioml
-repo_icon: fontawesome/brands/github
 
 extra:
   posthog_key: !ENV [POSTHOG_KEY, "YOUR_POSTHOG_API_KEY"]

@@ -60,7 +60,7 @@ class ThaiOMLLinkerPlugin(BasePlugin):
 
             is_stub = False
             if not url:
-                url = f"stub/{snomed_id}.html"
+                url = f"stub/{snomed_id}.md"
                 is_stub = True
 
             # Match markdown links, inline code, or the term itself
