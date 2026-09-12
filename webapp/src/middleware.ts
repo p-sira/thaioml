@@ -12,7 +12,7 @@ const handleProxy = async (req: NextRequest) => {
 
   if (
     pathname.startsWith('/assets/') ||
-    /\.(css|js|png|jpg|jpeg|gif|svg|json|xml|gz|woff|woff2|ico|webmanifest)$/i.test(pathname)
+    /\.(css|js|png|jpg|jpeg|gif|svg|json|xml|gz|woff|woff2|ico|webmanifest|yml|yaml)$/i.test(pathname)
   ) {
     const url = `${siteUrl}${pathname}${req.nextUrl.search}`;
     try {

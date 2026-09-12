@@ -403,24 +403,31 @@
 
   <!-- Initialize CMS & register preview styles -->
   <script>
-    // Dynamically pull all MkDocs stylesheets so the preview pane is an
-    // exact CSS replica of the live site (hashed filenames included).
-    fetch('../')
-      .then(res => res.text())
-      .then(html => {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(html, 'text/html');
-        doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-          CMS.registerPreviewStyle(link.href);
+    (function initPreview() {
+      if (typeof window.CMS === 'undefined') {
+        setTimeout(initPreview, 50);
+        return;
+      }
+      
+      // Dynamically pull all MkDocs stylesheets so the preview pane is an
+      // exact CSS replica of the live site (hashed filenames included).
+      fetch('../')
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+            CMS.registerPreviewStyle(link.href);
+          });
+        })
+        .catch(err => {
+          console.warn('Could not load MkDocs stylesheets for preview:', err);
+          CMS.registerPreviewStyle('../stylesheets/custom-theme.css');
+        })
+        .finally(() => {
+          CMS.init();
         });
-      })
-      .catch(err => {
-        console.warn('Could not load MkDocs stylesheets for preview:', err);
-        CMS.registerPreviewStyle('../stylesheets/custom-theme.css');
-      })
-      .finally(() => {
-        CMS.init();
-      });
+    })();
 
     // ── Sync theme into the preview iframe every second ──
     // The iframe is sandboxed so it can't inherit from the parent window.

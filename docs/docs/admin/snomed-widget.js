@@ -1,3 +1,9 @@
+(function initSnomedWidget() {
+  if (typeof window.CMS === 'undefined' || typeof window.createClass === 'undefined' || typeof window.h === 'undefined') {
+    setTimeout(initSnomedWidget, 50);
+    return;
+  }
+
 var SnomedControl = createClass({
   getInitialState: function () {
     return {
@@ -93,10 +99,19 @@ var SnomedControl = createClass({
 
     self.setState({ loading: true, error: null });
 
-    fetch('http://localhost:8080/snomed-suggest', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query: title }),
+    var tokenPromise = (window.Clerk && window.Clerk.session) ? window.Clerk.session.getToken() : 
+                       (window.parent && window.parent.Clerk && window.parent.Clerk.session) ? window.parent.Clerk.session.getToken() : 
+                       Promise.resolve(null);
+    
+    tokenPromise.then(function(token) {
+      var headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+      
+      return fetch('http://localhost:8080/snomed-suggest', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ query: title }),
+      });
     })
       .then(function (response) {
         return response.json().then(function (data) {
@@ -307,10 +322,19 @@ var SnomedLinkerControl = createClass({
 
     self.setState({ loading: true, error: null });
 
-    fetch('http://localhost:8080/auto-link', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ body: body }),
+    var tokenPromise = (window.Clerk && window.Clerk.session) ? window.Clerk.session.getToken() : 
+                       (window.parent && window.parent.Clerk && window.parent.Clerk.session) ? window.parent.Clerk.session.getToken() : 
+                       Promise.resolve(null);
+                       
+    tokenPromise.then(function(token) {
+      var headers = { 'Content-Type': 'application/json' };
+      if (token) headers['Authorization'] = 'Bearer ' + token;
+
+      return fetch('http://localhost:8080/auto-link', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ body: body }),
+      });
     })
       .then(function (response) {
         return response.json().then(function (data) {
@@ -522,3 +546,5 @@ var SnomedLinkerPreview = createClass({
 });
 
 CMS.registerWidget('snomed_linker', SnomedLinkerControl, SnomedLinkerPreview);
+
+})();

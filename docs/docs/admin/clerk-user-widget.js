@@ -1,3 +1,9 @@
+(function initClerkUserWidget() {
+  if (typeof window.CMS === 'undefined' || typeof window.createClass === 'undefined' || typeof window.h === 'undefined') {
+    setTimeout(initClerkUserWidget, 50);
+    return;
+  }
+
 var ClerkUserControl = createClass({
   getInitialState: function () {
     return {
@@ -122,3 +128,5 @@ var ClerkUserPreview = createClass({
 });
 
 CMS.registerWidget('clerk_user', ClerkUserControl, ClerkUserPreview);
+
+})();

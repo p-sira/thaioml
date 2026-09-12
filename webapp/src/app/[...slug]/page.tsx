@@ -65,7 +65,8 @@ export default async function MkDocsPage({ params }: PageProps) {
       // FOUC is prevented by the aggressive Cache-Control headers we added to the proxy.
       links.push(<link key={`link-${i}`} rel="stylesheet" href={href} />);
     } else if (rel === 'preconnect') {
-      links.push(<link key={`link-${i}`} rel="preconnect" href={href} crossOrigin={$(el).attr('crossorigin')} />);
+      const crossOrigin = $(el).attr('crossorigin') as "anonymous" | "use-credentials" | "" | undefined;
+      links.push(<link key={`link-${i}`} rel="preconnect" href={href} crossOrigin={crossOrigin} />);
     }
   });
 
