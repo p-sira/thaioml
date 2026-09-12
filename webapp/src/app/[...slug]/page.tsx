@@ -9,17 +9,17 @@ interface PageProps {
 
 async function fetchMkdocsPage(slugArray?: string[]) {
   const path = slugArray ? slugArray.join('/') : '';
-  
+
   // Silently ignore MkDocs livereload polling to prevent 404 console spam
-  if (path.startsWith('livereload/')) {
+  if (path.startsWith('livereload/') || path.includes('/livereload/')) {
     return null;
   }
 
   const siteUrl = process.env.DOCS_UPSTREAM_URL || 'http://localhost:8000';
-  
+
   // Always append trailing slash for MkDocs if not empty, otherwise we hit redirects
   const url = `${siteUrl}/${path}${path ? '/' : ''}`;
-  
+
   const res = await fetch(url, {
     next: { revalidate: 60 },
   });
@@ -46,7 +46,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 export default async function MkDocsPage({ params }: PageProps) {
   const { slug } = await params;
   const html = await fetchMkdocsPage(slug);
-  
+
   if (!html) {
     notFound();
   }
@@ -89,17 +89,17 @@ export default async function MkDocsPage({ params }: PageProps) {
     if (type && type !== 'text/javascript' && type !== 'module') {
       return;
     }
-    
+
     if (src) {
       scripts.push(<Script key={`script-${i}`} id={id || `mkdocs-ext-${i}`} src={src} strategy="afterInteractive" type={type} />);
     } else if (content) {
       scripts.push(
-        <Script 
-          key={`script-${i}`} 
-          id={id || `mkdocs-inline-${i}`} 
-          strategy="afterInteractive" 
+        <Script
+          key={`script-${i}`}
+          id={id || `mkdocs-inline-${i}`}
+          strategy="afterInteractive"
           type={type}
-          dangerouslySetInnerHTML={{ __html: content }} 
+          dangerouslySetInnerHTML={{ __html: content }}
         />
       );
     }
@@ -119,10 +119,10 @@ export default async function MkDocsPage({ params }: PageProps) {
     <>
       {links}
       {styles}
-      <div 
-        suppressHydrationWarning 
+      <div
+        suppressHydrationWarning
         className="mkdocs-wrapper flex-1"
-        dangerouslySetInnerHTML={{ __html: bodyContent }} 
+        dangerouslySetInnerHTML={{ __html: bodyContent }}
       />
       {scripts}
     </>
