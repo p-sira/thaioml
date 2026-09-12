@@ -7,6 +7,7 @@ import { PostHogProvider } from "@/components/PostHogProvider";
 import { CookieBanner } from "@/components/CookieBanner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import Script from "next/script";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -40,8 +41,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       >
         <head>
           <meta name="view-transition" content="same-origin" />
-          <script
+          <Script
+            id="speculation-rules"
             type="speculationrules"
+            strategy="beforeInteractive"
             dangerouslySetInnerHTML={{
               __html: JSON.stringify({
                 prerender: [
@@ -55,7 +58,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           />
         </head>
         <body className="min-h-full flex flex-col" data-md-color-scheme={theme} suppressHydrationWarning>
-          <script
+          <Script
+            id="theme-script"
+            strategy="beforeInteractive"
             dangerouslySetInnerHTML={{
               __html: `
                 (function() {

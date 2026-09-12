@@ -5,7 +5,7 @@ import ThemeSettings from './ThemeSettings'
 import PrivacySettings from './PrivacySettings'
 import { Palette, Cookie } from 'lucide-react'
 
-export default function UserProfileClient({
+export default function UserSettingsClient({
   currentTheme
 }: {
   currentTheme: string

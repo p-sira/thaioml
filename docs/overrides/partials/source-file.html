@@ -49,6 +49,31 @@
     </nav>
   </span>
 {% endmacro %}
+{% macro render_cms_contributors(title, contributors) %}
+  <span class="md-source-file__fact">
+    <span class="md-icon" title="{{ title }}">
+      {% if contributors | length == 1 %}
+        {% include ".icons/material/account.svg" %}
+      {% else %}
+        {% include ".icons/material/account-group.svg" %}
+      {% endif %}
+    </span>
+    <strong>{{ title }}:</strong>
+    <nav style="margin-left: 0.25rem; display: inline;">
+      {% for contributor in contributors %}
+        {% if contributor.user and contributor.user.username %}
+          {% set user_link = contributor.user.id if contributor.user.id else contributor.user.username %}
+          <a href="https://app.thaioml.org/user/{{ user_link }}" title="@{{ contributor.user.username }}" target="_blank" rel="noopener">
+            {{ contributor.user.name }}
+          </a>
+        {% else %}
+          <span>{{ contributor }}</span>
+        {% endif %}
+        {%- if loop.revindex > 1 %}, {% endif -%}
+      {% endfor %}
+    </nav>
+  </span>
+{% endmacro %}
 {% macro render_committers_github(title) %}
   <span class="md-icon" title="{{ lang.t('source.file.contributors') }}">
     {% include ".icons/material/github.svg" %}
@@ -104,8 +129,17 @@
     {% set v_hash = page.meta.git_version_hash %}
   {% endif %}
 {% endif %}
-{% if updated or created or v_count or git_info or committers %}
+{% if updated or created or v_count or git_info or committers or page.meta.authors or page.meta.reviewers or page.meta.editors %}
   <aside class="md-source-file">
+    {% if page.meta.authors %}
+      {{ render_cms_contributors("Authors", page.meta.authors) }}
+    {% endif %}
+    {% if page.meta.reviewers %}
+      {{ render_cms_contributors("Reviewers", page.meta.reviewers) }}
+    {% endif %}
+    {% if page.meta.editors %}
+      {{ render_cms_contributors("Editors", page.meta.editors) }}
+    {% endif %}
     {% if v_count %}
       {{ render_version(v_count, v_hash) }}
     {% endif %}

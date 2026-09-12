@@ -54,6 +54,9 @@ export function ClerkThemeProvider({
           },
           userButtonPopoverActionButtonIconBox: {
             color: 'var(--md-default-fg-color)',
+          },
+          userButtonPopoverActionButtonText: {
+            color: 'var(--md-default-fg-color)',
           }
         }
       }}

@@ -55,6 +55,7 @@ The ThaiOML ecosystem is divided structurally between the Next.js Webapp and the
 - **Webapp as the Main Focus:** The Next.js application serves as the primary entry point, index/landing page, and interactive search interface for ThaiOML. 
 - **Search-Centric Discovery:** The traditional left-hand directory navigation in MkDocs is intentionally removed. Users are encouraged to browse the content library via global search, intelligent search suggestions, and inline hyperlinks within the medical articles.
 - **MkDocs as the Content Library:** The static MkDocs site strictly serves the rendered markdown medical articles, guidelines, and static pages (like Contribution and About).
+- **Settings vs Public Profiles:** The application maintains a strict separation between public portfolios and private configurations. Public profiles are served dynamically at `/user/[username_or_id]`, while private account configurations (including Clerk's native profile management and custom display settings) are unified under the `/settings` route.
 
 ## 4. Common Architecture Pitfalls
 
