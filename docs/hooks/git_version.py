@@ -1,3 +1,4 @@
+import logging
 import subprocess
 
 
@@ -17,7 +18,7 @@ def on_page_markdown(markdown, page, config, files):
         if count and commit_hash:
             page.meta['git_version_count'] = count
             page.meta['git_version_hash'] = commit_hash
-    except Exception as e:
-        pass
+    except subprocess.CalledProcessError as e:
+        logging.getLogger("mkdocs.hooks.git_version").debug("Failed to get git version for %s: %s", file_path, e)
     
     return markdown

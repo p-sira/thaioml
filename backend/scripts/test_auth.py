@@ -4,9 +4,8 @@ import sys
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), "../src"))
 
-from fastapi.testclient import TestClient
-
 from backend.main import app
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 
