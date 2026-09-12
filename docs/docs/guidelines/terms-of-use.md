@@ -4,6 +4,8 @@ title: Terms of Use
 
 # Terms of Use
 
+[🇹🇭 อ่านฉบับภาษาไทย (Read in Thai)](./terms-of-use-th.md)
+
 ## 1. User's Acknowledgment and Acceptance of Terms
 The ThaiOML Project ("Us", "We", or "ThaiOML") provides this site and various related services (collectively, the "Site") to you, the user, subject to your compliance with all the terms, conditions, and notices contained or referenced herein (the "Terms of Use"), as well as any other written agreement between us and you, including, without limitation, the Privacy Policy and our Contributor License Agreement (CLA).
 

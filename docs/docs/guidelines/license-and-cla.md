@@ -4,6 +4,8 @@ title: License & Contributor Agreement
 
 # ThaiOML License & Contributor Agreement
 
+[🇹🇭 อ่านฉบับภาษาไทย (Read in Thai)](./license-and-cla-th.md)
+
 ThaiOML is built on the principle of open medical knowledge. To ensure the knowledge remains accessible while protecting the volunteer efforts of our contributors from commercial exploitation, we employ a dual-licensing and Contributor License Agreement (CLA) model.
 
 ## 1. Public License: CC-BY-NC 4.0
