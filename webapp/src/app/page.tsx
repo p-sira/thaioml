@@ -2,6 +2,9 @@ import Link from 'next/link'
 import { goToRandomArticle } from './actions/randomArticle'
 import { Search, Sparkles } from 'lucide-react'
 
+export const dynamic = 'force-static';
+export const revalidate = 86400;
+
 export default async function Home() {
   return (
     <div className="flex-1 flex flex-col items-center bg-background min-h-screen">
@@ -72,10 +75,6 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="w-full py-8 text-center text-sm text-foreground/50 border-t border-foreground/10 bg-background">
-        <p>© {new Date().getFullYear()} ThaiOML. All rights reserved.</p>
-      </footer>
     </div>
   )
 }

@@ -2,7 +2,7 @@
   <nav class="custom-header" aria-label="Header">
     <!-- Left: Logo & Text -->
     <div class="custom-header-section">
-      <a href="/" title="{{ config.site_name | e }}" class="logo-link">
+      <a href="/" target="_top" title="{{ config.site_name | e }}" class="logo-link">
         <img src="/logo.svg" alt="logo" class="logo-img" />
       </a>
     </div>
@@ -14,14 +14,14 @@
         aria-label="Search">
         Search
       </label>
-      <a href="/chat" class="nav-link {% if page and 'chat' in page.url %}active{% endif %}">Ask the Library</a>
+      <a href="/chat" target="_top" class="nav-link {% if page and 'chat' in page.url %}active{% endif %}">Ask the Library</a>
       <a href="/contribute/" class="nav-link {% if page and 'contribute' in page.url %}active{% endif %}">Contribute</a>
       <a href="/about/" class="nav-link {% if page and 'about' in page.url %}active{% endif %}">About</a>
     </div>
 
     <!-- Right: Profile / Auth -->
     <div class="custom-header-section custom-header-right" id="clerk-auth-container">
-      <a href="/sign-in" class="custom-btn" id="clerk-sign-in-btn">Sign In</a>
+      <a href="/sign-in" target="_top" class="custom-btn" id="clerk-sign-in-btn">Sign In</a>
     </div>
   </nav>
 
@@ -32,4 +32,14 @@
   {% include "partials/search.html" %}
   {% endif %}
   {% endif %}
+  <script type="speculationrules">
+    {
+      "prerender": [
+        {
+          "urls": ["/", "/chat", "/sign-in"],
+          "eagerness": "moderate"
+        }
+      ]
+    }
+  </script>
 </header>

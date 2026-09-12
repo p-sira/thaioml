@@ -6,6 +6,7 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { PostHogProvider } from "@/components/PostHogProvider";
 import { CookieBanner } from "@/components/CookieBanner";
 import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -39,6 +40,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       >
         <head>
           <meta name="view-transition" content="same-origin" />
+          <script
+            type="speculationrules"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({
+                prerender: [
+                  {
+                    urls: ["/contribute/", "/about/"],
+                    eagerness: "moderate",
+                  },
+                ],
+              }),
+            }}
+          />
         </head>
         <body className="min-h-full flex flex-col" data-md-color-scheme={theme} suppressHydrationWarning>
           <script
@@ -60,7 +74,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <ThemeProvider>
             <PostHogProvider>
               <Navbar />
-              {children}
+              <main className="flex-1 flex flex-col">
+                {children}
+              </main>
+              <Footer />
               <CookieBanner />
             </PostHogProvider>
           </ThemeProvider>
