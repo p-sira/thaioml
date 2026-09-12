@@ -36,7 +36,7 @@ This site may link you to other sites on the Internet. These other sites are not
 ## 6. Intellectual Property & Licensing
 All public content published on ThaiOML is released under the **Creative Commons Attribution-NonCommercial 4.0 International (CC-BY-NC 4.0)** license. You may share and adapt the material for non-commercial purposes, provided you give appropriate credit.
 
-**Restriction on Artificial Intelligence (AI) Ingestion**: Regardless of commercial or non-commercial intent, the content on this Site may not be reproduced, copied, scraped, or put into any artificial intelligence program, including large language and generative AI models, without explicit written permission from ThaiOML.
+**Restriction on Third-Party Artificial Intelligence (AI) Ingestion**: Regardless of commercial or non-commercial intent, the content on this Site may not be reproduced, copied, scraped, or put into any artificial intelligence program, including large language and generative AI models, by any third party without explicit written permission from ThaiOML. This restriction protects our authors' work from unauthorized external scraping, but does not limit ThaiOML's own internal AI features (which are governed by the Contributor License Agreement).
 
 By submitting or contributing content to the Site, you agree to the terms of the ThaiOML **Contributor License Agreement (CLA)**. You retain the copyright to your original work, but you grant the ThaiOML Project an irrevocable, non-exclusive right to distribute, modify, and sublicense your contribution. 
 
