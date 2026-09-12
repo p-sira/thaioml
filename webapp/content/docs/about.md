@@ -1,3 +1,7 @@
+---
+title: About
+---
+
 # About ThaiOML
 
 **Open Medical Library of Thailand (ThaiOML)** is a community-maintained, expert-reviewed medical education database and AI-powered knowledge base designed for healthcare professionals.

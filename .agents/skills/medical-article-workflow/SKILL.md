@@ -7,7 +7,7 @@ description: >-
 
 # Medical Article Workflow
 
-When working with medical articles in the `docs/docs/articles/` directory, adhere strictly to these guidelines:
+When working with medical articles in the `webapp/content/docs/articles/` directory, adhere strictly to these guidelines:
 
 ## 1. Content and Formatting
 - **High-Yield Format:** All articles MUST adopt a strictly bulleted and high-yield writing style:
@@ -54,10 +54,10 @@ When agents or frontend widgets interact with the SNOMED lookup system (e.g., vi
 3. **Validation:** The system extracts the first active concept, guaranteeing 100% ID accuracy before returning it to the user.
 
 ## 5. Editorial Workflow (ThaiOML Studio)
-The GitHub repository acts as the backend for the custom ThaiOML Studio Next.js Editor. For the exact editorial workflow (Contributor -> Reviewer -> Editor) and proxy approval rules, you MUST read the canonical guidelines at `docs/docs/guidelines/author-guideline.md`, `docs/docs/guidelines/reviewer-guideline.md`, and `docs/docs/guidelines/editor-guideline.md` using the `view_file` tool before taking action.
+The GitHub repository acts as the backend for the custom ThaiOML Studio Next.js Editor. For the exact editorial workflow (Contributor -> Reviewer -> Editor) and proxy approval rules, you MUST read the canonical guidelines at `webapp/content/docs/guidelines/author-guideline.md`, `webapp/content/docs/guidelines/reviewer-guideline.md`, and `webapp/content/docs/guidelines/editor-guideline.md` using the `view_file` tool before taking action.
 
 ## 6. AI Article Linking & Disambiguation
 When drafting or editing articles, abide by the following rules for linking clinical terminology and abbreviations:
 - **Inline Markdown Linking:** Authors can manually search and insert SNOMED concepts into their text using the `/term` slash command in the editor, or use the **Auto Link** button to have the RAG backend parse and inject these links across the entire article automatically.
 - **Format:** Links are strictly injected in standard Markdown or HTML format using the `snomed:` pseudo-protocol (e.g., `[Myocardial infarction](snomed:22298006)` or `<a href="snomed:22298006">Myocardial infarction</a>`). The `snomed_links` YAML block is obsolete.
-- **Auto-linking:** The `thaioml-linker` MkDocs plugin automatically parses these `snomed:` pseudo-links during the static site build. If the target article does not exist, it will safely fallback to a stub link (e.g., `/stub/[SNOMED_ID].html`).
+- **Auto-linking:** The `remark-thaioml-linker` plugin automatically parses these `snomed:` pseudo-links during the static site build. If the target article does not exist, it will safely fallback to a stub link (e.g., `/stub/[SNOMED_ID]`).

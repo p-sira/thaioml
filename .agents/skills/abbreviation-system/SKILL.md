@@ -15,7 +15,7 @@ Because of this, abbreviations must be explicitly registered and linked.
 
 ## 2. Creating an Abbreviation Entity
 When a new abbreviation collision is found, or when defining a major abbreviation, create a dedicated file:
-`docs/docs/articles/abbreviations/[ABBREVIATION].md` (or in the root articles folder if `type` handles it).
+`webapp/content/docs/articles/abbreviations/[ABBREVIATION].md` (or in the root articles folder if `type` handles it).
 
 **Example Format:**
 ```yaml

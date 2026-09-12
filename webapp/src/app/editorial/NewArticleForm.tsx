@@ -29,7 +29,7 @@ export default function NewArticleForm() {
         
         // Use encodeURIComponent to safely pass the suggested SNOMED ID and Title as query params
         // So the new editor can pick them up to populate the frontmatter
-        router.push(`/editorial/docs/docs/articles/${slug}?title=${encodeURIComponent(title)}&snomed_id=${data.id}`);
+        router.push(`/editorial/webapp/content/docs/articles/${slug}?title=${encodeURIComponent(title)}&snomed_id=${data.id}`);
       } else {
         alert("Failed to find a confident SNOMED CT concept for this title. Article creation is blocked to maintain strictness.");
       }

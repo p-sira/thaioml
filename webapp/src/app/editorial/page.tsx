@@ -19,7 +19,7 @@ export default async function EditorialPage() {
     redirect('/cms');
   }
 
-  const { files } = await listMarkdownFiles('docs/docs/articles');
+  const { files } = await listMarkdownFiles('webapp/content/docs/articles');
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
