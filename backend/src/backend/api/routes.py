@@ -68,9 +68,9 @@ def query_system(
     try:
         answer = rag_service.query(request.query)
         posthog.capture(
-            user_data.get("sub", "anonymous"),
-            "ask_library_query_submitted",
-            {"query": request.query},
+            distinct_id=user_data.get("sub", "anonymous"),
+            event="ask_library_query_submitted",
+            properties={"query": request.query},
         )
         return QueryResponse(answer=answer)
     except RuntimeError as e:
@@ -104,9 +104,9 @@ def chat_system(
         ]
         answer = rag_service.chat(messages_dict)
         posthog.capture(
-            user_data.get("sub", "anonymous"),
-            "ask_library_chat_submitted",
-            {"num_messages": len(messages_dict)},
+            distinct_id=user_data.get("sub", "anonymous"),
+            event="ask_library_chat_submitted",
+            properties={"num_messages": len(messages_dict)},
         )
         return QueryResponse(answer=answer)
     except RuntimeError as e:
@@ -135,9 +135,9 @@ def snomed_suggest(
     try:
         concept_id, display_term = suggest_snomed_term(request.query, db)
         posthog.capture(
-            user_data.get("sub", "anonymous"),
-            "title_check_performed",
-            {"query": request.query, "found_concept_id": concept_id},
+            distinct_id=user_data.get("sub", "anonymous"),
+            event="title_check_performed",
+            properties={"query": request.query, "found_concept_id": concept_id},
         )
         return SnomedSuggestResponse(id=concept_id, term=display_term)
     except ValueError as e:
@@ -167,9 +167,9 @@ def auto_link(
     try:
         links = auto_link_terms(request.body, db)
         posthog.capture(
-            user_data.get("sub", "anonymous"),
-            "auto_link_used",
-            {"num_links_found": len(links)},
+            distinct_id=user_data.get("sub", "anonymous"),
+            event="auto_link_used",
+            properties={"num_links_found": len(links)},
         )
         return AutoLinkResponse(links=links)
     except ValueError as e:
