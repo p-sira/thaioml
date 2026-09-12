@@ -14,6 +14,7 @@ All content published on ThaiOML is released to the public under the **Creative 
 - **Under the following terms:**
   - **Attribution:** You must give appropriate credit to ThaiOML and the original authors, provide a link to the license, and indicate if changes were made.
   - **NonCommercial:** You may not use the material for commercial purposes (e.g., incorporating the content into a paid app, test-prep service, or monetized AI model) without explicit permission from ThaiOML.
+  - **No AI Ingestion:** Regardless of commercial or non-commercial intent, this content may not be reproduced, copied, scraped, or put into any artificial intelligence program, including large language and generative AI models, without explicit written permission from ThaiOML.
 
 ## 2. Contributor License Agreement (CLA)
 
