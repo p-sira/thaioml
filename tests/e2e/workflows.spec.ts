@@ -31,7 +31,7 @@ test.describe('Key Workflows', () => {
 
   test('Decap CMS editor loading', async ({ page }) => {
     // Navigate to the CMS hosted on the MkDocs frontend
-    await page.goto('http://localhost:8000/admin/');
+    await page.goto('http://localhost:8000/editorial/');
 
     // In local_backend mode, there is usually a login button that bypasses OAuth
     // Or it automatically logs in depending on Decap version. We wait for a button or the UI.
