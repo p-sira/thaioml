@@ -70,10 +70,12 @@ export default async function MkDocsPage({ params }: PageProps) {
     }
   });
 
-  // Extract inline <style> blocks (e.g. MkDocs typography CSS variables)
-  const styles: React.ReactNode[] = [];
+  // Extract inline <style> blocks (e.g. MkDocs typography CSS variables or Decap CMS overrides)
+  // We prepend these directly into the bodyContent so they are managed by dangerouslySetInnerHTML.
+  // This prevents Next.js 13+ App Router from hoisting them to <head> and subsequently stripping them during hydration mismatch.
+  let styleTagsStr = '';
   $('head style').each((i, el) => {
-    styles.push(<style key={`style-${i}`} dangerouslySetInnerHTML={{ __html: $(el).html() || '' }} />);
+    styleTagsStr += `<style>${$(el).html() || ''}</style>\n`;
   });
 
   // Extract scripts
@@ -112,13 +114,12 @@ export default async function MkDocsPage({ params }: PageProps) {
   $('header.md-header').empty().attr('style', 'display: none !important');
   $('footer.md-footer').empty().attr('style', 'display: none !important');
 
-  // Extract remaining body content
-  const bodyContent = $('body').html() || '';
+  // Extract remaining body content and prepend styles
+  const bodyContent = styleTagsStr + ($('body').html() || '');
 
   return (
     <>
       {links}
-      {styles}
       <div
         suppressHydrationWarning
         className="mkdocs-wrapper flex-1"

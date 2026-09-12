@@ -12,6 +12,9 @@ export default function NavLinks() {
       // the search page is effectively the home of the Next.js app
       return pathname === '/' || pathname?.startsWith('/search');
     }
+    if (path === '/contribute') {
+      return pathname?.startsWith('/contribute') || pathname?.startsWith('/editorial') || pathname?.startsWith('/cms');
+    }
     return pathname?.startsWith(path);
   };
 
