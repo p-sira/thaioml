@@ -6,7 +6,7 @@ export default async function ContributePage() {
   const user = await currentUser()
 
   if (!user) {
-    redirect('/sign-in?redirect_url=/contribute')
+    redirect('/sign-in?redirect_url=/cms')
   }
 
   const roles = (user.publicMetadata?.roles as string[]) || []

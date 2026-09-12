@@ -6,7 +6,7 @@ ThaiOML is a community-maintained, expert-reviewed medical education database. W
 
 We use Decap CMS to manage our articles, abbreviations, and categories. 
 
-[Go to CMS (Login Required)](http://localhost:3000/contribute){ .md-button .md-button--primary }
+[Go to CMS (Login Required)](/cms){ .md-button .md-button--primary }
 
 *Note: You must have an authorized editor account to access the CMS.*
 

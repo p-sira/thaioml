@@ -15,7 +15,7 @@
         Search
       </label>
       <a href="/chat" target="_top" class="nav-link {% if page and 'chat' in page.url %}active{% endif %}">Ask the Library</a>
-      <a href="/contribute/" class="nav-link {% if page and 'contribute' in page.url %}active{% endif %}">Contribute</a>
+      <a href="{{ 'contribute.md' | url }}" class="nav-link {% if page and 'contribute' in page.url %}active{% endif %}">Contribute</a>
       <a href="/about/" class="nav-link {% if page and 'about' in page.url %}active{% endif %}">About</a>
     </div>
 
