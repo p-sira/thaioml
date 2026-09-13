@@ -28,6 +28,7 @@ interface DashboardClientProps {
 export default function DashboardClient({ articles, currentUser, isAdmin, isEditor }: DashboardClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [activeTab, setActiveTab] = useState<'active' | 'archived'>('active');
 
   // 1. Filter by permissions / related to you
   const visibleArticles = articles.filter(article => {
@@ -140,30 +141,52 @@ export default function DashboardClient({ articles, currentUser, isAdmin, isEdit
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Column 1: My Active Articles */}
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between border-b-2 border-green-500 pb-2">
-            <h3 className="font-bold text-slate-800">My Active Articles</h3>
-            <span className="bg-green-100 text-green-700 text-xs font-bold px-2 py-0.5 rounded-full">{myActiveArticles.length}</span>
-          </div>
-          <div className="flex flex-col gap-4">
-            {myActiveArticles.length === 0 && <p className="text-sm text-slate-500 italic">No active articles found.</p>}
-            {myActiveArticles.map(renderCard)}
-          </div>
-        </div>
+      <div className="border-b border-slate-200">
+        <nav className="-mb-px flex space-x-8">
+          <button
+            onClick={() => setActiveTab('active')}
+            className={`
+              whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+              ${activeTab === 'active' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}
+            `}
+          >
+            My Active Articles
+            <span className={`ml-3 py-0.5 px-2.5 rounded-full text-xs font-medium ${activeTab === 'active' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-900'}`}>
+              {myActiveArticles.length}
+            </span>
+          </button>
+          <button
+            onClick={() => setActiveTab('archived')}
+            className={`
+              whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
+              ${activeTab === 'archived' 
+                ? 'border-blue-500 text-blue-600' 
+                : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'}
+            `}
+          >
+            Archived & Others
+            <span className={`ml-3 py-0.5 px-2.5 rounded-full text-xs font-medium ${activeTab === 'archived' ? 'bg-blue-100 text-blue-600' : 'bg-slate-100 text-slate-900'}`}>
+              {archivedArticles.length}
+            </span>
+          </button>
+        </nav>
+      </div>
 
-        {/* Column 2: Archived & Others */}
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center justify-between border-b-2 border-slate-400 pb-2">
-            <h3 className="font-bold text-slate-800">Archived & Other Authors</h3>
-            <span className="bg-slate-200 text-slate-700 text-xs font-bold px-2 py-0.5 rounded-full">{archivedArticles.length}</span>
-          </div>
-          <div className="flex flex-col gap-4">
-            {archivedArticles.length === 0 && <p className="text-sm text-slate-500 italic">No archived articles found.</p>}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {activeTab === 'active' && (
+          <>
+            {myActiveArticles.length === 0 && <p className="text-sm text-slate-500 italic col-span-full">No active articles found.</p>}
+            {myActiveArticles.map(renderCard)}
+          </>
+        )}
+        {activeTab === 'archived' && (
+          <>
+            {archivedArticles.length === 0 && <p className="text-sm text-slate-500 italic col-span-full">No archived articles found.</p>}
             {archivedArticles.map(renderCard)}
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </div>
   );

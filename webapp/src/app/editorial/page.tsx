@@ -14,7 +14,6 @@ export default async function EditorialPage() {
 
   const roles = (user.publicMetadata?.roles as string[]) || [];
   const hasPermission = roles.includes('editor') || roles.includes('admin') || roles.includes('author');
-  const isEditor = roles.includes('editor') || roles.includes('admin');
 
   if (!hasPermission) {
     redirect('/cms');
@@ -37,14 +36,12 @@ export default async function EditorialPage() {
             >
               Articles
             </Link>
-            {isEditor && (
-              <Link 
-                href="/editorial/dashboard" 
-                className="px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50"
-              >
-                Dashboard
-              </Link>
-            )}
+            <Link 
+              href="/editorial/dashboard" 
+              className="px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+            >
+              Dashboard
+            </Link>
           </nav>
         </div>
         <NewArticleForm />

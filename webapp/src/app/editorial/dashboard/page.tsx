@@ -21,7 +21,7 @@ export default async function DashboardPage() {
   }
 
   const roles = (user.publicMetadata?.roles as string[]) || [];
-  const hasPermission = roles.includes('editor') || roles.includes('admin');
+  const hasPermission = roles.includes('editor') || roles.includes('admin') || roles.includes('author');
   const isAdmin = roles.includes('admin');
   const isEditor = roles.includes('editor') || isAdmin;
 
