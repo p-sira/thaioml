@@ -52,12 +52,17 @@ def test_snomed_suggest_endpoint(mock_suggest, client):
 
 @patch("backend.api.routes.auto_link_terms")
 def test_auto_link_endpoint(mock_auto_link, client):
-    mock_auto_link.return_value = {"Hypertension": "123456"}
+    mock_auto_link.return_value = (
+        "Patient has [Hypertension](snomed://123456).",
+        {"Hypertension": "123456"},
+    )
 
     response = client.post("/auto-link", json={"body": "Patient has Hypertension."})
 
     assert response.status_code == 200
-    assert response.json() == {"links": {"Hypertension": "123456"}}
+    data = response.json()
+    assert "Hypertension" in data["links"]
+    assert data["body"] == "Patient has [Hypertension](snomed://123456)."
     mock_auto_link.assert_called_once_with(
         "Patient has Hypertension.", "mocked_db_session"
     )

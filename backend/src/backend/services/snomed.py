@@ -123,7 +123,7 @@ Respond ONLY with the exact English term enclosed in <term> tags. For example: <
     raise ValueError(f"No active SNOMED concept found for term: {query} (AI canonical: {canonical_term})")
 
 
-def auto_link_terms(body: str, db: Session) -> dict[str, str]:
+def auto_link_terms(body: str, db: Session) -> tuple[str, dict[str, str]]:
     if not settings.openrouter_api_key_lookup:
         raise ValueError("OpenRouter API key missing.")
 
@@ -163,6 +163,7 @@ Text:
         extracted_terms = []
 
     final_links = {}
+    modified_body = body
     for item in extracted_terms:
         orig = item.get("original_text", "").strip()
         canon = item.get("canonical_snomed_term", "").strip()
@@ -172,8 +173,13 @@ Text:
         try:
             match = _search_snomed_term(canon, db, exact=False)
             if match:
-                final_links[orig] = f"{match[0]} | {match[1]}"
+                concept_id, display_term = match
+                final_links[orig] = f"{concept_id} | {display_term}"
+                
+                # Replace in markdown using word boundaries, ignoring already linked text
+                pattern = re.compile(r'(?<!\[)\b' + re.escape(orig) + r'\b(?!\])')
+                modified_body = pattern.sub(f"[{orig}](snomed://{concept_id})", modified_body)
         except Exception as e:  # noqa: BLE001
             print(f"Error resolving {canon}: {e}")
 
-    return final_links
+    return modified_body, final_links
