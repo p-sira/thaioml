@@ -16,9 +16,10 @@ import { Info, Sparkles, Loader2, MessageSquare } from 'lucide-react';
 interface EditorProps {
   initialContent: string;
   filePath: string;
+  isEditor?: boolean;
 }
 
-export default function Editor({ initialContent, filePath }: EditorProps) {
+export default function Editor({ initialContent, filePath, isEditor = false }: EditorProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
@@ -63,6 +64,7 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
         class: 'prose prose-slate max-w-none focus:outline-none min-h-[500px]',
       },
     },
+    editable: frontmatter.review_status !== 'pitch',
     immediatelyRender: false,
   }, [initialBody]); // re-init when initialBody is ready
 
@@ -221,9 +223,20 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
         </div>
 
         {/* Editor Content */}
-        <div className="p-6 bg-white overflow-y-auto flex-1">
-          <EditorContent editor={editor} />
-        </div>
+        {frontmatter.review_status === 'pitch' ? (
+          <div className="p-6 bg-slate-100 flex-1 flex flex-col items-center justify-center text-slate-500">
+            <Info className="w-12 h-12 text-slate-400 mb-4" />
+            <h3 className="text-lg font-medium text-slate-700">Main Body Disabled</h3>
+            <p className="max-w-md text-center mt-2">
+              The main body of the article is hidden during the Pitch phase. 
+              Please fill out the Abstract field in the metadata sidebar.
+            </p>
+          </div>
+        ) : (
+          <div className="p-6 bg-white overflow-y-auto flex-1">
+            <EditorContent editor={editor} />
+          </div>
+        )}
       </div>
 
       {/* Frontmatter Sidebar */}
@@ -280,7 +293,8 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
               type="text"
               value={frontmatter.assigned_editor || ''}
               onChange={(e) => handleFrontmatterChange('assigned_editor', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
+              disabled={!isEditor}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white disabled:bg-slate-100 disabled:text-slate-500"
               placeholder="GitHub username"
             />
           </div>
@@ -291,7 +305,8 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
               type="text"
               value={Array.isArray(frontmatter.assigned_reviewers) ? frontmatter.assigned_reviewers.join(', ') : (frontmatter.assigned_reviewers || '')}
               onChange={(e) => handleFrontmatterChange('assigned_reviewers', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
+              disabled={!isEditor}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white disabled:bg-slate-100 disabled:text-slate-500"
               placeholder="reviewer1, reviewer2"
             />
           </div>
@@ -301,7 +316,8 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
             <select
               value={frontmatter.review_status || 'pitch'}
               onChange={(e) => handleFrontmatterChange('review_status', e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
+              disabled={!isEditor}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white disabled:bg-slate-100 disabled:text-slate-500 cursor-pointer disabled:cursor-not-allowed"
             >
               <option value="pitch">Pitch</option>
               <option value="accepted">Accepted</option>

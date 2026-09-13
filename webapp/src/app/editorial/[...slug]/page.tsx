@@ -40,9 +40,10 @@ export default async function EditorRoute({
     content = `---
 title: "${title}"
 snomed_id: "${snomedId}"
-review_status: draft
-authors: []
-reviewers: []
+abstract: ""
+review_status: pitch
+assigned_editor: ""
+assigned_reviewers: []
 ---
 
 # ${title}
@@ -66,7 +67,7 @@ Begin writing your article here...
       </header>
       
       <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
-        <Editor initialContent={content} filePath={filePath} />
+        <Editor initialContent={content} filePath={filePath} isEditor={isEditor} />
       </main>
     </div>
   );
