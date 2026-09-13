@@ -20,6 +20,7 @@ export default async function EditorRoute({
 
   const roles = (user.publicMetadata?.roles as string[]) || [];
   const hasPermission = roles.includes('editor') || roles.includes('admin') || roles.includes('author');
+  const isEditor = roles.includes('editor') || roles.includes('admin');
 
   if (!hasPermission) {
     redirect('/cms');
