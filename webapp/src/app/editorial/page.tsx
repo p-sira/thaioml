@@ -43,24 +43,13 @@ export default async function EditorialDashboardPage() {
   
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-        <div className="flex items-center gap-6">
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">ThaiOML Studio</h1>
-            <p className="text-sm text-slate-500">Editorial Dashboard</p>
-          </div>
-        </div>
-        <NewArticleForm />
-      </header>
-      
-      <main className="flex-1 p-8 w-full max-w-7xl mx-auto">
-        <DashboardClient 
-          articles={validArticles} 
-          currentUser={user.username || ''} 
-          isAdmin={isAdmin}
-          isEditor={isEditor}
-        />
-      </main>
+      <DashboardClient 
+        articles={validArticles} 
+        currentUser={user.username || ''} 
+        isAdmin={isAdmin}
+        isEditor={isEditor}
+        newArticleForm={<NewArticleForm />}
+      />
     </div>
   );
 }
