@@ -13,7 +13,8 @@ export default async function EditorialPage() {
   }
 
   const roles = (user.publicMetadata?.roles as string[]) || [];
-  const hasPermission = roles.includes('editor') || roles.includes('admin');
+  const hasPermission = roles.includes('editor') || roles.includes('admin') || roles.includes('author');
+  const isEditor = roles.includes('editor') || roles.includes('admin');
 
   if (!hasPermission) {
     redirect('/cms');
@@ -24,9 +25,27 @@ export default async function EditorialPage() {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
-        <div>
-          <h1 className="text-xl font-bold text-slate-900">ThaiOML Studio</h1>
-          <p className="text-sm text-slate-500">Article Explorer</p>
+        <div className="flex items-center gap-6">
+          <div>
+            <h1 className="text-xl font-bold text-slate-900">ThaiOML Studio</h1>
+            <p className="text-sm text-slate-500">Article Explorer</p>
+          </div>
+          <nav className="flex space-x-1 border-l border-slate-200 pl-6">
+            <Link 
+              href="/editorial" 
+              className="px-3 py-2 text-sm font-medium rounded-md bg-slate-100 text-slate-900"
+            >
+              Articles
+            </Link>
+            {isEditor && (
+              <Link 
+                href="/editorial/dashboard" 
+                className="px-3 py-2 text-sm font-medium rounded-md text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+              >
+                Dashboard
+              </Link>
+            )}
+          </nav>
         </div>
         <NewArticleForm />
       </header>

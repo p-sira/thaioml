@@ -37,7 +37,12 @@ specialty:
   - [e.g., neurology]
 tags:
   - [e.g., autoimmune]
-review_status: [draft, pending, or reviewed]
+abstract: [Short summary or list of content for the pitch]
+assigned_editor: [GitHub username of the overseeing editor]
+assigned_reviewers:
+  - [Reviewer 1]
+  - [Reviewer 2]
+review_status: [pitch, accepted, drafting, in_review, approved, or published]
 last_medical_review: [YYYY-MM-DD, optional]
 ---
 ```

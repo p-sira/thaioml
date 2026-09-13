@@ -3,10 +3,11 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { Markdown } from 'tiptap-markdown';
+import { useRouter } from 'next/navigation';
 
 import { useState } from 'react';
 import matter from 'gray-matter';
-import { saveMarkdownFile } from '@/app/actions/github';
+import { saveMarkdownFile, moveMarkdownFile } from '@/app/actions/github';
 import { autoLinkContent, getSnomedSuggestion } from '@/app/actions/medical';
 import { SlashCommand, getSuggestionOptions } from './extensions/SlashCommand';
 import { CommentMark } from './extensions/CommentMark';
@@ -18,6 +19,7 @@ interface EditorProps {
 }
 
 export default function Editor({ initialContent, filePath }: EditorProps) {
+  const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
   const [isSuggesting, setIsSuggesting] = useState(false);
@@ -73,9 +75,28 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
     try {
       // @ts-expect-error tiptap-markdown extends storage dynamically
       const markdown = editor.storage.markdown.getMarkdown();
-      const fileContent = matter.stringify(markdown, frontmatter);
-      await saveMarkdownFile(filePath, fileContent, `Update ${filePath} via ThaiOML Studio`);
-      alert('Saved successfully!');
+      
+      // Parse comma-separated reviewers into array if it's a string
+      const dataToSave = { ...frontmatter };
+      if (typeof dataToSave.assigned_reviewers === 'string') {
+        dataToSave.assigned_reviewers = dataToSave.assigned_reviewers
+          .split(',')
+          .map((s: string) => s.trim())
+          .filter(Boolean);
+      }
+      
+      const fileContent = matter.stringify(markdown, dataToSave);
+      
+      if (dataToSave.review_status === 'published' && filePath.includes('/editorial/')) {
+        const newPath = filePath.replace('/editorial/', '/articles/');
+        await moveMarkdownFile(filePath, newPath, fileContent, `Publish ${filePath} to articles`);
+        alert('Published successfully! The article has been moved to the articles directory.');
+        // Navigate to the new path
+        router.push(`/editorial/${newPath}`);
+      } else {
+        await saveMarkdownFile(filePath, fileContent, `Update ${filePath} via ThaiOML Studio`);
+        alert('Saved successfully!');
+      }
     } catch {
       alert('Error saving document');
     } finally {
@@ -243,13 +264,48 @@ export default function Editor({ initialContent, filePath }: EditorProps) {
             <p className="text-xs text-slate-500 mt-1">Click the ✨ to auto-suggest based on the article title.</p>
           </div>
           <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Abstract / Pitch Summary</label>
+            <textarea
+              value={frontmatter.abstract || ''}
+              onChange={(e) => handleFrontmatterChange('abstract', e.target.value)}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
+              placeholder="Short list of content..."
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Assigned Editor</label>
+            <input
+              type="text"
+              value={frontmatter.assigned_editor || ''}
+              onChange={(e) => handleFrontmatterChange('assigned_editor', e.target.value)}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
+              placeholder="GitHub username"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Assigned Reviewers (comma-separated)</label>
+            <input
+              type="text"
+              value={Array.isArray(frontmatter.assigned_reviewers) ? frontmatter.assigned_reviewers.join(', ') : (frontmatter.assigned_reviewers || '')}
+              onChange={(e) => handleFrontmatterChange('assigned_reviewers', e.target.value)}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
+              placeholder="reviewer1, reviewer2"
+            />
+          </div>
+
+          <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Review Status</label>
             <select
-              value={frontmatter.review_status || 'draft'}
+              value={frontmatter.review_status || 'pitch'}
               onChange={(e) => handleFrontmatterChange('review_status', e.target.value)}
               className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
             >
-              <option value="draft">Draft</option>
+              <option value="pitch">Pitch</option>
+              <option value="accepted">Accepted</option>
+              <option value="drafting">Drafting</option>
               <option value="in_review">In Review</option>
               <option value="approved">Approved</option>
               <option value="published">Published</option>

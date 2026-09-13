@@ -235,3 +235,50 @@ export async function listMarkdownFiles(directoryPath: string) {
     throw error;
   }
 }
+
+export async function moveMarkdownFile(oldPath: string, newPath: string, content: string, message: string) {
+  const user = await currentUser();
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  const octokit = getOctokit();
+
+  // Save to the new path (which creates or updates it)
+  await saveMarkdownFile(newPath, content, message);
+
+  // Try to get the SHA of the old file on the editorial branch
+  try {
+    const { data } = await octokit.rest.repos.getContent({
+      owner: OWNER,
+      repo: REPO,
+      path: oldPath,
+      ref: 'editorial',
+    });
+
+    if (!Array.isArray(data) && data.type === 'file') {
+      await octokit.rest.repos.deleteFile({
+        owner: OWNER,
+        repo: REPO,
+        path: oldPath,
+        message: `Delete ${oldPath} (moved to ${newPath})`,
+        sha: data.sha,
+        branch: 'editorial',
+        committer: {
+          name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'ThaiOML Studio',
+          email: user.emailAddresses[0]?.emailAddress || 'studio@thaioml.org',
+        },
+        author: {
+          name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'ThaiOML Studio',
+          email: user.emailAddresses[0]?.emailAddress || 'studio@thaioml.org',
+        },
+      });
+    }
+  } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'status' in error && (error as { status: number }).status !== 404) {
+      throw error;
+    }
+  }
+
+  return { success: true };
+}

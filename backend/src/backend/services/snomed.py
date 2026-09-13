@@ -10,37 +10,14 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 
-def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:
-    if not settings.openrouter_api_key_lookup:
-        raise ValueError("OpenRouter API key missing.")
-
-    snomed_llm = ChatOpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=SecretStr(settings.openrouter_api_key_lookup),
-        model=settings.openrouter_model_lookup,
-    )
-
-    prompt_text = f"""You are a medical terminology translator. Translate the following user query into the exact, canonical English SNOMED CT term name.
-Query: '{query}'
-Respond ONLY with the exact English term, nothing else. Do not use quotes or markdown."""
-
-    response = snomed_llm.invoke(prompt_text)
-    canonical_term = str(response.content).strip()
-
-    # Strip quotes if the LLM adds them
-    if canonical_term.startswith('"') and canonical_term.endswith('"'):
-        canonical_term = canonical_term[1:-1]
-    if canonical_term.startswith("'") and canonical_term.endswith("'"):
-        canonical_term = canonical_term[1:-1]
-
-    # Query the local database using pg_trgm similarity
+def _search_snomed_term(term: str, db: Session) -> tuple[str, str] | None:
     result = None
     db_error = False
     try:
         stmt = (
             select(SnomedDescription)
             .where(SnomedDescription.active == True)
-            .order_by(SnomedDescription.term.op("<->")(canonical_term))
+            .order_by(SnomedDescription.term.op("<->")(term))
             .limit(1)
         )
         result = db.execute(stmt).scalars().first()
@@ -48,11 +25,14 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
         print(f"Warning: Local DB query failed ({e}). Falling back to CSIRO API.")
         db_error = True
 
-    if db_error:
-        print(f"Local DB miss for '{canonical_term}'. Falling back to CSIRO API.")
-        encoded_term = urllib.parse.quote(canonical_term)
-        url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
+    if not db_error and result:
+        return str(result.concept_id), str(result.term)
 
+    print(f"Local DB miss for '{term}'. Falling back to CSIRO API.")
+    encoded_term = urllib.parse.quote(term)
+    url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
+
+    try:
         req = urllib.request.Request(url, headers={"Accept": "application/json"})
         with urllib.request.urlopen(req) as resp:
             data = json.loads(resp.read().decode("utf-8"))
@@ -60,25 +40,60 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
         expansion = data.get("expansion", {})
         contains = expansion.get("contains", [])
 
-        valid_concept = None
         for concept in contains:
             if concept.get("inactive") is True:
                 continue
-            valid_concept = concept
-            break
+            return str(concept["code"]), concept["display"]
+    except Exception as e:
+        print(f"CSIRO API error for '{term}': {e}")
+        
+    return None
 
-        if not valid_concept:
-            raise ValueError(
-                f"No active SNOMED concept found for term: {canonical_term}"
-            )
 
-        return str(valid_concept["code"]), valid_concept["display"]
+def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:
+    # 1. Direct search (DB -> CSIRO)
+    match = _search_snomed_term(query, db)
+    if match:
+        return match
+
+    # 2. AI Translation
+    if not settings.openrouter_api_key_lookup:
+        raise ValueError("OpenRouter API key missing.")
+
+    snomed_llm = ChatOpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=SecretStr(settings.openrouter_api_key_lookup),
+        model=settings.openrouter_model_lookup,
+        temperature=0.0,
+    )
+
+    prompt_text = f"""You are a medical terminology translator. Translate the following user query into the exact, canonical English SNOMED CT term name.
+Query: '{query}'
+Respond ONLY with the exact English term enclosed in <term> tags. For example: <term>Myocardial infarction</term>."""
+
+    response = snomed_llm.invoke(prompt_text)
+    content = str(response.content).strip()
+
+    import re
+    match_tag = re.search(r"<term>(.*?)</term>", content, re.IGNORECASE | re.DOTALL)
+    if match_tag:
+        canonical_term = match_tag.group(1).strip()
     else:
-        if not result:
-            raise ValueError(
-                f"No active SNOMED concept found for term: {canonical_term}"
-            )
-        return str(result.concept_id), str(result.term)
+        # Fallback if tags are missing, take the last line which is usually the answer in reasoning models
+        canonical_term = content.split('\n')[-1].strip()
+
+    # Strip quotes if the LLM adds them
+    if canonical_term.startswith('"') and canonical_term.endswith('"'):
+        canonical_term = canonical_term[1:-1]
+    if canonical_term.startswith("'") and canonical_term.endswith("'"):
+        canonical_term = canonical_term[1:-1]
+
+    # 3. AI Search (DB -> CSIRO)
+    match = _search_snomed_term(canonical_term, db)
+    if match:
+        return match
+
+    raise ValueError(f"No active SNOMED concept found for term: {query} (AI canonical: {canonical_term})")
 
 
 def auto_link_terms(body: str, db: Session) -> dict[str, str]:
@@ -106,12 +121,16 @@ Text:
     response = snomed_llm.invoke(prompt_text)
     content = str(response.content).strip()
 
+    import re
+    json_match = re.search(r"```(?:json)?\s*(\[\s*{.*?}\s*\])\s*```", content, re.DOTALL | re.IGNORECASE)
+    if json_match:
+        content_to_parse = json_match.group(1)
+    else:
+        array_match = re.search(r"(\[\s*{.*?}\s*\])", content, re.DOTALL)
+        content_to_parse = array_match.group(1) if array_match else content
+
     try:
-        if content.startswith("```json"):
-            content = content[7:-3]
-        elif content.startswith("```"):
-            content = content[3:-3]
-        extracted_terms = json.loads(content.strip())
+        extracted_terms = json.loads(content_to_parse.strip())
     except json.JSONDecodeError:
         print(f"Failed to parse LLM output: {content}")
         extracted_terms = []
@@ -124,40 +143,9 @@ Text:
             continue
 
         try:
-            result = None
-            db_error = False
-            try:
-                stmt = (
-                    select(SnomedDescription)
-                    .where(SnomedDescription.active == True)
-                    .order_by(SnomedDescription.term.op("<->")(canon))
-                    .limit(1)
-                )
-                result = db.execute(stmt).scalars().first()
-            except Exception as db_e:  # noqa: BLE001
-                print(f"Local DB query failed for {canon}: {db_e}")
-                db_error = True
-
-            if db_error:
-                # Fallback to CSIRO API
-                encoded_term = urllib.parse.quote(canon)
-                url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
-                req = urllib.request.Request(
-                    url, headers={"Accept": "application/json"}
-                )
-                with urllib.request.urlopen(req) as resp:
-                    data = json.loads(resp.read().decode("utf-8"))
-
-                expansion = data.get("expansion", {})
-                contains = expansion.get("contains", [])
-
-                for concept in contains:
-                    if concept.get("inactive") is not True:
-                        final_links[orig] = f"{concept['code']} | {concept['display']}"
-                        break
-            else:
-                if result:
-                    final_links[orig] = f"{result.concept_id} | {result.term}"
+            match = _search_snomed_term(canon, db)
+            if match:
+                final_links[orig] = f"{match[0]} | {match[1]}"
         except Exception as e:  # noqa: BLE001
             print(f"Error resolving {canon}: {e}")
 
