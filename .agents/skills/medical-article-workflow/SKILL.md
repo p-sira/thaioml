@@ -38,12 +38,12 @@ specialty:
 tags:
   - [e.g., autoimmune]
 abstract: [Short summary or list of content for the pitch]
-assigned_editor: [GitHub username of the overseeing editor]
+assigned_editor: [ThaiOML (Clerk) username of the overseeing editor]
 assigned_reviewers:
   - [Reviewer 1]
   - [Reviewer 2]
 review_status: [pitch, accepted, drafting, in_review, approved, or published]
-active_author: [GitHub username of the current author working on the draft]
+active_author: [ThaiOML (Clerk) username of the current author working on the draft]
 last_medical_review: [YYYY-MM-DD, optional]
 ---
 ```

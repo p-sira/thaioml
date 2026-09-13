@@ -11,7 +11,8 @@ import { saveMarkdownFile, moveMarkdownFile } from '@/app/actions/github';
 import { autoLinkContent, getSnomedSuggestion } from '@/app/actions/medical';
 import { SlashCommand, getSuggestionOptions } from './extensions/SlashCommand';
 import { CommentMark } from './extensions/CommentMark';
-import { Info, Sparkles, Loader2, MessageSquare } from 'lucide-react';
+import { Info, Loader2, Sparkles, MessageSquare } from 'lucide-react';
+import UserAutocomplete from './UserAutocomplete';
 
 interface EditorProps {
   initialContent: string;
@@ -78,7 +79,7 @@ export default function Editor({ initialContent, filePath, isEditor = false, cur
     try {
       // @ts-expect-error tiptap-markdown extends storage dynamically
       const markdown = editor.storage.markdown.getMarkdown();
-      
+
       // Parse comma-separated reviewers into array if it's a string
       const dataToSave = { ...frontmatter };
       if (typeof dataToSave.assigned_reviewers === 'string') {
@@ -87,9 +88,9 @@ export default function Editor({ initialContent, filePath, isEditor = false, cur
           .map((s: string) => s.trim())
           .filter(Boolean);
       }
-      
+
       const fileContent = matter.stringify(markdown, dataToSave);
-      
+
       if (dataToSave.review_status === 'published' && filePath.includes('/editorial/')) {
         const newPath = filePath.replace('/editorial/', '/articles/');
         await moveMarkdownFile(filePath, newPath, fileContent, `Publish ${filePath} to articles`);
@@ -226,7 +227,7 @@ export default function Editor({ initialContent, filePath, isEditor = false, cur
         {/* Warning Banner for Active Author */}
         {frontmatter.active_author && frontmatter.active_author !== currentUser && (
           <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-center font-medium">
-            ⚠️ Warning: @{frontmatter.active_author} is currently the active author of this draft. Edit with caution to prevent race conditions.
+            ⚠️ Warning: @{frontmatter.active_author} is currently the active author of this draft. Edit with caution to prevent overwrites and save failures.
           </div>
         )}
 
@@ -236,7 +237,7 @@ export default function Editor({ initialContent, filePath, isEditor = false, cur
             <Info className="w-12 h-12 text-slate-400 mb-4" />
             <h3 className="text-lg font-medium text-slate-700">Main Body Disabled</h3>
             <p className="max-w-md text-center mt-2">
-              The main body of the article is hidden during the Pitch phase. 
+              The main body of the article is hidden during the Pitch phase.
               Please fill out the Abstract field in the metadata sidebar.
             </p>
           </div>
@@ -273,10 +274,10 @@ export default function Editor({ initialContent, filePath, isEditor = false, cur
                 className="flex-1 px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                 placeholder="e.g. 123456789"
               />
-              <button 
-                onClick={handleAutoSuggestSnomed} 
+              <button
+                onClick={handleAutoSuggestSnomed}
                 disabled={isSuggesting}
-                title="Auto-suggest SNOMED ID based on Title" 
+                title="Auto-suggest SNOMED ID based on Title"
                 className="p-2 bg-slate-200 text-slate-600 rounded-md hover:bg-slate-300 transition disabled:opacity-50"
               >
                 {isSuggesting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
@@ -295,39 +296,34 @@ export default function Editor({ initialContent, filePath, isEditor = false, cur
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Active Author</label>
-            <input
-              type="text"
+          <div className="mb-4">
+            <UserAutocomplete
+              label="Active Author"
               value={frontmatter.active_author || ''}
-              onChange={(e) => handleFrontmatterChange('active_author', e.target.value)}
+              onChange={(val) => handleFrontmatterChange('active_author', val)}
               disabled={!isEditor && frontmatter.active_author !== currentUser}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white disabled:bg-slate-100 disabled:text-slate-500"
-              placeholder="GitHub username"
+              placeholder="ThaiOML username"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Assigned Editor</label>
-            <input
-              type="text"
+          <div className="mb-4">
+            <UserAutocomplete
+              label="Assigned Editor"
               value={frontmatter.assigned_editor || ''}
-              onChange={(e) => handleFrontmatterChange('assigned_editor', e.target.value)}
+              onChange={(val) => handleFrontmatterChange('assigned_editor', val)}
               disabled={!isEditor}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white disabled:bg-slate-100 disabled:text-slate-500"
-              placeholder="GitHub username"
+              placeholder="ThaiOML username"
             />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Assigned Reviewers (comma-separated)</label>
-            <input
-              type="text"
-              value={Array.isArray(frontmatter.assigned_reviewers) ? frontmatter.assigned_reviewers.join(', ') : (frontmatter.assigned_reviewers || '')}
-              onChange={(e) => handleFrontmatterChange('assigned_reviewers', e.target.value)}
+          <div className="mb-4">
+            <UserAutocomplete
+              label="Assigned Reviewers"
+              value={frontmatter.assigned_reviewers || []}
+              onChange={(val) => handleFrontmatterChange('assigned_reviewers', val)}
               disabled={!isEditor}
-              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white disabled:bg-slate-100 disabled:text-slate-500"
-              placeholder="reviewer1, reviewer2"
+              multiple={true}
+              placeholder="ThaiOML usernames"
             />
           </div>
 
