@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect } from "react";
 import { Send, Loader2, User, Bot, AlertCircle } from "lucide-react";
-import Link from "next/link";
 import { usePostHog } from 'posthog-js/react';
 
 const PLACEHOLDERS = [

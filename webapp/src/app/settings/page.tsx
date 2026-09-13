@@ -1,6 +1,5 @@
 import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
-import Link from 'next/link'
 import UserSettingsClient from './UserSettingsClient'
 
 export default async function SettingsPage() {

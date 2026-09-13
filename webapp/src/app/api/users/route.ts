@@ -1,4 +1,4 @@
-import { clerkClient } from "@clerk/nextjs/server";
+import { clerkClient, User } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     // Some versions return { data } and some return the array directly
     const usersData = response.data || response;
     
-    const users = usersData.map((u: any) => {
+    const users = usersData.map((u: User) => {
       const name = `${u.firstName || ""} ${u.lastName || ""}`.trim() || u.username || "Unknown";
       return {
         value: u.username || u.id,

@@ -1,14 +1,14 @@
-import { clerkClient } from '@clerk/nextjs/server';
+import { clerkClient, User } from '@clerk/nextjs/server';
 import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 
 // Helper to check if a user is in a field list
-function hasUser(field: any, clerkUser: any): boolean {
+function hasUser(field: unknown, clerkUser: User): boolean {
   if (!field || !clerkUser) return false;
   if (Array.isArray(field)) {
-    return field.some((u: any) => {
+    return field.some((u: { user?: { id?: string, username?: string }, id?: string, username?: string }) => {
       const userData = u?.user || u;
       if (!userData) return false;
       
@@ -27,13 +27,13 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
   }
   
   const client = await clerkClient();
-  let users: any[] = [];
+  let users: User[] = [];
   
   if (username.startsWith('user_')) {
     try {
       const user = await client.users.getUser(username);
       if (user) users = [user];
-    } catch (e) {
+    } catch {
       // User not found by ID
     }
   } else {
@@ -50,7 +50,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
   
   // Read all markdown articles
   const articlesDir = path.join(process.cwd(), '../docs/docs/articles');
-  let contributedArticles = [];
+  const contributedArticles: { id: string, title: string, roles: string[], slug: string, type: string }[] = [];
   
   try {
     if (fs.existsSync(articlesDir)) {
@@ -61,7 +61,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
           const fileContents = fs.readFileSync(filePath, 'utf8');
           const { data } = matter(fileContents);
           
-          let roles = [];
+          const roles: string[] = [];
           if (hasUser(data.authors, user)) roles.push('Author');
           if (hasUser(data.reviewers, user)) roles.push('Reviewer');
           if (hasUser(data.editors, user)) roles.push('Editor');

@@ -24,7 +24,7 @@ Every article MUST contain this exact metadata structure at the top of the file:
 
 ```yaml
 ---
-id: [SNOMED CT Concept ID, e.g., 22298006. Custom IDs like thai-guideline-xxx allowed for exceptions]
+snomed_id: [SNOMED CT Concept ID, e.g., 22298006. Custom IDs like thai-guideline-xxx allowed for exceptions]
 title: [Preferred Term, e.g., Myocardial infarction]
 snomed_fsn: [Fully Specified Name, e.g., Myocardial infarction (disorder)]
 type: [One of: disease, drug, procedure, anatomy, physiology, symptom, laboratory-test, guideline, abbreviation, differential-diagnosis]
@@ -39,15 +39,13 @@ tags:
   - [e.g., autoimmune]
 review_status: [draft, pending, or reviewed]
 last_medical_review: [YYYY-MM-DD, optional]
-snomed_links:
-  "[Exact text to link]": "[SNOMED CT Concept ID]" # e.g. "ASA": "387207008"
 ---
 ```
 
 ## 3. Disambiguation and Deduplication
-- **Deduplication:** The `id` field (SNOMED Concept ID) acts as the unique identifier. Do not create a new file if a concept with this ID already exists. For Thai-specific local content (e.g., national guidelines) that has no SNOMED equivalent, use a custom ID prefix like `thai-guideline-`.
+- **Deduplication:** The `snomed_id` field (SNOMED Concept ID) acts as the unique identifier. Do not create a new file if a concept with this ID already exists. For Thai-specific local content (e.g., national guidelines) that has no SNOMED equivalent, use a custom ID prefix like `thai-guideline-`.
 - **Thai Aliases:** Always map Thai condition names to the official SNOMED CT concept. Include the Thai name in the `synonyms` array to ensure AI search and RAG pipelines can find the English canonical concept via Thai queries.
-- **Workflow:** Authors should use the AI semantic lookup in Decap CMS to find the correct `id` and `snomed_fsn` when creating articles. Keep filenames in human-readable kebab-case (e.g., `myocardial-infarction.md`).
+- **Workflow:** Authors should use the Auto-Suggest feature in the ThaiOML Studio (Next.js TipTap Editor) to find the correct `snomed_id` and `snomed_fsn` when creating articles. Keep filenames in human-readable kebab-case (e.g., `myocardial-infarction.md`).
 
 ## 4. SNOMED Lookup Architecture
 When agents or frontend widgets interact with the SNOMED lookup system (e.g., via the backend `/snomed-suggest` endpoint), the following hybrid pipeline is used to prevent hallucination while retaining semantic translation capabilities (like Thai to English):
@@ -55,11 +53,11 @@ When agents or frontend widgets interact with the SNOMED lookup system (e.g., vi
 2. **Verification (FHIR API):** The backend queries an official terminology server (e.g., CSIRO Ontoserver `tx.ontoserver.csiro.au`) via FHIR (`$expand`) using the predicted term to fetch the actual concept.
 3. **Validation:** The system extracts the first active concept, guaranteeing 100% ID accuracy before returning it to the user.
 
-## 5. Editorial CMS Workflow
-The GitHub repository acts as the backend for Decap CMS. For the exact editorial workflow (Contributor -> Reviewer -> Editor) and proxy approval rules, you MUST read the canonical guidelines at `docs/docs/guidelines/author-guideline.md`, `docs/docs/guidelines/reviewer-guideline.md`, and `docs/docs/guidelines/editor-guideline.md` using the `view_file` tool before taking action.
+## 5. Editorial Workflow (ThaiOML Studio)
+The GitHub repository acts as the backend for the custom ThaiOML Studio Next.js Editor. For the exact editorial workflow (Contributor -> Reviewer -> Editor) and proxy approval rules, you MUST read the canonical guidelines at `docs/docs/guidelines/author-guideline.md`, `docs/docs/guidelines/reviewer-guideline.md`, and `docs/docs/guidelines/editor-guideline.md` using the `view_file` tool before taking action.
 
 ## 6. AI Article Linking & Disambiguation
 When drafting or editing articles, abide by the following rules for linking clinical terminology and abbreviations:
-- **No Manual Linking:** Authors should write text naturally (e.g., `give ASA and check EKG`) and avoid manually adding markdown links for internal terms.
-- **AI Disambiguation:** An AI assistant (or the author via Decap CMS) will populate the `snomed_links` block in the YAML frontmatter. This block maps exact strings from the text to their corresponding SNOMED CT Concept IDs.
-- **Auto-linking:** The `thaioml_linker` MkDocs plugin automatically replaces these strings with links during the static site build. If the target article does not exist, it will safely fallback to a stub link (e.g., `/stub/[SNOMED_ID].html`).
+- **Inline Markdown Linking:** Authors can manually search and insert SNOMED concepts into their text using the `/term` slash command in the editor, or use the **Auto Link** button to have the RAG backend parse and inject these links across the entire article automatically.
+- **Format:** Links are strictly injected in standard Markdown or HTML format using the `snomed:` pseudo-protocol (e.g., `[Myocardial infarction](snomed:22298006)` or `<a href="snomed:22298006">Myocardial infarction</a>`). The `snomed_links` YAML block is obsolete.
+- **Auto-linking:** The `thaioml-linker` MkDocs plugin automatically parses these `snomed:` pseudo-links during the static site build. If the target article does not exist, it will safely fallback to a stub link (e.g., `/stub/[SNOMED_ID].html`).

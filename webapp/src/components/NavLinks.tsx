@@ -35,12 +35,12 @@ export default function NavLinks() {
         <span className="hidden xl:inline">Ask the Library</span>
         <span className="xl:hidden">Ask</span>
       </Link>
-      <a href="/contribute/" className={getLinkClass('/contribute')}>
+      <Link href="/contribute/" className={getLinkClass('/contribute')}>
         Contribute
-      </a>
-      <a href="/about/" className={getLinkClass('/about')}>
+      </Link>
+      <Link href="/about/" className={getLinkClass('/about')}>
         About
-      </a>
+      </Link>
     </div>
   );
 }
