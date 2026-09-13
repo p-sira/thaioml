@@ -111,7 +111,7 @@ export default function Editor({ initialContent, filePath, isEditor = false }: E
     try {
       // @ts-expect-error tiptap-markdown extends storage dynamically
       const markdown = editor.storage.markdown.getMarkdown();
-      const result = await autoLinkContent(markdown);
+      const result = await autoLinkContent(markdown, frontmatter.title, frontmatter.snomed_id);
 
       // Assume backend returns the linked markdown in `result.body` or just `result` if string
       const linkedMarkdown = typeof result === 'string' ? result : (result.body || markdown);

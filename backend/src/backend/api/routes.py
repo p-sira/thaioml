@@ -150,6 +150,8 @@ def snomed_suggest(
 
 class AutoLinkRequest(BaseModel):
     body: str
+    title: str | None = None
+    snomed_id: str | None = None
 
 
 class AutoLinkResponse(BaseModel):
@@ -166,7 +168,9 @@ def auto_link(
     ],
 ):
     try:
-        modified_body, links = auto_link_terms(request.body, db)
+        modified_body, links = auto_link_terms(
+            request.body, db, title=request.title, snomed_id=request.snomed_id
+        )
         posthog.capture(
             distinct_id=user_data.get("sub", "anonymous"),
             event="auto_link_used",

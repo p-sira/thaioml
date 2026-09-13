@@ -12,9 +12,13 @@ from sqlalchemy.orm import Session
 
 def _strip_semantic_tag(text: str) -> str:
     import re
-    return re.sub(r'\s*\([^)]*\)$', '', text).strip()
 
-def _search_snomed_term(term: str, db: Session, exact: bool = False) -> tuple[str, str] | None:
+    return re.sub(r"\s*\([^)]*\)$", "", text).strip()
+
+
+def _search_snomed_term(
+    term: str, db: Session, exact: bool = False
+) -> tuple[str, str] | None:
     result = None
     db_error = False
     try:
@@ -25,7 +29,9 @@ def _search_snomed_term(term: str, db: Session, exact: bool = False) -> tuple[st
                 .where(
                     or_(
                         func.lower(SnomedDescription.term) == func.lower(term),
-                        func.lower(SnomedDescription.term).like(func.lower(term) + " (%)")
+                        func.lower(SnomedDescription.term).like(
+                            func.lower(term) + " (%)"
+                        ),
                     )
                 )
                 .limit(1)
@@ -61,9 +67,9 @@ def _search_snomed_term(term: str, db: Session, exact: bool = False) -> tuple[st
         for concept in contains:
             if concept.get("inactive") is True:
                 continue
-            
+
             display_clean = _strip_semantic_tag(concept["display"])
-            
+
             if exact:
                 if display_clean.lower() == term.lower():
                     return str(concept["code"]), display_clean
@@ -71,13 +77,13 @@ def _search_snomed_term(term: str, db: Session, exact: bool = False) -> tuple[st
                 return str(concept["code"]), display_clean
     except Exception as e:
         print(f"CSIRO API error for '{term}': {e}")
-        
+
     return None
 
 
 def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:
     query = query.strip()
-    
+
     # 1. Direct search (DB -> CSIRO)
     match = _search_snomed_term(query, db, exact=True)
     if match:
@@ -102,12 +108,13 @@ Respond ONLY with the exact English term enclosed in <term> tags. For example: <
     content = str(response.content).strip()
 
     import re
+
     match_tag = re.search(r"<term>(.*?)</term>", content, re.IGNORECASE | re.DOTALL)
     if match_tag:
         canonical_term = match_tag.group(1).strip()
     else:
         # Fallback if tags are missing, take the last line which is usually the answer in reasoning models
-        canonical_term = content.split('\n')[-1].strip()
+        canonical_term = content.split("\n")[-1].strip()
 
     # Strip quotes if the LLM adds them
     if canonical_term.startswith('"') and canonical_term.endswith('"'):
@@ -120,10 +127,14 @@ Respond ONLY with the exact English term enclosed in <term> tags. For example: <
     if match:
         return match
 
-    raise ValueError(f"No active SNOMED concept found for term: {query} (AI canonical: {canonical_term})")
+    raise ValueError(
+        f"No active SNOMED concept found for term: {query} (AI canonical: {canonical_term})"
+    )
 
 
-def auto_link_terms(body: str, db: Session) -> tuple[str, dict[str, str]]:
+def auto_link_terms(
+    body: str, db: Session, title: str | None = None, snomed_id: str | None = None
+) -> tuple[str, dict[str, str]]:
     if not settings.openrouter_api_key_lookup:
         raise ValueError("OpenRouter API key missing.")
 
@@ -137,7 +148,6 @@ def auto_link_terms(body: str, db: Session) -> tuple[str, dict[str, str]]:
     prompt_text = f"""You are a medical terminology extraction system. 
 Analyze the following markdown text and extract clinically significant terms (abbreviations, diseases, drugs, procedures). 
 For each extracted term, predict the exact, canonical English SNOMED CT term name.
-Limit to at most 10 key terms.
 Output ONLY a valid JSON array of objects with keys "original_text" and "canonical_snomed_term".
 Do not wrap in markdown blocks, just return raw JSON.
 
@@ -149,7 +159,10 @@ Text:
     content = str(response.content).strip()
 
     import re
-    json_match = re.search(r"```(?:json)?\s*(\[\s*{.*?}\s*\])\s*```", content, re.DOTALL | re.IGNORECASE)
+
+    json_match = re.search(
+        r"```(?:json)?\s*(\[\s*{.*?}\s*\])\s*```", content, re.DOTALL | re.IGNORECASE
+    )
     if json_match:
         content_to_parse = json_match.group(1)
     else:
@@ -163,7 +176,8 @@ Text:
         extracted_terms = []
 
     final_links = {}
-    modified_body = body
+    modified_body_lines = body.split("\n")
+
     for item in extracted_terms:
         orig = item.get("original_text", "").strip()
         canon = item.get("canonical_snomed_term", "").strip()
@@ -174,12 +188,25 @@ Text:
             match = _search_snomed_term(canon, db, exact=False)
             if match:
                 concept_id, display_term = match
+
+                # Prevent self-linking
+                if snomed_id and str(concept_id) == str(snomed_id):
+                    continue
+                if title and orig.lower() == title.lower():
+                    continue
+
                 final_links[orig] = f"{concept_id} | {display_term}"
-                
+
                 # Replace in markdown using word boundaries, ignoring already linked text
-                pattern = re.compile(r'(?<!\[)\b' + re.escape(orig) + r'\b(?!\])')
-                modified_body = pattern.sub(f"[{orig}](snomed://{concept_id})", modified_body)
+                pattern = re.compile(r"(?<!\[)\b" + re.escape(orig) + r"\b(?!\])")
+
+                for i, line in enumerate(modified_body_lines):
+                    if not line.lstrip().startswith("#"):
+                        modified_body_lines[i] = pattern.sub(
+                            f"[{orig}](snomed://{concept_id})", line
+                        )
         except Exception as e:  # noqa: BLE001
             print(f"Error resolving {canon}: {e}")
 
+    modified_body = "\n".join(modified_body_lines)
     return modified_body, final_links

@@ -64,5 +64,5 @@ def test_auto_link_endpoint(mock_auto_link, client):
     assert "Hypertension" in data["links"]
     assert data["body"] == "Patient has [Hypertension](snomed://123456)."
     mock_auto_link.assert_called_once_with(
-        "Patient has Hypertension.", "mocked_db_session"
+        "Patient has Hypertension.", "mocked_db_session", title=None, snomed_id=None
     )
