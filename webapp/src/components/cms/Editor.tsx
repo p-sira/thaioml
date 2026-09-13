@@ -17,9 +17,10 @@ interface EditorProps {
   initialContent: string;
   filePath: string;
   isEditor?: boolean;
+  currentUser?: string;
 }
 
-export default function Editor({ initialContent, filePath, isEditor = false }: EditorProps) {
+export default function Editor({ initialContent, filePath, isEditor = false, currentUser = '' }: EditorProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
   const [isLinking, setIsLinking] = useState(false);
@@ -222,6 +223,13 @@ export default function Editor({ initialContent, filePath, isEditor = false }: E
           </button>
         </div>
 
+        {/* Warning Banner for Active Author */}
+        {frontmatter.active_author && frontmatter.active_author !== currentUser && (
+          <div className="bg-amber-50 border-b border-amber-200 px-4 py-2 text-sm text-amber-800 flex items-center justify-center font-medium">
+            ⚠️ Warning: @{frontmatter.active_author} is currently the active author of this draft. Edit with caution to prevent race conditions.
+          </div>
+        )}
+
         {/* Editor Content */}
         {frontmatter.review_status === 'pitch' ? (
           <div className="p-6 bg-slate-100 flex-1 flex flex-col items-center justify-center text-slate-500">
@@ -284,6 +292,18 @@ export default function Editor({ initialContent, filePath, isEditor = false }: E
               className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white"
               placeholder="Short list of content..."
               rows={3}
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Active Author</label>
+            <input
+              type="text"
+              value={frontmatter.active_author || ''}
+              onChange={(e) => handleFrontmatterChange('active_author', e.target.value)}
+              disabled={!isEditor && frontmatter.active_author !== currentUser}
+              className="w-full px-3 py-2 border border-slate-300 rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500 sm:text-sm bg-white disabled:bg-slate-100 disabled:text-slate-500"
+              placeholder="GitHub username"
             />
           </div>
 

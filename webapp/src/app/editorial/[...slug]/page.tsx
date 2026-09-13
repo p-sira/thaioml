@@ -45,6 +45,7 @@ abstract: ""
 review_status: pitch
 assigned_editor: ""
 assigned_reviewers: []
+active_author: "${user.username || ''}"
 ---
 
 # ${title}
@@ -68,7 +69,7 @@ Begin writing your article here...
       </header>
       
       <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
-        <Editor initialContent={content} filePath={filePath} isEditor={isEditor} />
+        <Editor initialContent={content} filePath={filePath} isEditor={isEditor} currentUser={user.username || ''} />
       </main>
     </div>
   );
