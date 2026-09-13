@@ -8,7 +8,8 @@ review_status: accepted
 assigned_editor: psira
 assigned_reviewers:
   - psira
+active_author: author
 ---
 # Systemic lupus erythematosus
 
-Begin writing your article here...
+**Systemic lupus erythematosus** (**SLE**), is an autoimmune disease in which the immune system mistakenly attacks healthy tissue in many parts of the body.
