@@ -5,8 +5,9 @@ abstract: |-
   Clinical manifestation
   Management (first-line, adjuncts)
 review_status: pitch
-assigned_editor: ''
-assigned_reviewers: []
+assigned_editor: psira
+assigned_reviewers:
+  - psira
 ---
 # Systemic lupus erythematosus
 
