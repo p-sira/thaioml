@@ -76,6 +76,8 @@ def _search_snomed_term(term: str, db: Session, exact: bool = False) -> tuple[st
 
 
 def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:
+    query = query.strip()
+    
     # 1. Direct search (DB -> CSIRO)
     match = _search_snomed_term(query, db, exact=True)
     if match:
@@ -162,8 +164,8 @@ Text:
 
     final_links = {}
     for item in extracted_terms:
-        orig = item.get("original_text")
-        canon = item.get("canonical_snomed_term")
+        orig = item.get("original_text", "").strip()
+        canon = item.get("canonical_snomed_term", "").strip()
         if not orig or not canon:
             continue
 
