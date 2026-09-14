@@ -7,6 +7,9 @@
         "@modelcontextprotocol/server-postgres",
         "postgresql://postgres:postgres@localhost:5432/thaioml"
       ]
+    },
+    "cloudflare": {
+      "httpUrl": "https://mcp.cloudflare.com/mcp"
     }
   }
 }

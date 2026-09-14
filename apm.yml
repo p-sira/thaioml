@@ -1,0 +1,15 @@
+name: thaioml
+version: 1.0.0
+description: APM project for thaioml
+author: Sira Pornsiriprasert
+# Which agent platforms to deploy to (uncomment to pin):
+# targets:
+#   - copilot
+#   - claude
+
+dependencies:
+  apm:
+    - cloudflare/skills
+  mcp: []
+includes: auto
+scripts: {}
