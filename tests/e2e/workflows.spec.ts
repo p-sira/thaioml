@@ -29,24 +29,11 @@ test.describe('Key Workflows', () => {
     await expect(page.getByText('This is a mocked response from the AI.')).toBeVisible({ timeout: 10000 });
   });
 
-  test('Decap CMS editor loading', async ({ page }) => {
-    // Navigate to the CMS hosted on the MkDocs frontend
-    await page.goto('http://localhost:8000/editorial/');
-
-    // In local_backend mode, there is usually a login button that bypasses OAuth
-    // Or it automatically logs in depending on Decap version. We wait for a button or the UI.
-    const loginButton = page.getByRole('button', { name: /login/i });
-    if (await loginButton.isVisible()) {
-      await loginButton.click();
-    }
-
-    // Verify we land on the Collections page and can see the Articles collection
-    // Wait for the side navigation or header
-    await expect(page.getByRole('heading', { name: 'Collections' })).toBeVisible({ timeout: 10000 });
-
-    // The "Articles" collection heading should be present (use role to avoid ambiguity
-    // with the sidebar nav link which also contains "Articles" text)
-    await expect(page.getByRole('heading', { name: 'Articles' })).toBeVisible();
+  test('ThaiOML Studio route redirects unauthenticated users', async ({ page }) => {
+    await page.goto('http://localhost:3000/cms');
+    // Without authentication, users are redirected to sign-in
+    await page.waitForURL(url => url.pathname.includes('/sign-in'), { timeout: 10000 });
+    expect(page.url()).toContain('/sign-in');
   });
 
   test('Cross-app search redirection', async ({ page }) => {

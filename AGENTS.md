@@ -23,4 +23,4 @@ To save your context window, detailed procedures have been extracted into Skills
 
 ## 3. Governance Context
 * ThaiOML is an independent organization. Branches (like specific medical schools) operate under this unified structure.
-* Reviewers (staff/experts) approve content via the Decap CMS, and the responsible editors (medical students) merge on that basis. Always ensure `review_status` metadata accurately reflects this pipeline.
+* Reviewers (staff/experts) approve content via ThaiOML Studio, and the responsible editors (medical students) merge on that basis. Always ensure `review_status` metadata accurately reflects this pipeline.

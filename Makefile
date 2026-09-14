@@ -1,4 +1,4 @@
-.PHONY: dev-docs dev-cms dev-backend setup
+.PHONY: dev-backend dev-webapp dev-all setup test test-backend test-webapp test-e2e
 
 -include .env
 export
@@ -11,10 +11,6 @@ setup:
 	@echo "Setting up webapp dependencies..."
 	cd webapp && npm install
 
-dev-cms:
-	@echo "Starting Decap CMS proxy..."
-	npx decap-server
-
 dev-backend:
 	@echo "Starting FastAPI backend..."
 	cd backend && uv run uvicorn backend.main:app --reload --port 8080
@@ -24,11 +20,11 @@ dev-webapp:
 	cd webapp && npm run dev
 
 dev:
-	@echo "To run everything manually, we recommend opening this folder in a Devcontainer, or running 'make dev-cms', 'make dev-backend' and 'make dev-webapp' in separate terminals."
+	@echo "To run everything manually, we recommend opening this folder in a Devcontainer, or running 'make dev-backend' and 'make dev-webapp' in separate terminals."
 
 dev-all:
-	@echo "Starting all services (CMS, Backend, Webapp)..."
-	@trap 'echo "Stopping services..."; kill 0' SIGINT EXIT; $(MAKE) dev-backend & $(MAKE) dev-cms & $(MAKE) dev-webapp & wait
+	@echo "Starting all services (Backend, Webapp)..."
+	@trap 'echo "Stopping services..."; kill 0' SIGINT EXIT; $(MAKE) dev-backend & $(MAKE) dev-webapp & wait
 
 test-backend:
 	@echo "Running backend unit tests..."

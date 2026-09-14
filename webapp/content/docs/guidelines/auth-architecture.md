@@ -68,7 +68,7 @@ def chat_system(
 Users in ThaiOML have customizable usernames, which they can manage through Clerk's built-in Account Settings tab.
 
 To maintain robust identity references (e.g., in medical article authorship metadata) when a user changes their username:
-- **Immutability First:** The CMS and frontend components MUST always prioritize linking and storing the immutable Clerk `user.id`. 
-- **CMS Storage:** When assigning roles in Decap CMS (e.g., authors or reviewers), the custom `clerk_user` widget stores both the `username` (for human-readable display) and the `id` (for robust linking).
+- **Immutability First:** The editorial studio and frontend components MUST always prioritize linking and storing the immutable Clerk `user.id`. 
+- **Studio Storage:** When assigning roles in ThaiOML Studio (e.g., authors or reviewers), the user autocomplete widget stores both the `username` (for human-readable display) and the `id` (for robust linking).
 - **Profile Routing:** The public profile page (`/user/[username_or_id]`) is designed to accept either the username or the `user_` prefixed ID.
-- **Static Linking:** MkDocs templates (like `source-file.html`) construct user profile URLs using the `id` fallback whenever possible to prevent broken links (404s) after username changes.
+- **Linking:** Documentation and article views construct user profile URLs using the `id` fallback whenever possible to prevent broken links (404s) after username changes.

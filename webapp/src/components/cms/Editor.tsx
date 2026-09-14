@@ -127,7 +127,7 @@ export default function Editor({ initialContent, filePath, isEditor = false, cur
     }
   };
 
-  const handleFrontmatterChange = (key: string, value: string) => {
+  const handleFrontmatterChange = (key: string, value: string | string[]) => {
     setFrontmatter(prev => ({ ...prev, [key]: value }));
   };
 

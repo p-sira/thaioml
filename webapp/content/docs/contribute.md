@@ -6,13 +6,13 @@ title: Contribute
 
 ThaiOML is a community-maintained, expert-reviewed medical education database. We welcome contributions from medical students, professionals, and domain experts.
 
-## Content Management System (CMS)
+## ThaiOML Studio (Editorial Workspace)
 
-We use Decap CMS to manage our articles, abbreviations, and categories. 
+We use ThaiOML Studio to manage our articles, abbreviations, and categories. 
 
-[Go to CMS (Login Required)](/cms)
+[Go to ThaiOML Studio (Login Required)](/cms)
 
-*Note: You must have an authorized editor account to access the CMS.*
+*Note: You must have an authorized author or editor account to access the workspace.*
 
 If you do not have permission and would like to join as an editor, please contact us at [code@psira.me](mailto:code@psira.me).
 
