@@ -8,8 +8,8 @@
         "postgresql://postgres:postgres@localhost:5432/thaioml"
       ]
     },
-    "cloudflare": {
-      "httpUrl": "https://mcp.cloudflare.com/mcp"
+    "supabase": {
+      "httpUrl": "https://mcp.supabase.com/mcp?features=docs"
     }
   }
 }
