@@ -10,6 +10,7 @@ Welcome to the Open Medical Library of Thailand (ThaiOML) workspace. As an AI pa
 * **Python Tooling:** You MUST strictly use `uv` for all Python dependency management and environments across the repository (backend). The use of standard `pip` is banned.
 * **Auth & Identity:** Clerk is the single source of truth for identity and roles. See `webapp/content/docs/guidelines/auth-architecture.md` for rules on Next.js API JWT templates and FastAPI role dependencies.
 * **Deployment-First Environment Configuration:** NEVER hardcode environment-specific URLs (especially `http://localhost:...`) anywhere in the codebase (Next.js, FastAPI, or Fumadocs). Always aim for deployment from the start. Use environment variables (e.g., `NEXT_PUBLIC_API_URL`, FastAPI config files) to handle environment routing. This ensures seamless, immediate deployments across local, staging, and production environments.
+* **Infrastructure & Hosting Stack:** ThaiOML employs a decoupled multi-tier stack: Cloudflare Workers (Next.js webapp via OpenNext), Google Cloud Run (FastAPI backend container), and Supabase (PostgreSQL with `pgvector` and `pg_trgm`). Detailed architecture and deployment specifications are canonical in `webapp/content/docs/guidelines/architecture-stack.md`.
 
 ## 2. Agent Skills
 To save your context window, detailed procedures have been extracted into Skills. If you need to perform any of the following tasks, you MUST load the respective skill before modifying files:

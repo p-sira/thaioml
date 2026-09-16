@@ -4,9 +4,9 @@ import { Octokit } from 'octokit';
 import { currentUser } from '@clerk/nextjs/server';
 
 const getOctokit = () => {
-  const token = process.env.THAIOML_BOT;
+  const token = process.env.THAIOML_BOT_GITHUB_TOKEN || process.env.THAIOML_BOT;
   if (!token) {
-    throw new Error('THAIOML_BOT token is not set');
+    throw new Error('Neither THAIOML_BOT_GITHUB_TOKEN nor THAIOML_BOT token is set');
   }
   return new Octokit({ auth: token });
 };
@@ -42,7 +42,7 @@ export async function saveMarkdownFile(filePath: string, content: string, messag
       repo: REPO,
       ref: 'heads/main'
     });
-    
+
     await octokit.rest.git.createRef({
       owner: OWNER,
       repo: REPO,
@@ -91,7 +91,7 @@ export async function saveMarkdownFile(filePath: string, content: string, messag
 
   // 5. Commit the file to the editorial branch
   const base64Content = Buffer.from(content).toString('base64');
-  
+
   await octokit.rest.repos.createOrUpdateFileContents({
     owner: OWNER,
     repo: REPO,
@@ -215,7 +215,7 @@ export async function moveMarkdownFile(oldPath: string, newPath: string, content
   }
 
   const octokit = getOctokit();
-  
+
   // 1. Determine the publish branch name based on the file name
   const filename = newPath.split('/').pop()?.replace('.md', '') || 'article';
   const publishBranch = `publish/${filename}`;
@@ -241,7 +241,7 @@ export async function moveMarkdownFile(oldPath: string, newPath: string, content
       repo: REPO,
       ref: 'heads/main'
     });
-    
+
     await octokit.rest.git.createRef({
       owner: OWNER,
       repo: REPO,

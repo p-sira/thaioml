@@ -26,3 +26,7 @@ node_modules/
 
 # APM dependencies
 apm_modules/
+
+# Cloudflare / OpenNext
+.open-next/
+.wrangler/

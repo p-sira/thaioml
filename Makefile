@@ -1,4 +1,4 @@
-.PHONY: dev-backend dev-webapp dev-all setup test test-backend test-webapp test-e2e
+.PHONY: dev-backend dev-webapp dev-all setup test test-backend test-webapp test-e2e build-webapp deploy-webapp
 
 -include .env
 export
@@ -40,3 +40,12 @@ test-e2e:
 
 test: test-backend test-webapp
 	@echo "Unit testing complete. For E2E tests, make sure servers are running and run 'make test-e2e'"
+
+build-webapp:
+	@echo "Building webapp for Cloudflare..."
+	cd webapp && npm run build:worker
+
+deploy-webapp:
+	@echo "Deploying webapp to Cloudflare..."
+	cd webapp && npm run deploy
+

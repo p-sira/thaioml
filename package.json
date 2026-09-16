@@ -4,7 +4,10 @@
   "description": "Open Medical Library of Thailand",
   "scripts": {
     "dev": "make dev-all",
-    "test:e2e": "npx playwright test"
+    "test:e2e": "npx playwright test",
+    "wrangler": "wrangler",
+    "build:webapp": "npm run --prefix webapp build:worker",
+    "deploy:webapp": "npm run --prefix webapp deploy"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
