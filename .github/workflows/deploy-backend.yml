@@ -52,3 +52,4 @@ jobs:
             --memory=1Gi
             --min-instances=0
             --max-instances=5
+            --service-account=github-deployer@thaioml.iam.gserviceaccount.com
