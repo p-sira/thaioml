@@ -29,6 +29,13 @@ jobs:
         run: npm ci
 
       - name: Build Next.js & OpenNext
+        env:
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_live_YW11c2VkLWhlcm1pdC01ODYuY2xlcmsuYWNjb3VudHMuZGV2JA"
+          NEXT_PUBLIC_CLERK_SIGN_IN_URL: "/sign-in"
+          NEXT_PUBLIC_CLERK_SIGN_UP_URL: "/sign-up"
+          NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: "/"
+          NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL: "/"
+          NEXT_PUBLIC_POSTHOG_PROJECT_TOKEN: "phc_kowbTx2d6QWUCeLUQhsYLkGwsE4XZenFv8micQD9xGXp"
         run: npm run build:worker
 
       - name: Deploy to Cloudflare Workers
