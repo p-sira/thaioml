@@ -3,12 +3,20 @@ name: Test Workflow
 on:
   push:
     branches: ["main"]
-    paths-ignore:
-      - 'webapp/content/docs/articles/**'
+    paths:
+      - "backend/**"
+      - "webapp/**"
+      - ".github/workflows/test.yml"
+      - "package.json"
+      - "package-lock.json"
   pull_request:
     branches: ["main"]
-    paths-ignore:
-      - 'webapp/content/docs/articles/**'
+    paths:
+      - "backend/**"
+      - "webapp/**"
+      - ".github/workflows/test.yml"
+      - "package.json"
+      - "package-lock.json"
 
 jobs:
   test:

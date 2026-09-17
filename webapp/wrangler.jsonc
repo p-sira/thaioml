@@ -11,7 +11,7 @@
     "binding": "ASSETS"
   },
   "vars": {
-    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuaGVsbG9wc2lyYS53b3JrZXJzLmRldiQ"
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY": "pk_live_YW11c2VkLWhlcm1pdC01ODYuY2xlcmsuYWNjb3VudHMuZGV2JA"
   },
   "observability": {
     "logs": {
