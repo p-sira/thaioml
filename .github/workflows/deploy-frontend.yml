@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Next.js & OpenNext
         env:
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: "pk_test_YW11c2VkLWhlcm1pdC01ODYuY2xlcmsuYWNjb3VudHMuZGV2JA"
+          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
           NEXT_PUBLIC_CLERK_SIGN_IN_URL: "/sign-in"
           NEXT_PUBLIC_CLERK_SIGN_UP_URL: "/sign-up"
           NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL: "/"
@@ -44,4 +44,4 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: webapp
-          command: deploy -c wrangler.jsonc
+          command: deploy -c wrangler.jsonc --var NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}

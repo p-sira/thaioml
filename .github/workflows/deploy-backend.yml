@@ -44,7 +44,7 @@ jobs:
             DATABASE_URL=${{ secrets.SUPABASE_DATABASE_URL }}
             OPENROUTER_API_KEY_RAG=${{ secrets.OPENROUTER_API_KEY_RAG }}
             HUGGINGFACE_API_KEY_EMBEDDING=${{ secrets.HUGGINGFACE_API_KEY_EMBEDDING }}
-            CLERK_JWKS_URL=https://amused-hermit-586.clerk.accounts.dev/.well-known/jwks.json
+            CLERK_JWKS_URL=${{ secrets.CLERK_JWKS_URL }}
           flags: |
             --allow-unauthenticated
             --port=8080
