@@ -40,11 +40,11 @@ jobs:
           service: thaioml-backend
           region: asia-southeast1
           source: ./backend
-          env_vars: |
-            DATABASE_URL=${{ secrets.SUPABASE_DATABASE_URL }}
-            OPENROUTER_API_KEY_RAG=${{ secrets.OPENROUTER_API_KEY_RAG }}
-            HUGGINGFACE_API_KEY_EMBEDDING=${{ secrets.HUGGINGFACE_API_KEY_EMBEDDING }}
-            CLERK_JWKS_URL=${{ secrets.CLERK_JWKS_URL }}
+          secrets: |
+            DATABASE_URL=SUPABASE_DATABASE_URL:latest
+            OPENROUTER_API_KEY_RAG=OPENROUTER_API_KEY_RAG:latest
+            HUGGINGFACE_API_KEY_EMBEDDING=HUGGINGFACE_API_KEY_EMBEDDING:latest
+            CLERK_JWKS_URL=CLERK_JWKS_URL:latest
           flags: |
             --allow-unauthenticated
             --port=8080
