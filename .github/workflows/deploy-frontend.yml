@@ -45,3 +45,7 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           workingDirectory: webapp
           command: deploy -c wrangler.jsonc --var NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:${{ secrets.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY }}
+          secrets: |
+            CLERK_SECRET_KEY
+        env:
+          CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
