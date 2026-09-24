@@ -42,7 +42,7 @@ def test_query_endpoint(mock_rag_service, client):
 
 @patch("backend.api.routes.suggest_snomed_term")
 def test_snomed_suggest_endpoint(mock_suggest, client):
-    mock_suggest.return_value = ("123456", "Hypertension (disorder)")
+    mock_suggest.return_value = ("123456", "Hypertension (disorder)", "exact")
 
     response = client.post("/snomed-suggest", json={"query": "hypertension"})
 
