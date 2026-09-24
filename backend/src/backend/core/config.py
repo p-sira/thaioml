@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
-    database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/thaioml"
+    database_url: str
     openrouter_api_key_rag: str = ""
     openrouter_model_rag: str = "qwen/qwen-2.5-72b-instruct:free"
     huggingface_api_key_embedding: str = ""

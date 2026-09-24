@@ -44,7 +44,6 @@ jobs:
             DATABASE_URL=SUPABASE_DATABASE_URL:latest
             OPENROUTER_API_KEY_RAG=OPENROUTER_API_KEY_RAG:latest
             HUGGINGFACE_API_KEY_EMBEDDING=HUGGINGFACE_API_KEY_EMBEDDING:latest
-            CLERK_JWKS_URL=CLERK_JWKS_URL:latest
           flags: |
             --allow-unauthenticated
             --port=8080
