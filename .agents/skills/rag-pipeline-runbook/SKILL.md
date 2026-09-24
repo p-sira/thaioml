@@ -7,7 +7,7 @@ description: >-
 
 # RAG Pipeline Runbook
 
-The ThaiOML RAG pipeline operates entirely independently of the static frontend. It uses `FastAPI`, `LangChain`, and `pgvector`. It also hosts the AI SNOMED auto-linker for the Decap CMS.
+The ThaiOML RAG pipeline operates entirely independently of the static frontend. It uses `FastAPI`, `LangChain`, and `pgvector`. It also hosts the AI SNOMED auto-linker for ThaiOML Studio.
 
 ## 1. Local Environment Requirements
 To test the full RAG pipeline locally, you need the PostgreSQL `pgvector` container running.

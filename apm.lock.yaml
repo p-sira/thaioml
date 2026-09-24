@@ -1,0 +1,504 @@
+lockfile_version: '1'
+generated_at: '2026-09-16T10:14:16.130164+00:00'
+apm_version: 0.30.0
+dependencies:
+- repo_url: cloudflare/skills
+  name: cloudflare
+  host: github.com
+  resolved_commit: b052c32bab7dd493513260228a36c88294f343f1
+  version: 1.0.0
+  package_type: agent_plugin
+  content_hash: sha256:b6ae275c3a1100a2c6d0504031a6efd4b4a9a918643c0273ff59697be0be9e16
+  declared_license: Apache-2.0
+- repo_url: supabase/agent-skills
+  name: agent-skills
+  host: github.com
+  resolved_commit: 8331f910845103c08d51f6ca1d86ebb7d1f745e3
+  version: 8331f91
+  package_type: marketplace_plugin
+  deployed_files:
+  - .agents/skills/supabase
+  - .agents/skills/supabase-postgres-best-practices
+  - .agents/skills/supabase-postgres-best-practices/CHANGELOG.md
+  - .agents/skills/supabase-postgres-best-practices/SKILL.md
+  - .agents/skills/supabase-postgres-best-practices/references/_contributing.md
+  - .agents/skills/supabase-postgres-best-practices/references/_sections.md
+  - .agents/skills/supabase-postgres-best-practices/references/_template.md
+  - .agents/skills/supabase-postgres-best-practices/references/advanced-full-text-search.md
+  - .agents/skills/supabase-postgres-best-practices/references/advanced-jsonb-indexing.md
+  - .agents/skills/supabase-postgres-best-practices/references/conn-idle-timeout.md
+  - .agents/skills/supabase-postgres-best-practices/references/conn-limits.md
+  - .agents/skills/supabase-postgres-best-practices/references/conn-pooling.md
+  - .agents/skills/supabase-postgres-best-practices/references/conn-prepared-statements.md
+  - .agents/skills/supabase-postgres-best-practices/references/data-batch-inserts.md
+  - .agents/skills/supabase-postgres-best-practices/references/data-n-plus-one.md
+  - .agents/skills/supabase-postgres-best-practices/references/data-pagination.md
+  - .agents/skills/supabase-postgres-best-practices/references/data-upsert.md
+  - .agents/skills/supabase-postgres-best-practices/references/lock-advisory.md
+  - .agents/skills/supabase-postgres-best-practices/references/lock-deadlock-prevention.md
+  - .agents/skills/supabase-postgres-best-practices/references/lock-short-transactions.md
+  - .agents/skills/supabase-postgres-best-practices/references/lock-skip-locked.md
+  - .agents/skills/supabase-postgres-best-practices/references/monitor-explain-analyze.md
+  - .agents/skills/supabase-postgres-best-practices/references/monitor-pg-stat-statements.md
+  - .agents/skills/supabase-postgres-best-practices/references/monitor-vacuum-analyze.md
+  - .agents/skills/supabase-postgres-best-practices/references/query-composite-indexes.md
+  - .agents/skills/supabase-postgres-best-practices/references/query-covering-indexes.md
+  - .agents/skills/supabase-postgres-best-practices/references/query-index-types.md
+  - .agents/skills/supabase-postgres-best-practices/references/query-missing-indexes.md
+  - .agents/skills/supabase-postgres-best-practices/references/query-partial-indexes.md
+  - .agents/skills/supabase-postgres-best-practices/references/schema-constraints.md
+  - .agents/skills/supabase-postgres-best-practices/references/schema-data-types.md
+  - .agents/skills/supabase-postgres-best-practices/references/schema-foreign-key-indexes.md
+  - .agents/skills/supabase-postgres-best-practices/references/schema-lowercase-identifiers.md
+  - .agents/skills/supabase-postgres-best-practices/references/schema-partitioning.md
+  - .agents/skills/supabase-postgres-best-practices/references/schema-primary-keys.md
+  - .agents/skills/supabase-postgres-best-practices/references/security-privileges.md
+  - .agents/skills/supabase-postgres-best-practices/references/security-rls-basics.md
+  - .agents/skills/supabase-postgres-best-practices/references/security-rls-performance.md
+  - .agents/skills/supabase/CHANGELOG.md
+  - .agents/skills/supabase/SKILL.md
+  - .agents/skills/supabase/assets/feedback-issue-template.md
+  - .agents/skills/supabase/references/skill-feedback.md
+  deployed_file_hashes:
+    .agents/skills/supabase-postgres-best-practices/CHANGELOG.md: sha256:751ad110037c85d400018c9894716a04fa46357ff55c22b1169b280752e19e88
+    .agents/skills/supabase-postgres-best-practices/SKILL.md: sha256:ad65e776f45e761bafc609d3f506c77c1032225aa65e0c4c02f241b8071e5855
+    .agents/skills/supabase-postgres-best-practices/references/_contributing.md: sha256:191e039e7d94764e6073410b513b559f9a594e0fdf0252a30c2a2986df2ab3bc
+    .agents/skills/supabase-postgres-best-practices/references/_sections.md: sha256:c9e992612b422c7122de0b7542ebc2450db283edaab08cfe86c6d657fcccccd5
+    .agents/skills/supabase-postgres-best-practices/references/_template.md: sha256:6299954250f212caabe339d752c3e5313a8e07d1a182a4e4b425baee91df1bd2
+    .agents/skills/supabase-postgres-best-practices/references/advanced-full-text-search.md: sha256:40c2606bbb4c4dce31308f201b24cc7f58c7df05b1d9c6856fe2b888d3b7cf28
+    .agents/skills/supabase-postgres-best-practices/references/advanced-jsonb-indexing.md: sha256:24cacf6a8bc35901dd566d24502ce8e57f810a5c196b897e61d52726e521d106
+    .agents/skills/supabase-postgres-best-practices/references/conn-idle-timeout.md: sha256:630588902c00fcec59a5988cc5d042f76dcf2c923a535abfd8c47dca205eaed5
+    .agents/skills/supabase-postgres-best-practices/references/conn-limits.md: sha256:11b2a67a7c7679cbbc5d807bbb17e69c98484a581d0c8b929c03408f412b81b2
+    .agents/skills/supabase-postgres-best-practices/references/conn-pooling.md: sha256:88cf086bf98ba865d2e9d0579974e1366b14157619d6a93e7da77be91084e4a5
+    .agents/skills/supabase-postgres-best-practices/references/conn-prepared-statements.md: sha256:174e9332fe3dda5c99b2b00159fb1915ae36c00bab3a7882c14e73e4344e946e
+    .agents/skills/supabase-postgres-best-practices/references/data-batch-inserts.md: sha256:531933b82d6a622d0fae29e0ea80be6fe5d78655adf2804c271ea84a1930de37
+    .agents/skills/supabase-postgres-best-practices/references/data-n-plus-one.md: sha256:21a44905e5b16a42741892ec34bb1bfef124d049b140a76934a9acd0f46f5fc2
+    .agents/skills/supabase-postgres-best-practices/references/data-pagination.md: sha256:73c9fa10a3d439bedea0e11b640bd25bf30dd50f0d9006cf85baf7c3151543fa
+    .agents/skills/supabase-postgres-best-practices/references/data-upsert.md: sha256:2612af83b20a2701dde30ef1f8d7efd26b7e9eef84717226b8f038a2d2150ff7
+    .agents/skills/supabase-postgres-best-practices/references/lock-advisory.md: sha256:c88d259dbf81c3771438f59a165f7eab8acd09999dd370bdf807521c73f35aab
+    .agents/skills/supabase-postgres-best-practices/references/lock-deadlock-prevention.md: sha256:09aee46f51d7178c8e55fe056cd5a94a64ba2c122fe418e6900cd99f297b2347
+    .agents/skills/supabase-postgres-best-practices/references/lock-short-transactions.md: sha256:5aa7f61095916986d39644b446cdbcd2bacca7ef698a3bb50b3f82dd60207602
+    .agents/skills/supabase-postgres-best-practices/references/lock-skip-locked.md: sha256:6c45077f430f29cd9cd8f448c94d578e827e7bd023fcdaf717a756acb116fa4b
+    .agents/skills/supabase-postgres-best-practices/references/monitor-explain-analyze.md: sha256:4cb67ffbf8e57f2e5b380b0beb4242528b513723ce314a2c2ffcf083bd4203d7
+    .agents/skills/supabase-postgres-best-practices/references/monitor-pg-stat-statements.md: sha256:89dca99d4e894fcbdcac136be7ad9fbc03d1342904f065c1b198dc9cf495f098
+    .agents/skills/supabase-postgres-best-practices/references/monitor-vacuum-analyze.md: sha256:2892272011710eb49b3f185ec12f15ce9ce4c365792c672f6e2a9c90da426a1a
+    .agents/skills/supabase-postgres-best-practices/references/query-composite-indexes.md: sha256:73e42424e671f0266e74fdb220db3196790f69fb43e2b19c7b9483eb4971b554
+    .agents/skills/supabase-postgres-best-practices/references/query-covering-indexes.md: sha256:daf2a7f0477fb7357b62b5fb5b185b1995a77a186347e45cb780e25e7a7589b6
+    .agents/skills/supabase-postgres-best-practices/references/query-index-types.md: sha256:472a74f22c2df203bd0154999b3a5a0187cca2ab3d9a3978e305bb7c32f1a282
+    .agents/skills/supabase-postgres-best-practices/references/query-missing-indexes.md: sha256:91ad8b0ff4365704b4830a7f077c6f140f7140fd5d3ce5cd0b92b160cf9e25f1
+    .agents/skills/supabase-postgres-best-practices/references/query-partial-indexes.md: sha256:6448982bc8558c6555284958edc331b29239c6a0130e6b4501dd6d4da607a6dd
+    .agents/skills/supabase-postgres-best-practices/references/schema-constraints.md: sha256:90e8efda3e9e81095e642911ad4aae2809d160f29414338fa997253238f510f8
+    .agents/skills/supabase-postgres-best-practices/references/schema-data-types.md: sha256:e01b58c14c7f3f65d8ead580b9a4fcf70b83baaab0f9a5f83c569c9fd113e8c8
+    .agents/skills/supabase-postgres-best-practices/references/schema-foreign-key-indexes.md: sha256:7587713d12a65a212365459b3d39e4717d8a79e4073b10bd62f1054d8192c0dd
+    .agents/skills/supabase-postgres-best-practices/references/schema-lowercase-identifiers.md: sha256:4bc80f70865f2390872591f326c8a6be6456a0aeb5a7e5a2475d7cd9d43059ab
+    .agents/skills/supabase-postgres-best-practices/references/schema-partitioning.md: sha256:541e13fbeaf4bb1485c9059d4c9417dbdb766cf16f4237cd63a04ada7ec45b90
+    .agents/skills/supabase-postgres-best-practices/references/schema-primary-keys.md: sha256:3c8beabef82066f9a0838b926da0885117fd2d9a263aaf84cb5ca9e5f0d400e9
+    .agents/skills/supabase-postgres-best-practices/references/security-privileges.md: sha256:095909274a4fb43df785d7144cf674eeb40284d2d45628f14af4108737b93663
+    .agents/skills/supabase-postgres-best-practices/references/security-rls-basics.md: sha256:e04dd1a3a382aafdaaa73fe9f7976352acdde6e90c2a2470d281b94d4f44b096
+    .agents/skills/supabase-postgres-best-practices/references/security-rls-performance.md: sha256:2e1faeca7d5746e246b1c78f9492fe2a9cfa41c4d7fa1e23c402d58fa18ea014
+    .agents/skills/supabase/CHANGELOG.md: sha256:f4c9c7750ea2c9212a05c3f38bc04d66cb2fe037f6b9a3fb6279d53bef152f8e
+    .agents/skills/supabase/SKILL.md: sha256:16817870f69bb9db58343cfa41c6fb864713c01f3680a64e0fb869605a5d81c3
+    .agents/skills/supabase/assets/feedback-issue-template.md: sha256:ea211aa174c5a096fe76461f25143b8bc23f3bde3adc9e727cda38218cc8c282
+    .agents/skills/supabase/references/skill-feedback.md: sha256:09ad94c0291735dfc04c92557c8734fa259ec39e1d56bf2bd5c6a6529d838717
+  content_hash: sha256:8e4e1d90aaa4970df2ca51c50365104575c62909dcc1cac112d414a496cdddfb
+deployments:
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: null
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: null
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/CHANGELOG.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:751ad110037c85d400018c9894716a04fa46357ff55c22b1169b280752e19e88
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:ad65e776f45e761bafc609d3f506c77c1032225aa65e0c4c02f241b8071e5855
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/_contributing.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:191e039e7d94764e6073410b513b559f9a594e0fdf0252a30c2a2986df2ab3bc
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/_sections.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:c9e992612b422c7122de0b7542ebc2450db283edaab08cfe86c6d657fcccccd5
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/_template.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:6299954250f212caabe339d752c3e5313a8e07d1a182a4e4b425baee91df1bd2
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/advanced-full-text-search.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:40c2606bbb4c4dce31308f201b24cc7f58c7df05b1d9c6856fe2b888d3b7cf28
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/advanced-jsonb-indexing.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:24cacf6a8bc35901dd566d24502ce8e57f810a5c196b897e61d52726e521d106
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/conn-idle-timeout.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:630588902c00fcec59a5988cc5d042f76dcf2c923a535abfd8c47dca205eaed5
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/conn-limits.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:11b2a67a7c7679cbbc5d807bbb17e69c98484a581d0c8b929c03408f412b81b2
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/conn-pooling.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:88cf086bf98ba865d2e9d0579974e1366b14157619d6a93e7da77be91084e4a5
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/conn-prepared-statements.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:174e9332fe3dda5c99b2b00159fb1915ae36c00bab3a7882c14e73e4344e946e
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/data-batch-inserts.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:531933b82d6a622d0fae29e0ea80be6fe5d78655adf2804c271ea84a1930de37
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/data-n-plus-one.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:21a44905e5b16a42741892ec34bb1bfef124d049b140a76934a9acd0f46f5fc2
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/data-pagination.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:73c9fa10a3d439bedea0e11b640bd25bf30dd50f0d9006cf85baf7c3151543fa
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/data-upsert.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:2612af83b20a2701dde30ef1f8d7efd26b7e9eef84717226b8f038a2d2150ff7
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/lock-advisory.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:c88d259dbf81c3771438f59a165f7eab8acd09999dd370bdf807521c73f35aab
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/lock-deadlock-prevention.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:09aee46f51d7178c8e55fe056cd5a94a64ba2c122fe418e6900cd99f297b2347
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/lock-short-transactions.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:5aa7f61095916986d39644b446cdbcd2bacca7ef698a3bb50b3f82dd60207602
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/lock-skip-locked.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:6c45077f430f29cd9cd8f448c94d578e827e7bd023fcdaf717a756acb116fa4b
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/monitor-explain-analyze.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:4cb67ffbf8e57f2e5b380b0beb4242528b513723ce314a2c2ffcf083bd4203d7
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/monitor-pg-stat-statements.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:89dca99d4e894fcbdcac136be7ad9fbc03d1342904f065c1b198dc9cf495f098
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/monitor-vacuum-analyze.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:2892272011710eb49b3f185ec12f15ce9ce4c365792c672f6e2a9c90da426a1a
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/query-composite-indexes.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:73e42424e671f0266e74fdb220db3196790f69fb43e2b19c7b9483eb4971b554
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/query-covering-indexes.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:daf2a7f0477fb7357b62b5fb5b185b1995a77a186347e45cb780e25e7a7589b6
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/query-index-types.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:472a74f22c2df203bd0154999b3a5a0187cca2ab3d9a3978e305bb7c32f1a282
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/query-missing-indexes.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:91ad8b0ff4365704b4830a7f077c6f140f7140fd5d3ce5cd0b92b160cf9e25f1
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/query-partial-indexes.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:6448982bc8558c6555284958edc331b29239c6a0130e6b4501dd6d4da607a6dd
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/schema-constraints.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:90e8efda3e9e81095e642911ad4aae2809d160f29414338fa997253238f510f8
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/schema-data-types.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:e01b58c14c7f3f65d8ead580b9a4fcf70b83baaab0f9a5f83c569c9fd113e8c8
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/schema-foreign-key-indexes.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:7587713d12a65a212365459b3d39e4717d8a79e4073b10bd62f1054d8192c0dd
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/schema-lowercase-identifiers.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:4bc80f70865f2390872591f326c8a6be6456a0aeb5a7e5a2475d7cd9d43059ab
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/schema-partitioning.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:541e13fbeaf4bb1485c9059d4c9417dbdb766cf16f4237cd63a04ada7ec45b90
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/schema-primary-keys.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:3c8beabef82066f9a0838b926da0885117fd2d9a263aaf84cb5ca9e5f0d400e9
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/security-privileges.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:095909274a4fb43df785d7144cf674eeb40284d2d45628f14af4108737b93663
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/security-rls-basics.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:e04dd1a3a382aafdaaa73fe9f7976352acdde6e90c2a2470d281b94d4f44b096
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase-postgres-best-practices/references/security-rls-performance.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:2e1faeca7d5746e246b1c78f9492fe2a9cfa41c4d7fa1e23c402d58fa18ea014
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase/CHANGELOG.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:f4c9c7750ea2c9212a05c3f38bc04d66cb2fe037f6b9a3fb6279d53bef152f8e
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase/SKILL.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:16817870f69bb9db58343cfa41c6fb864713c01f3680a64e0fb869605a5d81c3
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase/assets/feedback-issue-template.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:ea211aa174c5a096fe76461f25143b8bc23f3bde3adc9e727cda38218cc8c282
+- kind: project-relative
+  target: antigravity
+  value: .agents/skills/supabase/references/skill-feedback.md
+  runtime: null
+  scope: project
+  owners:
+  - supabase/agent-skills
+  active_owner: supabase/agent-skills
+  content_hash: sha256:09ad94c0291735dfc04c92557c8734fa259ec39e1d56bf2bd5c6a6529d838717
+- kind: uri
+  target: mcp
+  value: supabase
+  runtime: antigravity
+  scope: project
+  owners:
+  - .
+  active_owner: .
+  content_hash: null
+mcp_servers:
+- supabase
+mcp_configs:
+  supabase:
+    name: supabase
+    transport: http
+    registry: false
+    url: https://mcp.supabase.com/mcp?features=docs
+mcp_target_servers:
+  antigravity:
+  - supabase
+mcp_config_provenance:
+  supabase: agent-skills

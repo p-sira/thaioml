@@ -8,6 +8,7 @@ import { CookieBanner } from "@/components/CookieBanner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Script from "next/script";
+
 import "./globals.css";
 
 const geistSans = Geist({

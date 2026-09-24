@@ -37,13 +37,13 @@ export async function getSnomedSuggestion(query: string) {
   }
 }
 
-export async function autoLinkContent(body: string) {
+export async function autoLinkContent(body: string, title?: string, snomedId?: string) {
   try {
     const headers = await getHeaders();
     const res = await fetch(`${getBaseUrl()}/auto-link`, {
       method: 'POST',
       headers,
-      body: JSON.stringify({ body }),
+      body: JSON.stringify({ body, title, snomed_id: snomedId }),
     });
 
     if (!res.ok) {

@@ -3,12 +3,20 @@ name: Test Workflow
 on:
   push:
     branches: ["main"]
-    paths-ignore:
-      - 'docs/docs/articles/**'
+    paths:
+      - "backend/**"
+      - "webapp/**"
+      - ".github/workflows/test.yml"
+      - "package.json"
+      - "package-lock.json"
   pull_request:
     branches: ["main"]
-    paths-ignore:
-      - 'docs/docs/articles/**'
+    paths:
+      - "backend/**"
+      - "webapp/**"
+      - ".github/workflows/test.yml"
+      - "package.json"
+      - "package-lock.json"
 
 jobs:
   test:
@@ -80,16 +88,12 @@ jobs:
           POSTHOG_KEY: "phc_dummykeyforci123456789"
           NEXT_PUBLIC_POSTHOG_HOST: "https://us.i.posthog.com"
         run: |
-          (cd docs && npm install && uv sync && uv run mkdocs serve -a localhost:8000) &
           (cd backend && uv run uvicorn backend.main:app --port 8080) &
           (cd webapp && npm run dev) &
-          npx decap-server &
 
           # Wait for services to be ready
-          npx wait-on -t 120000 http-get://localhost:8000
           npx wait-on -t 120000 http-get://127.0.0.1:3000
           npx wait-on -t 120000 http-get://127.0.0.1:8080
-          npx wait-on -t 120000 tcp:127.0.0.1:8081
 
       - name: Run Playwright E2E Tests
         run: npx playwright test --project=chromium

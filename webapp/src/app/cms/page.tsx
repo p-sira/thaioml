@@ -10,7 +10,7 @@ export default async function ContributePage() {
   }
 
   const roles = (user.publicMetadata?.roles as string[]) || []
-  const hasPermission = roles.includes('editor') || roles.includes('admin')
+  const hasPermission = roles.includes('editor') || roles.includes('admin') || roles.includes('author');
 
   if (hasPermission) {
     redirect('/editorial/')
@@ -23,7 +23,7 @@ export default async function ContributePage() {
         <div className="max-w-md w-full bg-white p-8 rounded-2xl shadow-sm border border-slate-200 text-center">
           <h2 className="text-2xl font-bold text-slate-900 mb-4">Access Restricted</h2>
           <p className="text-slate-600 mb-6">
-            You don&apos;t have permission to access the Content Management System (CMS). To become an editor and help expand ThaiOML, please request permission.
+            You don&apos;t have permission to access the Content Management System (CMS). To become an author or editor and help expand ThaiOML, please request permission.
           </p>
           <div className="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-8 inline-block w-full">
             <p className="text-sm text-slate-500 mb-1">Send an email to:</p>

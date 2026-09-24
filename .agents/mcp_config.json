@@ -7,6 +7,9 @@
         "@modelcontextprotocol/server-postgres",
         "postgresql://postgres:postgres@localhost:5432/thaioml"
       ]
+    },
+    "supabase": {
+      "httpUrl": "https://mcp.supabase.com/mcp?features=docs"
     }
   }
 }

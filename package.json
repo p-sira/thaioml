@@ -3,13 +3,18 @@
   "version": "1.0.0",
   "description": "Open Medical Library of Thailand",
   "scripts": {
-    "dev:cms": "npx decap-server",
-    "dev:docs": "cd docs && mkdocs serve -a localhost:8000"
-  },
-  "dependencies": {
-    "decap-server": "^3.0.0"
+    "dev": "make dev-all",
+    "test:e2e": "npx playwright test",
+    "wrangler": "wrangler",
+    "build:webapp": "npm run --prefix webapp build:worker",
+    "deploy:webapp": "npm run --prefix webapp deploy"
   },
   "devDependencies": {
-    "@playwright/test": "^1.63.0"
+    "@playwright/test": "^1.63.0",
+    "wrangler": "^4.131.2"
+  },
+  "allowScripts": {
+    "esbuild@0.28.1": true,
+    "workerd@1.20260911.1": true
   }
 }

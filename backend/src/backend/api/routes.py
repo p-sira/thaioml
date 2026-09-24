@@ -150,10 +150,13 @@ def snomed_suggest(
 
 class AutoLinkRequest(BaseModel):
     body: str
+    title: str | None = None
+    snomed_id: str | None = None
 
 
 class AutoLinkResponse(BaseModel):
     links: dict[str, str]
+    body: str
 
 
 @router.post("/auto-link", response_model=AutoLinkResponse)
@@ -165,13 +168,15 @@ def auto_link(
     ],
 ):
     try:
-        links = auto_link_terms(request.body, db)
+        modified_body, links = auto_link_terms(
+            request.body, db, title=request.title, snomed_id=request.snomed_id
+        )
         posthog.capture(
             distinct_id=user_data.get("sub", "anonymous"),
             event="auto_link_used",
             properties={"num_links_found": len(links)},
         )
-        return AutoLinkResponse(links=links)
+        return AutoLinkResponse(links=links, body=modified_body)
     except ValueError as e:
         raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:  # noqa: BLE001

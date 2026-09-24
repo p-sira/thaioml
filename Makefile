@@ -1,4 +1,4 @@
-.PHONY: dev-docs dev-cms dev-backend setup
+.PHONY: dev-backend dev-webapp dev-all setup test test-backend test-webapp test-e2e build-webapp deploy-webapp
 
 -include .env
 export
@@ -6,19 +6,10 @@ export
 setup:
 	@echo "Setting up frontend dependencies..."
 	npm install
-	cd docs && uv sync
 	@echo "Setting up backend dependencies..."
 	cd backend && uv sync
 	@echo "Setting up webapp dependencies..."
 	cd webapp && npm install
-
-dev-docs:
-	@echo "Starting MkDocs..."
-	cd docs && uv run mkdocs serve -a localhost:8000
-
-dev-cms:
-	@echo "Starting Decap CMS proxy..."
-	npx decap-server
 
 dev-backend:
 	@echo "Starting FastAPI backend..."
@@ -29,11 +20,11 @@ dev-webapp:
 	cd webapp && npm run dev
 
 dev:
-	@echo "To run everything manually, we recommend opening this folder in a Devcontainer, or running 'make dev-docs', 'make dev-cms', 'make dev-backend' and 'make dev-webapp' in separate terminals."
+	@echo "To run everything manually, we recommend opening this folder in a Devcontainer, or running 'make dev-backend' and 'make dev-webapp' in separate terminals."
 
 dev-all:
-	@echo "Starting all services (Docs, CMS, Backend, Webapp)..."
-	@trap 'echo "Stopping services..."; kill 0' SIGINT EXIT; $(MAKE) dev-docs & $(MAKE) dev-backend & $(MAKE) dev-cms & $(MAKE) dev-webapp & wait
+	@echo "Starting all services (Backend, Webapp)..."
+	@trap 'echo "Stopping services..."; kill 0' SIGINT EXIT; $(MAKE) dev-backend & $(MAKE) dev-webapp & wait
 
 test-backend:
 	@echo "Running backend unit tests..."
@@ -49,3 +40,12 @@ test-e2e:
 
 test: test-backend test-webapp
 	@echo "Unit testing complete. For E2E tests, make sure servers are running and run 'make test-e2e'"
+
+build-webapp:
+	@echo "Building webapp for Cloudflare..."
+	cd webapp && npm run build:worker
+
+deploy-webapp:
+	@echo "Deploying webapp to Cloudflare..."
+	cd webapp && npm run deploy
+

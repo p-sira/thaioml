@@ -1,16 +1,24 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
-@import "../../../docs/docs/stylesheets/custom-theme.css";
+@import "../../content/docs/stylesheets/custom-theme.css";
 
 @theme inline {
+  /* Primary surface: page/card background */
   --color-background: var(--md-default-bg-color);
+  /* Secondary surface: toolbars, sidebars, input fills */
+  --color-surface: var(--md-default-bg-color--light);
+  /* Default body text */
   --color-foreground: var(--md-default-fg-color);
+  /* Secondary/placeholder text */
+  --color-foreground-muted: var(--md-default-fg-color--light);
+  /* Headings and high-emphasis text */
+  --color-foreground-strong: var(--md-default-fg-color--dark);
+  /* Interactive accent (links, active states) */
+  --color-accent: var(--md-accent-fg-color);
+  /* Dividers and input borders */
+  --color-border: color-mix(in srgb, var(--md-default-fg-color) 12%, transparent);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-html {
-  font-size: 100% !important; /* Protect Tailwind rem geometry from MkDocs's global 125% override */
 }
 
 body {
@@ -19,13 +27,4 @@ body {
   /* Map MkDocs internal font variables to Next.js Geist fonts for perfect unification */
   --md-text-font: var(--font-geist-sans);
   --md-code-font: var(--font-geist-mono);
-}
-
-/* 
-  MkDocs expects a 125% (20px) root font-size. Since we forced it back to 100% (16px) above, 
-  MkDocs will render 20% smaller than intended. We use CSS zoom to mathematically scale 
-  its layout back up to its native size! 
-*/
-.mkdocs-wrapper {
-  zoom: 1.25;
 }

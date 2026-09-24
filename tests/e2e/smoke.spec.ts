@@ -1,12 +1,6 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Website E2E Smoke Tests', () => {
-  test('MkDocs frontend should load', async ({ page }) => {
-    // MkDocs runs on 8000 by default (from mkdocs serve)
-    await page.goto('http://localhost:8000');
-    await expect(page).toHaveTitle(/ThaiOML/);
-  });
-
   test('Next.js webapp should load', async ({ page }) => {
     // Next.js runs on 3000 by default.
     // In CI, Clerk uses a dummy key so it may return 400 (auth rejected)
@@ -20,13 +14,5 @@ test.describe('Website E2E Smoke Tests', () => {
     // We check the root/health endpoint
     const response = await request.get('http://localhost:8080');
     expect(response.ok()).toBeTruthy();
-  });
-
-  test('Decap CMS proxy should respond', async ({ request }) => {
-    // Decap proxy server usually runs on 8081
-    // We just check if the server accepts a connection
-    const response = await request.get('http://localhost:8081/api/v1', { ignoreHTTPSErrors: true });
-    // It might return a 401 or 404, but as long as it responds, it's up.
-    expect(response.status()).toBeDefined();
   });
 });

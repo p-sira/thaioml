@@ -1,12 +1,15 @@
+import { createMDX } from 'fumadocs-mdx/next';
 import type { NextConfig } from "next";
 import path from "path";
 
+const withMDX = createMDX();
+
 const nextConfig: NextConfig = {
-  /* config options here */
+  outputFileTracingRoot: path.resolve(__dirname),
   skipTrailingSlashRedirect: true,
   turbopack: {
-    root: path.join(__dirname, ".."),
+    root: path.resolve(__dirname),
   },
 };
 
-export default nextConfig;
+export default withMDX(nextConfig);

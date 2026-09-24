@@ -4,9 +4,9 @@ import { Octokit } from 'octokit';
 import { currentUser } from '@clerk/nextjs/server';
 
 const getOctokit = () => {
-  const token = process.env.THAIOML_BOT;
+  const token = process.env.THAIOML_BOT_GITHUB_TOKEN || process.env.THAIOML_BOT;
   if (!token) {
-    throw new Error('THAIOML_BOT token is not set');
+    throw new Error('Neither THAIOML_BOT_GITHUB_TOKEN nor THAIOML_BOT token is set');
   }
   return new Octokit({ auth: token });
 };
@@ -42,7 +42,7 @@ export async function saveMarkdownFile(filePath: string, content: string, messag
       repo: REPO,
       ref: 'heads/main'
     });
-    
+
     await octokit.rest.git.createRef({
       owner: OWNER,
       repo: REPO,
@@ -91,7 +91,7 @@ export async function saveMarkdownFile(filePath: string, content: string, messag
 
   // 5. Commit the file to the editorial branch
   const base64Content = Buffer.from(content).toString('base64');
-  
+
   await octokit.rest.repos.createOrUpdateFileContents({
     owner: OWNER,
     repo: REPO,
@@ -109,34 +109,6 @@ export async function saveMarkdownFile(filePath: string, content: string, messag
       email: user.emailAddresses[0]?.emailAddress || 'studio@thaioml.org',
     },
   });
-
-  // 6. Check if an open Pull Request exists from editorial to main
-  const { data: pulls } = await octokit.rest.pulls.list({
-    owner: OWNER,
-    repo: REPO,
-    state: 'open',
-    head: `${OWNER}:editorial`,
-    base: 'main'
-  });
-
-  if (pulls.length === 0) {
-    const { data: pr } = await octokit.rest.pulls.create({
-      owner: OWNER,
-      repo: REPO,
-      title: 'Editorial Updates',
-      head: 'editorial',
-      base: 'main',
-      body: 'Automated PR for editorial updates from ThaiOML Studio.'
-    });
-
-    await octokit.rest.pulls.requestReviewers({
-      owner: OWNER,
-      repo: REPO,
-      pull_number: pr.number,
-      reviewers: ['p-sira']
-    });
-  }
-
   return { success: true };
 }
 
@@ -234,4 +206,147 @@ export async function listMarkdownFiles(directoryPath: string) {
     }
     throw error;
   }
+}
+
+export async function moveMarkdownFile(oldPath: string, newPath: string, content: string, message: string) {
+  const user = await currentUser();
+  if (!user) {
+    throw new Error('Unauthorized');
+  }
+
+  const octokit = getOctokit();
+
+  // 1. Determine the publish branch name based on the file name
+  const filename = newPath.split('/').pop()?.replace('.md', '') || 'article';
+  const publishBranch = `publish/${filename}`;
+  const publishRef = `refs/heads/${publishBranch}`;
+
+  // 2. Check if publish branch exists
+  let publishBranchExists = false;
+  try {
+    await octokit.rest.repos.getBranch({ owner: OWNER, repo: REPO, branch: publishBranch });
+    publishBranchExists = true;
+  } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'status' in error && (error as { status: number }).status === 404) {
+      publishBranchExists = false;
+    } else {
+      throw error;
+    }
+  }
+
+  // 3. If it doesn't exist, create it from main
+  if (!publishBranchExists) {
+    const { data: mainRef } = await octokit.rest.git.getRef({
+      owner: OWNER,
+      repo: REPO,
+      ref: 'heads/main'
+    });
+
+    await octokit.rest.git.createRef({
+      owner: OWNER,
+      repo: REPO,
+      ref: publishRef,
+      sha: mainRef.object.sha
+    });
+  }
+
+  // 4. Get SHA if file already exists on publish branch
+  let sha: string | undefined = undefined;
+  try {
+    const { data } = await octokit.rest.repos.getContent({
+      owner: OWNER,
+      repo: REPO,
+      path: newPath,
+      ref: publishBranch,
+    });
+    if (!Array.isArray(data) && data.type === 'file') {
+      sha = data.sha;
+    }
+  } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'status' in error && (error as { status: number }).status !== 404) {
+      throw error;
+    }
+  }
+
+  // 5. Commit the new file to the publish branch
+  const base64Content = Buffer.from(content).toString('base64');
+  await octokit.rest.repos.createOrUpdateFileContents({
+    owner: OWNER,
+    repo: REPO,
+    path: newPath,
+    message: message || `Publish ${newPath}`,
+    content: base64Content,
+    sha,
+    branch: publishBranch,
+    committer: {
+      name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'ThaiOML Studio',
+      email: user.emailAddresses[0]?.emailAddress || 'studio@thaioml.org',
+    },
+    author: {
+      name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'ThaiOML Studio',
+      email: user.emailAddresses[0]?.emailAddress || 'studio@thaioml.org',
+    },
+  });
+
+  // 6. Delete the old file from the editorial branch
+  try {
+    const { data } = await octokit.rest.repos.getContent({
+      owner: OWNER,
+      repo: REPO,
+      path: oldPath,
+      ref: 'editorial',
+    });
+
+    if (!Array.isArray(data) && data.type === 'file') {
+      await octokit.rest.repos.deleteFile({
+        owner: OWNER,
+        repo: REPO,
+        path: oldPath,
+        message: `Delete ${oldPath} (published to ${newPath})`,
+        sha: data.sha,
+        branch: 'editorial',
+        committer: {
+          name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'ThaiOML Studio',
+          email: user.emailAddresses[0]?.emailAddress || 'studio@thaioml.org',
+        },
+        author: {
+          name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : 'ThaiOML Studio',
+          email: user.emailAddresses[0]?.emailAddress || 'studio@thaioml.org',
+        },
+      });
+    }
+  } catch (error: unknown) {
+    if (typeof error === 'object' && error !== null && 'status' in error && (error as { status: number }).status !== 404) {
+      throw error;
+    }
+  }
+
+  // 7. Check if an open Pull Request exists from publish branch to main
+  const { data: pulls } = await octokit.rest.pulls.list({
+    owner: OWNER,
+    repo: REPO,
+    state: 'open',
+    head: `${OWNER}:${publishBranch}`,
+    base: 'main'
+  });
+
+  if (pulls.length === 0) {
+    const { data: pr } = await octokit.rest.pulls.create({
+      owner: OWNER,
+      repo: REPO,
+      title: `Publish: ${filename}`,
+      head: publishBranch,
+      base: 'main',
+      body: `Automated PR for publishing article \`${filename}\` from ThaiOML Studio.`
+    });
+
+    await octokit.rest.pulls.requestReviewers({
+      owner: OWNER,
+      repo: REPO,
+      pull_number: pr.number,
+      reviewers: ['p-sira']
+    });
+  }
+
+  return { success: true };
 }

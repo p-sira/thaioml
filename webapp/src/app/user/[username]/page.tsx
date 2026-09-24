@@ -49,7 +49,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
   const name = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.username || 'Unknown';
   
   // Read all markdown articles
-  const articlesDir = path.join(process.cwd(), '../docs/docs/articles');
+  const articlesDir = path.join(process.cwd(), 'content/docs/articles');
   const contributedArticles: { id: string, title: string, roles: string[], slug: string, type: string }[] = [];
   
   try {

@@ -7,7 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "jest"
+    "test": "jest",
+    "build:worker": "opennextjs-cloudflare build",
+    "deploy": "opennextjs-cloudflare build && wrangler deploy",
+    "preview": "opennextjs-cloudflare build && wrangler dev"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.1",
@@ -19,7 +22,11 @@
     "@tiptap/react": "^3.31.3",
     "@tiptap/starter-kit": "^3.31.3",
     "@tiptap/suggestion": "^3.31.3",
+    "@types/mdx": "^2.0.14",
     "cheerio": "^1.2.0",
+    "fumadocs-core": "^16.15.9",
+    "fumadocs-mdx": "^15.4.0",
+    "fumadocs-ui": "^16.15.9",
     "gray-matter": "^4.0.3",
     "lucide-react": "^1.43.0",
     "next": "16.3.4",
@@ -27,10 +34,12 @@
     "posthog-js": "^1.430.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "remark-gfm": "^4.0.1",
     "tippy.js": "^6.3.7",
     "tiptap-markdown": "^0.9.0"
   },
   "devDependencies": {
+    "@opennextjs/cloudflare": "^1.20.6",
     "@tailwindcss/postcss": "^4",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^7.0.1",
@@ -45,6 +54,7 @@
     "jest-environment-jsdom": "^30.5.1",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
-    "typescript": "^5"
+    "typescript": "^5",
+    "wrangler": "^4.131.2"
   }
 }

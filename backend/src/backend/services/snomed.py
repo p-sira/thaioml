@@ -6,53 +6,57 @@ from backend.core.config import settings
 from backend.models.snomed import SnomedDescription
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
-from sqlalchemy import select
+from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 
-def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:
-    if not settings.openrouter_api_key_lookup:
-        raise ValueError("OpenRouter API key missing.")
+def _strip_semantic_tag(text: str) -> str:
+    import re
 
-    snomed_llm = ChatOpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=SecretStr(settings.openrouter_api_key_lookup),
-        model=settings.openrouter_model_lookup,
-    )
+    return re.sub(r"\s*\([^)]*\)$", "", text).strip()
 
-    prompt_text = f"""You are a medical terminology translator. Translate the following user query into the exact, canonical English SNOMED CT term name.
-Query: '{query}'
-Respond ONLY with the exact English term, nothing else. Do not use quotes or markdown."""
 
-    response = snomed_llm.invoke(prompt_text)
-    canonical_term = str(response.content).strip()
-
-    # Strip quotes if the LLM adds them
-    if canonical_term.startswith('"') and canonical_term.endswith('"'):
-        canonical_term = canonical_term[1:-1]
-    if canonical_term.startswith("'") and canonical_term.endswith("'"):
-        canonical_term = canonical_term[1:-1]
-
-    # Query the local database using pg_trgm similarity
+def _search_snomed_term(
+    term: str, db: Session, exact: bool = False
+) -> tuple[str, str] | None:
     result = None
     db_error = False
     try:
-        stmt = (
-            select(SnomedDescription)
-            .where(SnomedDescription.active == True)
-            .order_by(SnomedDescription.term.op("<->")(canonical_term))
-            .limit(1)
-        )
+        if exact:
+            stmt = (
+                select(SnomedDescription)
+                .where(SnomedDescription.active == True)
+                .where(
+                    or_(
+                        func.lower(SnomedDescription.term) == func.lower(term),
+                        func.lower(SnomedDescription.term).like(
+                            func.lower(term) + " (%)"
+                        ),
+                    )
+                )
+                .limit(1)
+            )
+        else:
+            stmt = (
+                select(SnomedDescription)
+                .where(SnomedDescription.active == True)
+                .where(SnomedDescription.term.op("<->")(term) < 0.3)
+                .order_by(SnomedDescription.term.op("<->")(term))
+                .limit(1)
+            )
         result = db.execute(stmt).scalars().first()
     except Exception as e:  # noqa: BLE001
         print(f"Warning: Local DB query failed ({e}). Falling back to CSIRO API.")
         db_error = True
 
-    if db_error:
-        print(f"Local DB miss for '{canonical_term}'. Falling back to CSIRO API.")
-        encoded_term = urllib.parse.quote(canonical_term)
-        url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
+    if not db_error and result:
+        return str(result.concept_id), _strip_semantic_tag(str(result.term))
 
+    print(f"Local DB miss for '{term}'. Falling back to CSIRO API.")
+    encoded_term = urllib.parse.quote(term)
+    url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=10"
+
+    try:
         req = urllib.request.Request(url, headers={"Accept": "application/json"})
         with urllib.request.urlopen(req) as resp:
             data = json.loads(resp.read().decode("utf-8"))
@@ -60,28 +64,77 @@ Respond ONLY with the exact English term, nothing else. Do not use quotes or mar
         expansion = data.get("expansion", {})
         contains = expansion.get("contains", [])
 
-        valid_concept = None
         for concept in contains:
             if concept.get("inactive") is True:
                 continue
-            valid_concept = concept
-            break
 
-        if not valid_concept:
-            raise ValueError(
-                f"No active SNOMED concept found for term: {canonical_term}"
-            )
+            display_clean = _strip_semantic_tag(concept["display"])
 
-        return str(valid_concept["code"]), valid_concept["display"]
+            if exact:
+                if display_clean.lower() == term.lower():
+                    return str(concept["code"]), display_clean
+            else:
+                return str(concept["code"]), display_clean
+    except Exception as e:
+        print(f"CSIRO API error for '{term}': {e}")
+
+    return None
+
+
+def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:
+    query = query.strip()
+
+    # 1. Direct search (DB -> CSIRO)
+    match = _search_snomed_term(query, db, exact=True)
+    if match:
+        return match
+
+    # 2. AI Translation
+    if not settings.openrouter_api_key_lookup:
+        raise ValueError("OpenRouter API key missing.")
+
+    snomed_llm = ChatOpenAI(
+        base_url="https://openrouter.ai/api/v1",
+        api_key=SecretStr(settings.openrouter_api_key_lookup),
+        model=settings.openrouter_model_lookup,
+        temperature=0.0,
+    )
+
+    prompt_text = f"""You are a medical terminology translator. Translate the following user query into the exact, canonical English SNOMED CT term name.
+Query: '{query}'
+Respond ONLY with the exact English term enclosed in <term> tags. For example: <term>Myocardial infarction</term>."""
+
+    response = snomed_llm.invoke(prompt_text)
+    content = str(response.content).strip()
+
+    import re
+
+    match_tag = re.search(r"<term>(.*?)</term>", content, re.IGNORECASE | re.DOTALL)
+    if match_tag:
+        canonical_term = match_tag.group(1).strip()
     else:
-        if not result:
-            raise ValueError(
-                f"No active SNOMED concept found for term: {canonical_term}"
-            )
-        return str(result.concept_id), str(result.term)
+        # Fallback if tags are missing, take the last line which is usually the answer in reasoning models
+        canonical_term = content.split("\n")[-1].strip()
+
+    # Strip quotes if the LLM adds them
+    if canonical_term.startswith('"') and canonical_term.endswith('"'):
+        canonical_term = canonical_term[1:-1]
+    if canonical_term.startswith("'") and canonical_term.endswith("'"):
+        canonical_term = canonical_term[1:-1]
+
+    # 3. AI Search (DB -> CSIRO)
+    match = _search_snomed_term(canonical_term, db, exact=False)
+    if match:
+        return match
+
+    raise ValueError(
+        f"No active SNOMED concept found for term: {query} (AI canonical: {canonical_term})"
+    )
 
 
-def auto_link_terms(body: str, db: Session) -> dict[str, str]:
+def auto_link_terms(
+    body: str, db: Session, title: str | None = None, snomed_id: str | None = None
+) -> tuple[str, dict[str, str]]:
     if not settings.openrouter_api_key_lookup:
         raise ValueError("OpenRouter API key missing.")
 
@@ -95,7 +148,6 @@ def auto_link_terms(body: str, db: Session) -> dict[str, str]:
     prompt_text = f"""You are a medical terminology extraction system. 
 Analyze the following markdown text and extract clinically significant terms (abbreviations, diseases, drugs, procedures). 
 For each extracted term, predict the exact, canonical English SNOMED CT term name.
-Limit to at most 10 key terms.
 Output ONLY a valid JSON array of objects with keys "original_text" and "canonical_snomed_term".
 Do not wrap in markdown blocks, just return raw JSON.
 
@@ -106,59 +158,55 @@ Text:
     response = snomed_llm.invoke(prompt_text)
     content = str(response.content).strip()
 
+    import re
+
+    json_match = re.search(
+        r"```(?:json)?\s*(\[\s*{.*?}\s*\])\s*```", content, re.DOTALL | re.IGNORECASE
+    )
+    if json_match:
+        content_to_parse = json_match.group(1)
+    else:
+        array_match = re.search(r"(\[\s*{.*?}\s*\])", content, re.DOTALL)
+        content_to_parse = array_match.group(1) if array_match else content
+
     try:
-        if content.startswith("```json"):
-            content = content[7:-3]
-        elif content.startswith("```"):
-            content = content[3:-3]
-        extracted_terms = json.loads(content.strip())
+        extracted_terms = json.loads(content_to_parse.strip())
     except json.JSONDecodeError:
         print(f"Failed to parse LLM output: {content}")
         extracted_terms = []
 
     final_links = {}
+    modified_body_lines = body.split("\n")
+
     for item in extracted_terms:
-        orig = item.get("original_text")
-        canon = item.get("canonical_snomed_term")
+        orig = item.get("original_text", "").strip()
+        canon = item.get("canonical_snomed_term", "").strip()
         if not orig or not canon:
             continue
 
         try:
-            result = None
-            db_error = False
-            try:
-                stmt = (
-                    select(SnomedDescription)
-                    .where(SnomedDescription.active == True)
-                    .order_by(SnomedDescription.term.op("<->")(canon))
-                    .limit(1)
-                )
-                result = db.execute(stmt).scalars().first()
-            except Exception as db_e:  # noqa: BLE001
-                print(f"Local DB query failed for {canon}: {db_e}")
-                db_error = True
+            match = _search_snomed_term(canon, db, exact=False)
+            if match:
+                concept_id, display_term = match
 
-            if db_error:
-                # Fallback to CSIRO API
-                encoded_term = urllib.parse.quote(canon)
-                url = f"https://tx.ontoserver.csiro.au/fhir/ValueSet/$expand?url=http://snomed.info/sct?fhir_vs&filter={encoded_term}&count=1"
-                req = urllib.request.Request(
-                    url, headers={"Accept": "application/json"}
-                )
-                with urllib.request.urlopen(req) as resp:
-                    data = json.loads(resp.read().decode("utf-8"))
+                # Prevent self-linking
+                if snomed_id and str(concept_id) == str(snomed_id):
+                    continue
+                if title and orig.lower() == title.lower():
+                    continue
 
-                expansion = data.get("expansion", {})
-                contains = expansion.get("contains", [])
+                final_links[orig] = f"{concept_id} | {display_term}"
 
-                for concept in contains:
-                    if concept.get("inactive") is not True:
-                        final_links[orig] = f"{concept['code']} | {concept['display']}"
-                        break
-            else:
-                if result:
-                    final_links[orig] = f"{result.concept_id} | {result.term}"
+                # Replace in markdown using word boundaries, ignoring already linked text
+                pattern = re.compile(r"(?<!\[)\b" + re.escape(orig) + r"\b(?!\])")
+
+                for i, line in enumerate(modified_body_lines):
+                    if not line.lstrip().startswith("#"):
+                        modified_body_lines[i] = pattern.sub(
+                            f"[{orig}](snomed://{concept_id})", line
+                        )
         except Exception as e:  # noqa: BLE001
             print(f"Error resolving {canon}: {e}")
 
-    return final_links
+    modified_body = "\n".join(modified_body_lines)
+    return modified_body, final_links

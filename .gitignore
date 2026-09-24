@@ -22,3 +22,11 @@ node_modules/
 
 # Devcontainers local data
 .devcontainer/data/
+
+
+# APM dependencies
+apm_modules/
+
+# Cloudflare / OpenNext
+.open-next/
+.wrangler/

@@ -19,7 +19,8 @@ export default async function EditorRoute({
   }
 
   const roles = (user.publicMetadata?.roles as string[]) || [];
-  const hasPermission = roles.includes('editor') || roles.includes('admin');
+  const hasPermission = roles.includes('editor') || roles.includes('admin') || roles.includes('author');
+  const isEditor = roles.includes('editor') || roles.includes('admin');
 
   if (!hasPermission) {
     redirect('/cms');
@@ -40,9 +41,11 @@ export default async function EditorRoute({
     content = `---
 title: "${title}"
 snomed_id: "${snomedId}"
-review_status: draft
-authors: []
-reviewers: []
+abstract: ""
+review_status: pitch
+assigned_editor: ""
+assigned_reviewers: []
+active_author: "${user.username || ''}"
 ---
 
 # ${title}
@@ -52,21 +55,21 @@ Begin writing your article here...
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50">
-      <header className="bg-white border-b border-slate-200 px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
+    <div className="min-h-screen flex flex-col bg-background">
+      <header className="bg-background border-b border-border px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
         <div className="flex items-center gap-4">
-          <Link href="/editorial" className="p-2 -ml-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition">
+          <Link href="/editorial" className="p-2 -ml-2 text-foreground-muted hover:text-foreground hover:bg-surface rounded-full transition">
             <ArrowLeft className="w-5 h-5" />
           </Link>
           <div>
-            <h1 className="text-xl font-bold text-slate-900">ThaiOML Studio</h1>
-            <p className="text-sm text-slate-500">Editing: {filePath}</p>
+            <h1 className="text-xl font-bold text-foreground-strong">ThaiOML Studio</h1>
+            <p className="text-sm text-foreground-muted">Editing: {filePath}</p>
           </div>
         </div>
       </header>
       
       <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
-        <Editor initialContent={content} filePath={filePath} />
+        <Editor initialContent={content} filePath={filePath} isEditor={isEditor} currentUser={user.username || ''} />
       </main>
     </div>
   );

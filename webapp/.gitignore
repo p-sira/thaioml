@@ -39,3 +39,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/.source/
+/.open-next/
+.wrangler/
+
+
+# APM dependencies
+apm_modules/
