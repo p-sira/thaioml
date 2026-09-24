@@ -215,6 +215,7 @@ dependencies = [
     { name = "pyyaml" },
     { name = "ruff" },
     { name = "sqlalchemy" },
+    { name = "tqdm" },
     { name = "uvicorn", extra = ["standard"] },
 ]
 
@@ -246,6 +247,7 @@ requires-dist = [
     { name = "pyyaml", specifier = ">=6.0.3" },
     { name = "ruff", specifier = ">=0.16.6" },
     { name = "sqlalchemy", specifier = ">=2.0.52" },
+    { name = "tqdm", specifier = ">=4.70.0" },
     { name = "uvicorn", extras = ["standard"], specifier = ">=0.52.4" },
 ]
 

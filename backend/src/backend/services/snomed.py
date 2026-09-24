@@ -2,12 +2,13 @@ import json
 import urllib.parse
 import urllib.request
 
-from backend.core.config import settings
-from backend.models.snomed import SnomedDescription
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
+
+from backend.core.config import settings
+from backend.models.snomed import SnomedDescription
 
 
 def _strip_semantic_tag(text: str) -> str:
@@ -75,19 +76,19 @@ def _search_snomed_term(
                     return str(concept["code"]), display_clean
             else:
                 return str(concept["code"]), display_clean
-    except Exception as e:
+    except Exception as e:  # noqa: BLE001
         print(f"CSIRO API error for '{term}': {e}")
 
     return None
 
 
-def suggest_snomed_term(query: str, db: Session) -> tuple[str, str]:
+def suggest_snomed_term(query: str, db: Session) -> tuple[str, str, str]:
     query = query.strip()
 
     # 1. Direct search (DB -> CSIRO)
     match = _search_snomed_term(query, db, exact=True)
     if match:
-        return match
+        return match[0], match[1], "direct"
 
     # 2. AI Translation
     if not settings.openrouter_api_key_lookup:
@@ -125,7 +126,7 @@ Respond ONLY with the exact English term enclosed in <term> tags. For example: <
     # 3. AI Search (DB -> CSIRO)
     match = _search_snomed_term(canonical_term, db, exact=False)
     if match:
-        return match
+        return match[0], match[1], "llm"
 
     raise ValueError(
         f"No active SNOMED concept found for term: {query} (AI canonical: {canonical_term})"

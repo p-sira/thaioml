@@ -1,14 +1,15 @@
 import os
 from typing import Annotated
 
-from backend.core.auth import require_role
-from backend.core.db import get_db
-from backend.services.rag import rag_service
-from backend.services.snomed import auto_link_terms, suggest_snomed_term
 from fastapi import APIRouter, Depends, HTTPException
 from posthog import Posthog
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
+
+from backend.core.auth import require_role
+from backend.core.db import get_db
+from backend.services.rag import rag_service
+from backend.services.snomed import auto_link_terms, suggest_snomed_term
 
 router = APIRouter()
 posthog = Posthog(
@@ -133,11 +134,15 @@ def snomed_suggest(
     ],
 ):
     try:
-        concept_id, display_term = suggest_snomed_term(request.query, db)
+        concept_id, display_term, match_type = suggest_snomed_term(request.query, db)
         posthog.capture(
             distinct_id=user_data.get("sub", "anonymous"),
             event="title_check_performed",
-            properties={"query": request.query, "found_concept_id": concept_id},
+            properties={
+                "query": request.query,
+                "found_concept_id": concept_id,
+                "match_type": match_type,
+            },
         )
         return SnomedSuggestResponse(id=concept_id, term=display_term)
     except ValueError as e:

@@ -1,9 +1,16 @@
 import csv
+import sys
 from pathlib import Path
+
+# Increase CSV field size limit to handle very large text fields (e.g. SNOMED descriptions)
+csv.field_size_limit(sys.maxsize)
+
+from sqlalchemy import text
+from sqlalchemy.dialects.postgresql import insert as pg_insert
+from tqdm import tqdm
 
 from backend.core.db import Base, engine
 from backend.models.snomed import SnomedConcept, SnomedDescription
-from sqlalchemy import insert, text
 
 
 def create_tables():
@@ -26,17 +33,23 @@ def ingest_concepts(file_path: Path):
     concepts = []
     with open(file_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
-        for row in reader:
+        for row in tqdm(reader, desc="Concepts"):
+            if row["active"] != "1":
+                continue
             concepts.append(
                 {"concept_id": int(row["id"]), "active": row["active"] == "1"}
             )
             if len(concepts) >= 10000:
                 with engine.begin() as conn:
-                    conn.execute(insert(SnomedConcept), concepts)
+                    conn.execute(
+                        pg_insert(SnomedConcept).on_conflict_do_nothing(), concepts
+                    )
                 concepts = []
         if concepts:
             with engine.begin() as conn:
-                conn.execute(insert(SnomedConcept), concepts)
+                conn.execute(
+                    pg_insert(SnomedConcept).on_conflict_do_nothing(), concepts
+                )
     print("Concept ingestion complete.")
 
 
@@ -49,7 +62,9 @@ def ingest_descriptions(file_path: Path):
     descriptions = []
     with open(file_path, "r", encoding="utf-8") as f:
         reader = csv.DictReader(f, delimiter="\t")
-        for row in reader:
+        for row in tqdm(reader, desc="Descriptions"):
+            if row["active"] != "1":
+                continue
             descriptions.append(
                 {
                     "id": int(row["id"]),
@@ -61,32 +76,28 @@ def ingest_descriptions(file_path: Path):
             )
             if len(descriptions) >= 10000:
                 with engine.begin() as conn:
-                    conn.execute(insert(SnomedDescription), descriptions)
+                    conn.execute(
+                        pg_insert(SnomedDescription).on_conflict_do_nothing(),
+                        descriptions,
+                    )
                 descriptions = []
         if descriptions:
             with engine.begin() as conn:
-                conn.execute(insert(SnomedDescription), descriptions)
+                conn.execute(
+                    pg_insert(SnomedDescription).on_conflict_do_nothing(), descriptions
+                )
     print("Description ingestion complete.")
 
 
 def main():
     data_dir = Path(__file__).resolve().parent.parent.parent.parent / "data"
-    _concept_file = (
-        data_dir / "sct2_Concept_Snapshot_INT_20230731.txt"
-    )  # Adjust filename as needed
-    _desc_file = (
-        data_dir / "sct2_Description_Snapshot-en_INT_20230731.txt"
-    )  # Adjust filename as needed
+    concept_file = data_dir / "sct2_Concept_Snapshot_INT_20260901.txt"
+    desc_file = data_dir / "sct2_Description_Snapshot-en_INT_20260901.txt"
 
     create_tables()
 
-    # Uncomment when actual files are present
-    # ingest_concepts(concept_file)
-    # ingest_descriptions(desc_file)
-
-    print(
-        "Note: Update the filenames in ingest_snomed.py to match your actual RF2 files."
-    )
+    ingest_concepts(concept_file)
+    ingest_descriptions(desc_file)
 
 
 if __name__ == "__main__":

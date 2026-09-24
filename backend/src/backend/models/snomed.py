@@ -1,4 +1,4 @@
-from sqlalchemy import BigInteger, Boolean, Column, Index, String
+from sqlalchemy import BigInteger, Boolean, Column, Index, Text
 
 from backend.core.db import Base
 
@@ -15,7 +15,7 @@ class SnomedDescription(Base):
 
     id = Column(BigInteger, primary_key=True, index=True)
     concept_id = Column(BigInteger, nullable=False, index=True)
-    term = Column(String(512), nullable=False)
+    term = Column(Text, nullable=False)
     type_id = Column(BigInteger, nullable=False)
     active = Column(Boolean, nullable=False, default=True)
 

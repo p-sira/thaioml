@@ -1,4 +1,3 @@
-from backend.core.config import settings
 from langchain_classic.chains import (
     create_history_aware_retriever,
     create_retrieval_chain,
@@ -16,6 +15,8 @@ from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_postgres import PGVector
 from pydantic import SecretStr
+
+from backend.core.config import settings
 
 
 class RAGService:
