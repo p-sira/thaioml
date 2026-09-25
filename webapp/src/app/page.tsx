@@ -13,8 +13,8 @@ export default async function Home() {
         <h1 className="text-4xl md:text-5xl font-extrabold text-foreground tracking-tight mb-2">
           Open Medical Library of Thailand
         </h1>
-        <p className="text-lg text-foreground/70 mb-10">
-          The largest open-source medical knowledge base for healthcare professionals.
+        <p className="text-lg text-foreground/70 mb-10 max-w-3xl">
+          The Open Medical Library of Thailand (ThaiOML) is a public digital library designed to provide medical students with open access to high-quality, polyhierarchically-linked medical education.
         </p>
 
         {/* Search Box */}
