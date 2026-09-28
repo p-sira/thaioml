@@ -27,7 +27,19 @@ This is the FastAPI backend for ThaiOML. It handles RAG (Retrieval-Augmented Gen
    - Place the SNOMED RF2 release files in the `backend/data/` directory.
    - Run the ingestion script: `uv run ingest` (or `python src/backend/scripts/ingest_snomed.py`)
 
-4. **Start the server:**
+4. **Configure the LiteLLM Proxy:**
+   Set the private, deployment-specific proxy URL and server-side key. Do not expose
+   either value to the browser.
+   ```bash
+   LITELLM_API_BASE=https://<your-private-litellm-service>
+   LITELLM_API_KEY=<server-side-virtual-key>
+   LITELLM_MODEL_FAST=fast
+   LITELLM_MODEL_THINK=think
+   ```
+   Provider model names and credentials belong in LiteLLM configuration; backend
+   application code uses only the stable `fast` and `think` aliases.
+
+5. **Start the server:**
    ```bash
    uv run backend
    # or
@@ -55,7 +67,7 @@ gcloud run deploy thaioml-backend \
   --allow-unauthenticated \
   --port 8080 \
   --set-env-vars "CLERK_JWKS_URL=https://<your-clerk-domain>/.well-known/jwks.json" \
-  --set-secrets "DATABASE_URL=THAI_DB_URL:latest,OPENROUTER_API_KEY_RAG=OPENROUTER_API_KEY:latest,HUGGINGFACE_API_KEY_EMBEDDING=HF_API_KEY:latest"
+  --set-secrets "DATABASE_URL=THAI_DB_URL:latest,LITELLM_API_BASE=LITELLM_API_BASE:latest,LITELLM_API_KEY=LITELLM_API_KEY:latest,HUGGINGFACE_API_KEY_EMBEDDING=HF_API_KEY:latest"
 ```
 
 Once deployed, copy the Cloud Run service URL (e.g. `https://thaioml-backend-xxx-as.a.run.app`) into `NEXT_PUBLIC_API_URL` and `BACKEND_URL` in `webapp/wrangler.jsonc`.

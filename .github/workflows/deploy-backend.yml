@@ -42,7 +42,8 @@ jobs:
           source: ./backend
           secrets: |
             DATABASE_URL=SUPABASE_DATABASE_URL:latest
-            OPENROUTER_API_KEY_RAG=OPENROUTER_API_KEY_RAG:latest
+            LITELLM_API_BASE=LITELLM_API_BASE:latest
+            LITELLM_API_KEY=LITELLM_API_KEY:latest
             HUGGINGFACE_API_KEY_EMBEDDING=HUGGINGFACE_API_KEY_EMBEDDING:latest
           flags: |
             --allow-unauthenticated

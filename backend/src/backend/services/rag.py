@@ -12,11 +12,10 @@ from langchain_core.prompts import (
 )
 from langchain_core.runnables import RunnablePassthrough
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
-from langchain_openai import ChatOpenAI
 from langchain_postgres import PGVector
-from pydantic import SecretStr
 
 from backend.core.config import settings
+from backend.core.llm import create_chat_model
 
 
 class RAGService:
@@ -33,7 +32,8 @@ class RAGService:
 
         if (
             not settings.huggingface_api_key_embedding
-            or not settings.openrouter_api_key_rag
+            or not settings.litellm_api_base
+            or not settings.litellm_api_key
         ):
             print("Warning: Missing API keys. RAG query endpoint will fail.")
             return
@@ -52,11 +52,7 @@ class RAGService:
             )
             retriever = self.vector_store.as_retriever(search_kwargs={"k": 4})
 
-            self.llm = ChatOpenAI(
-                base_url="https://openrouter.ai/api/v1",
-                api_key=SecretStr(settings.openrouter_api_key_rag),
-                model=settings.openrouter_model_rag,
-            )
+            self.llm = create_chat_model("fast")
 
             # Original single-turn chain
             template = """Answer the question based only on the following context. Do not make up any information that is not in the context. Answer in Thai when the user ask in Thai, explicitly state so, or based on the context where appropriate, such as specific mnemonics:
