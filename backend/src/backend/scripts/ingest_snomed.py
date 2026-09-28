@@ -5,12 +5,11 @@ from pathlib import Path
 # Increase CSV field size limit to handle very large text fields (e.g. SNOMED descriptions)
 csv.field_size_limit(sys.maxsize)
 
+from backend.core.db import Base, engine
+from backend.models.snomed import SnomedConcept, SnomedDescription
 from sqlalchemy import text
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from tqdm import tqdm
-
-from backend.core.db import Base, engine
-from backend.models.snomed import SnomedConcept, SnomedDescription
 
 
 def create_tables():

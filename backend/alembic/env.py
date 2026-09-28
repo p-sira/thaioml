@@ -1,8 +1,7 @@
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config, pool
-
 from alembic import context
+from sqlalchemy import engine_from_config, pool
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -35,7 +34,11 @@ config.set_main_option("sqlalchemy.url", db_url)
 
 
 def include_object(object, name, type_, reflected, compare_to):
-    return not (type_ == "table" and name in ("langchain_pg_collection", "langchain_pg_embedding", "upsertion_record"))
+    return not (
+        type_ == "table"
+        and name
+        in ("langchain_pg_collection", "langchain_pg_embedding", "upsertion_record")
+    )
 
 
 def run_migrations_offline() -> None:

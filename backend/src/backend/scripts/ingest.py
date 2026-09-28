@@ -2,6 +2,7 @@ import glob
 import os
 
 import yaml
+from backend.core.config import settings
 from langchain_classic.indexes import SQLRecordManager, index
 from langchain_huggingface import HuggingFaceEndpointEmbeddings
 from langchain_postgres import PGVector
@@ -9,8 +10,6 @@ from langchain_text_splitters import (
     MarkdownHeaderTextSplitter,
     RecursiveCharacterTextSplitter,
 )
-
-from backend.core.config import settings
 
 
 def parse_frontmatter(content: str):

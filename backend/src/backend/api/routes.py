@@ -1,15 +1,14 @@
 import os
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException
-from posthog import Posthog
-from pydantic import BaseModel
-from sqlalchemy.orm import Session
-
 from backend.core.auth import require_role
 from backend.core.db import get_db
 from backend.services.rag import rag_service
 from backend.services.snomed import auto_link_terms, suggest_snomed_term
+from fastapi import APIRouter, Depends, HTTPException
+from posthog import Posthog
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
 
 router = APIRouter()
 posthog = Posthog(
