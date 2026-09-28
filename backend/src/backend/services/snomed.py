@@ -2,12 +2,11 @@ import json
 import urllib.parse
 import urllib.request
 
-from langchain_openai import ChatOpenAI
-from pydantic import SecretStr
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
 
 from backend.core.config import settings
+from backend.core.llm import create_chat_model
 from backend.models.snomed import SnomedDescription
 
 
@@ -91,15 +90,10 @@ def suggest_snomed_term(query: str, db: Session) -> tuple[str, str, str]:
         return match[0], match[1], "direct"
 
     # 2. AI Translation
-    if not settings.openrouter_api_key_lookup:
-        raise ValueError("OpenRouter API key missing.")
+    if not settings.litellm_api_base or not settings.litellm_api_key:
+        raise ValueError("LiteLLM configuration missing.")
 
-    snomed_llm = ChatOpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=SecretStr(settings.openrouter_api_key_lookup),
-        model=settings.openrouter_model_lookup,
-        temperature=0.0,
-    )
+    snomed_llm = create_chat_model("fast", temperature=0.0)
 
     prompt_text = f"""You are a medical terminology translator. Translate the following user query into the exact, canonical English SNOMED CT term name.
 Query: '{query}'
@@ -136,15 +130,10 @@ Respond ONLY with the exact English term enclosed in <term> tags. For example: <
 def auto_link_terms(
     body: str, db: Session, title: str | None = None, snomed_id: str | None = None
 ) -> tuple[str, dict[str, str]]:
-    if not settings.openrouter_api_key_lookup:
-        raise ValueError("OpenRouter API key missing.")
+    if not settings.litellm_api_base or not settings.litellm_api_key:
+        raise ValueError("LiteLLM configuration missing.")
 
-    snomed_llm = ChatOpenAI(
-        base_url="https://openrouter.ai/api/v1",
-        api_key=SecretStr(settings.openrouter_api_key_lookup),
-        model=settings.openrouter_model_lookup,
-        temperature=0.0,
-    )
+    snomed_llm = create_chat_model("fast", temperature=0.0)
 
     prompt_text = f"""You are a medical terminology extraction system. 
 Analyze the following markdown text and extract clinically significant terms (abbreviations, diseases, drugs, procedures). 

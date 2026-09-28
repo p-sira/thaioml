@@ -59,7 +59,8 @@ ThaiOML is built as a decoupled, multi-tier system engineered for static resilie
 * **Execution Model:** Fully serverless container that scales to zero instances when idle, incurring zero baseline server costs.
 * **Role:**
   * **RAG Retrieval:** Vector similarity search using LangChain and Hugging Face embeddings.
-  * **LLM Synthesis:** Synthesizes responses via OpenRouter models.
+* **LLM Synthesis:** Synthesizes responses through a private LiteLLM Proxy using
+  the stable Fast and Think model aliases.
   * **Terminology Lookup:** Fuzzy trigram search against SNOMED CT clinical terms.
   * **Authorization:** Validates Clerk JWT tokens against Clerk's JWKS endpoint before executing protected routes.
 * **Containerization:** Multi-stage build via [backend/Dockerfile](file:///home/psira/Code/web/thaioml/backend/Dockerfile) with Astral `uv`.
@@ -78,11 +79,29 @@ ThaiOML is built as a decoupled, multi-tier system engineered for static resilie
 
 ---
 
+## LLM Gateway & Billing Control Plane
+
+FastAPI sends generation requests to a private LiteLLM Proxy on Google Cloud Run
+using only the `fast` and `think` aliases. LiteLLM routes requests to OpenRouter (or
+approved future providers), applies defensive budgets, and persists its operational
+state in a dedicated Neon Postgres database. Supabase continues to hold SNOMED,
+vectors, entitlements, and the application usage ledger.
+
+Stripe owns Lite and Pro subscription state. FastAPI verifies Stripe webhooks and
+enforces the corresponding weekly allowance. Full governance is defined in
+[LLM Access and Billing Architecture](./llm-access-and-billing-architecture.md).
+
+---
+
 ## Supporting Services
 
 * **Identity & Authentication:** [Clerk](https://clerk.com) — Single source of truth for user identities, roles, and cryptographic JWT sessions.
 * **Analytics & Telemetry:** [PostHog](https://posthog.com) — Privacy-first, server-side and client-side telemetry.
 * **LLM / Embedding Providers:** OpenRouter (text generation) and Hugging Face (embeddings).
+* **LLM Gateway:** LiteLLM Proxy on Google Cloud Run with dedicated Neon Postgres
+  persistence. See [LLM Access and Billing Architecture](./llm-access-and-billing-architecture.md).
+* **Billing:** Stripe owns commercial state; FastAPI enforces entitlements and
+  reconciles usage in Supabase.
 
 ---
 
@@ -96,6 +115,10 @@ ThaiOML is built as a decoupled, multi-tier system engineered for static resilie
 | `NEXT_PUBLIC_API_URL` | Cloudflare Worker (`vars`) | Public URL pointing to Google Cloud Run |
 | `BACKEND_URL` | Cloudflare Worker (`vars`) | Internal/Server URL pointing to Google Cloud Run |
 | `DATABASE_URL` | Cloud Run Secret | Supabase connection string (`postgresql+psycopg://...`) |
-| `OPENROUTER_API_KEY_RAG` | Cloud Run Secret | OpenRouter API Key for RAG responses |
+| `LITELLM_API_BASE` | Cloud Run Secret | Private LiteLLM Proxy URL |
+| `LITELLM_API_KEY` | Cloud Run Secret | Server-side LiteLLM virtual key |
+| `LITELLM_MODEL_FAST` | Cloud Run Environment Variable | Stable Fast alias (default `fast`) |
+| `LITELLM_MODEL_THINK` | Cloud Run Environment Variable | Stable Think alias (default `think`) |
+| `LITELLM_DATABASE_URL` | LiteLLM Cloud Run Secret | Dedicated Neon connection used only by LiteLLM |
 | `HUGGINGFACE_API_KEY_EMBEDDING` | Cloud Run Secret | Hugging Face embedding API key |
 | `CLERK_JWKS_URL` | Cloud Run Environment Variable | JWKS endpoint for Clerk JWT verification |
