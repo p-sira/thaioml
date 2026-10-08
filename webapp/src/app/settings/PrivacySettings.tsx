@@ -2,24 +2,16 @@
 
 import { useState } from 'react'
 import posthog from 'posthog-js'
+import { Button } from '@/components/ui/Button'
+import { statusMessageStyles } from '@/components/ui/FormField'
+import { getBrowserCookie, setBrowserCookie } from '@/lib/browserCookies'
 
-function getConsentCookie() {
-  if (typeof document === 'undefined') return null
-  const match = document.cookie.match(new RegExp('(^| )cookie_consent=([^;]+)'))
-  if (match) return match[2]
-  return null
-}
-
-function setConsentCookie(value: string) {
-  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  const domainStr = isLocal ? '' : `; domain=.${window.location.hostname.replace(/^[^.]+\./g, '')}`
-  document.cookie = `cookie_consent=${value}; path=/; max-age=15552000${domainStr}`
-}
+const CONSENT_MAX_AGE = 60 * 60 * 24 * 180
 
 export default function PrivacySettings() {
   const [consent, setConsent] = useState<string | null>(() => {
     if (typeof document === 'undefined') return null;
-    return getConsentCookie();
+    return getBrowserCookie('cookie_consent');
   })
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState('')
@@ -29,10 +21,10 @@ export default function PrivacySettings() {
     setMessage('')
     
     if (consent === 'granted') {
-      setConsentCookie('granted')
+      setBrowserCookie('cookie_consent', 'granted', CONSENT_MAX_AGE)
       posthog.opt_in_capturing()
     } else {
-      setConsentCookie('denied')
+      setBrowserCookie('cookie_consent', 'denied', CONSENT_MAX_AGE)
       posthog.opt_out_capturing()
     }
     
@@ -79,15 +71,15 @@ export default function PrivacySettings() {
       </div>
 
       <div className="flex items-center gap-4">
-        <button
+        <Button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-6 py-2 bg-foreground text-background font-medium rounded-md hover:opacity-90 disabled:opacity-50 transition-all duration-300"
+          className="px-6"
         >
           {isSaving ? 'Saving...' : 'Save Preferences'}
-        </button>
+        </Button>
         {message && (
-          <span className={`text-sm ${message.includes('Failed') ? 'text-red-600' : 'text-green-600'}`}>
+          <span role="status" className={statusMessageStyles(message)}>
             {message}
           </span>
         )}

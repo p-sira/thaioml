@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
+import Link from 'next/link';
+import { Archive } from 'lucide-react';
 
 // Helper to check if a user is in a field list
 function hasUser(field: unknown, clerkUser: User): boolean {
@@ -105,7 +107,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
       
       <div>
         <h2 className="text-2xl font-semibold mb-6 border-b pb-4 flex items-center gap-2">
-          <svg className="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
+          <Archive className="w-6 h-6 text-primary" />
           Article Contributions
         </h2>
         
@@ -116,11 +118,9 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
         ) : (
           <div className="grid gap-5 md:grid-cols-2">
             {contributedArticles.map((article) => (
-              <a 
+              <Link
                 key={article.id}
-                href={`https://www.thaioml.org/articles/${article.slug}`} 
-                target="_blank" 
-                rel="noopener noreferrer"
+                href={`/articles/${article.slug}`}
                 className="group block p-6 border rounded-xl shadow-sm hover:shadow-md transition-all hover:-translate-y-1 bg-card hover:border-primary/50 text-card-foreground"
               >
                 <div className="flex flex-wrap gap-2 mb-4">
@@ -138,7 +138,7 @@ export default async function UserProfilePage({ params }: { params: Promise<{ us
                 <h3 className="text-xl font-bold group-hover:text-primary transition-colors line-clamp-2">
                   {article.title}
                 </h3>
-              </a>
+              </Link>
             ))}
           </div>
         )}

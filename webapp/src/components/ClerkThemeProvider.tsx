@@ -3,6 +3,8 @@
 import { ClerkProvider } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
 import { useEffect, useState } from 'react'
+import { getBrowserCookie } from '@/lib/browserCookies'
+import { isTheme, type Theme } from '@/lib/theme'
 
 // Only mount ClerkProvider when explicitly enabled via env var.
 // Set NEXT_PUBLIC_CLERK_ENABLED=false in CI to skip Clerk entirely
@@ -14,15 +16,15 @@ export function ClerkThemeProvider({
   initialTheme
 }: {
   children: React.ReactNode
-  initialTheme: string
+  initialTheme: Theme
 }) {
-  const [theme, setTheme] = useState(initialTheme)
+  const [theme, setTheme] = useState<Theme>(initialTheme)
 
   useEffect(() => {
     const handleThemeChange = () => {
       const bodyTheme = document.body.getAttribute('data-md-color-scheme')
-      const match = document.cookie.match('(^|;) ?thaioml-theme=([^;]*)(;|$)')
-      const currentTheme = bodyTheme || (match ? match[2] : 'leuko')
+      const savedTheme = getBrowserCookie('thaioml-theme')
+      const currentTheme = isTheme(bodyTheme) ? bodyTheme : (isTheme(savedTheme) ? savedTheme : 'leuko')
       setTheme(currentTheme)
     }
 

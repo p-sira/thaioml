@@ -3,28 +3,19 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { updateThemeSettings } from '../actions/theme'
+import { Button } from '@/components/ui/Button'
+import { statusMessageStyles } from '@/components/ui/FormField'
+import { getBrowserCookie, setBrowserCookie } from '@/lib/browserCookies'
+import { isTheme, THEMES, type Theme } from '@/lib/theme'
 
-const THEMES = [
-  { id: 'leuko', name: 'Leuko' },
-  { id: 'darkroom', name: 'Darkroom' },
-  { id: 'progressnote', name: 'Progressnote' },
-]
-
-// Note: Using document.cookie for cross-subdomain sharing (e.g. thaioml.org and app.thaioml.org)
-function setCookie(name: string, value: string, days: number = 365) {
-  const d = new Date()
-  d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000))
-  // Set cross-subdomain cookie for production, otherwise bind to exact hostname
-  const domainString = window.location.hostname.includes('thaioml.org') ? 'domain=.thaioml.org;' : ''
-  document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;${domainString}SameSite=Lax`
-}
+const THEME_MAX_AGE = 60 * 60 * 24 * 365
 
 export default function ThemeSettings({
   initialTheme = 'leuko'
 }: {
   initialTheme?: string
 }) {
-  const [theme, setTheme] = useState(initialTheme)
+  const [theme, setTheme] = useState<Theme>(isTheme(initialTheme) ? initialTheme : 'leuko')
   const [isSaving, setIsSaving] = useState(false)
   const [message, setMessage] = useState('')
   const router = useRouter()
@@ -39,8 +30,8 @@ export default function ThemeSettings({
     // but if we just navigate away, we want to revert to the saved state.
     return () => {
       // We read the cookie to revert to the saved state, or fallback to initialTheme
-      const savedTheme = document.cookie.match('(^|;) ?thaioml-theme=([^;]*)(;|$)');
-      const themeToRevertTo = savedTheme ? savedTheme[2] : initialTheme;
+      const savedTheme = getBrowserCookie('thaioml-theme')
+      const themeToRevertTo = isTheme(savedTheme) ? savedTheme : (isTheme(initialTheme) ? initialTheme : 'leuko')
       document.body.setAttribute('data-md-color-scheme', themeToRevertTo)
       window.dispatchEvent(new Event('theme-change'))
     }
@@ -52,7 +43,7 @@ export default function ThemeSettings({
     setMessage('')
     try {
       // 1. Save to cookies synchronously
-      setCookie('thaioml-theme', theme)
+      setBrowserCookie('thaioml-theme', theme, THEME_MAX_AGE)
 
       // 2. Dispatch custom event for ThemeProvider to pick up instantly without reload
       window.dispatchEvent(new Event('theme-change'))
@@ -93,15 +84,15 @@ export default function ThemeSettings({
       </div>
 
       <div className="flex items-center gap-4">
-        <button
+        <Button
           onClick={handleSave}
           disabled={isSaving}
-          className="px-6 py-2 bg-foreground text-background font-medium rounded-md hover:opacity-90 disabled:opacity-50 transition-all duration-300"
+          className="px-6"
         >
           {isSaving ? 'Saving...' : 'Save Preferences'}
-        </button>
+        </Button>
         {message && (
-          <span className={`text-sm ${message.includes('Failed') ? 'text-red-600' : 'text-green-600'}`}>
+          <span role="status" className={statusMessageStyles(message)}>
             {message}
           </span>
         )}

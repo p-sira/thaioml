@@ -1,9 +1,9 @@
-import { currentUser } from '@clerk/nextjs/server';
-import { redirect } from 'next/navigation';
 import { listMarkdownFiles, getMarkdownFile } from '@/app/actions/github';
 import matter from 'gray-matter';
 import DashboardClient from './DashboardClient';
 import NewArticleForm from './NewArticleForm';
+import { requireEditorialUser } from '@/lib/auth';
+import type { EditorialArticle } from '@/lib/editorial';
 
 // Helper to fetch file content and parse frontmatter
 async function getFileWithFrontmatter(filePath: string) {
@@ -13,44 +13,18 @@ async function getFileWithFrontmatter(filePath: string) {
   return { path: filePath, data };
 }
 
-const HAS_CLERK = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false';
-
 export default async function EditorialDashboardPage() {
-  if (!HAS_CLERK) {
-    redirect('/sign-in?redirect_url=/editorial');
-  }
-
-  let user = null;
-  try {
-    user = await currentUser();
-  } catch {
-    redirect('/sign-in?redirect_url=/editorial');
-  }
-
-  if (!user) {
-    redirect('/sign-in?redirect_url=/editorial');
-  }
-
-  const roles = (user.publicMetadata?.roles as string[]) || [];
-  const hasPermission = roles.includes('editor') || roles.includes('admin') || roles.includes('author');
-  const isAdmin = roles.includes('admin');
-  const isEditor = roles.includes('editor') || isAdmin;
-
-  if (!hasPermission) {
-    redirect('/cms');
-  }
+  const { user, isAdmin, isEditor } = await requireEditorialUser();
 
   const { files } = await listMarkdownFiles('webapp/content/docs/editorial');
   
   // Fetch all contents in parallel to read frontmatter
   const articlesData = await Promise.all(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    files.map((file: any) => getFileWithFrontmatter(file.path))
+    files.map((file) => getFileWithFrontmatter(file.path))
   );
 
   // Filter out nulls
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const validArticles = articlesData.filter(Boolean) as { path: string, data: any }[];
+  const validArticles = articlesData.filter((article): article is EditorialArticle => article !== null);
   
   return (
     <div className="min-h-screen flex flex-col bg-background">

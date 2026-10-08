@@ -1,12 +1,24 @@
-import { clerkClient, User } from "@clerk/nextjs/server";
+import { clerkClient, currentUser, User } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
+import { getUserRoles } from '@/lib/auth';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const query = searchParams.get("query") || "";
+  const query = (searchParams.get("query") || "").trim();
 
   try {
-    // Await if client is a function (Clerk v5+)
+    const requestingUser = await currentUser();
+    if (!requestingUser) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+    const roles = getUserRoles(requestingUser);
+    if (!roles.some((role) => ['author', 'editor', 'admin'].includes(role))) {
+      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    }
+
+    if (!query || query.length > 100) {
+      return NextResponse.json({ error: 'Query must contain 1 to 100 characters' }, { status: 400 });
+    }
+
     const client = await clerkClient();
     
     const response = await client.users.getUserList({
@@ -14,8 +26,7 @@ export async function GET(request: Request) {
       limit: 20,
     });
     
-    // Some versions return { data } and some return the array directly
-    const usersData = response.data || response;
+    const usersData = response.data;
     
     const users = usersData.map((u: User) => {
       const name = `${u.firstName || ""} ${u.lastName || ""}`.trim() || u.username || "Unknown";
