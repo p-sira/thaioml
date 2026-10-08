@@ -65,6 +65,16 @@ Begin writing your article here...
 `;
   }
 
+  const currentAuthor = {
+    id: user.id,
+    username: user.username || user.firstName?.toLowerCase() || 'anonymous',
+    name: user.firstName
+      ? `${user.firstName} ${user.lastName || ''}`.trim()
+      : user.username || 'Anonymous User',
+    avatar: user.imageUrl || '',
+    role: isEditor ? 'editor' : 'author',
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <header className="bg-background border-b border-border px-6 py-4 flex items-center justify-between sticky top-0 z-10 shadow-sm">
@@ -80,7 +90,7 @@ Begin writing your article here...
       </header>
       
       <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
-        <Editor initialContent={content} filePath={filePath} isEditor={isEditor} currentUser={user.username || ''} />
+        <Editor initialContent={content} filePath={filePath} isEditor={isEditor} currentUser={currentAuthor} />
       </main>
     </div>
   );
