@@ -13,6 +13,14 @@ import { SlashCommand, getSuggestionOptions } from './extensions/SlashCommand';
 import { CommentMark } from './extensions/CommentMark';
 import UserAutocomplete from './UserAutocomplete';
 import CommentsSidebar from './comments/CommentsSidebar';
+import LinkDialog from './LinkDialog';
+import LinkHoverPopup from './LinkHoverPopup';
+import { HighlightMark, HighlightColor } from './extensions/HighlightMark';
+import { TextColorMark, TextColor } from './extensions/TextColorMark';
+import {
+  HighlightPickerDropdown,
+  TextColorPickerDropdown,
+} from './ColorPickerDropdown';
 import {
   CommentThread,
   CurrentUserInfo,
@@ -133,6 +141,14 @@ export default function Editor({
   const [sidebarTab, setSidebarTab] = useState<'comments' | 'metadata'>('comments');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
+  // Link modal state (replaces browser window.prompt)
+  const [linkDialogState, setLinkDialogState] = useState<{
+    isOpen: boolean;
+    initialUrl: string;
+    selectedText?: string;
+    pos?: number;
+  } | null>(null);
+
   // Container ref for click-to-focus and scroll synchronization
   const editorContainerRef = useRef<HTMLDivElement>(null);
 
@@ -143,6 +159,9 @@ export default function Editor({
           link: {
             openOnClick: false,
             protocols: ['snomed'],
+            HTMLAttributes: {
+              class: 'editor-link',
+            },
           },
         }),
         Markdown,
@@ -150,6 +169,8 @@ export default function Editor({
           suggestion: getSuggestionOptions(),
         }),
         CommentMark,
+        HighlightMark,
+        TextColorMark,
       ],
       content: initialBody,
       editorProps: {
@@ -519,14 +540,63 @@ export default function Editor({
   };
 
   const handleAddLink = () => {
-    const previousUrl = editor.getAttributes('link').href;
-    const url = window.prompt('Enter link URL:', previousUrl || 'https://');
-    if (url === null) return;
-    if (url === '') {
-      editor.chain().focus().extendMarkRange('link').unsetLink().run();
-      return;
+    const previousUrl = editor.getAttributes('link').href || '';
+    const { from, to } = editor.state.selection;
+    const selectedText = from !== to ? editor.state.doc.textBetween(from, to) : '';
+    setLinkDialogState({
+      isOpen: true,
+      initialUrl: previousUrl,
+      selectedText,
+      pos: undefined,
+    });
+  };
+
+  const handleEditLinkFromHover = (href: string, pos: number) => {
+    setLinkDialogState({
+      isOpen: true,
+      initialUrl: href,
+      pos,
+    });
+  };
+
+  const handleSaveLink = (newUrl: string) => {
+    if (linkDialogState?.pos !== undefined) {
+      editor
+        .chain()
+        .setTextSelection(linkDialogState.pos)
+        .extendMarkRange('link')
+        .setLink({ href: newUrl })
+        .focus()
+        .run();
+    } else {
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .setLink({ href: newUrl })
+        .run();
     }
-    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+    setLinkDialogState(null);
+  };
+
+  const handleRemoveLinkFromDialog = () => {
+    if (linkDialogState?.pos !== undefined) {
+      editor
+        .chain()
+        .setTextSelection(linkDialogState.pos)
+        .extendMarkRange('link')
+        .unsetLink()
+        .focus()
+        .run();
+    } else {
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange('link')
+        .unsetLink()
+        .run();
+    }
+    setLinkDialogState(null);
   };
 
   // Word count & character count calculations
@@ -616,6 +686,28 @@ export default function Editor({
             >
               <Code className="w-4 h-4" />
             </button>
+
+            <div className="w-px h-5 bg-border mx-1" />
+
+            {/* Theme-Adaptive Text Color & Highlight Pickers */}
+            <TextColorPickerDropdown
+              currentColor={
+                editor.isActive('textColor')
+                  ? (editor.getAttributes('textColor').color as TextColor)
+                  : null
+              }
+              onSelect={color => editor.chain().focus().setTextColor(color).run()}
+              onClear={() => editor.chain().focus().unsetTextColor().run()}
+            />
+            <HighlightPickerDropdown
+              currentColor={
+                editor.isActive('highlight')
+                  ? (editor.getAttributes('highlight').color as HighlightColor)
+                  : null
+              }
+              onSelect={color => editor.chain().focus().setHighlight({ color }).run()}
+              onClear={() => editor.chain().focus().unsetHighlight().run()}
+            />
 
             <div className="w-px h-5 bg-border mx-1" />
 
@@ -882,6 +974,30 @@ export default function Editor({
 
             <div className="w-px h-4 bg-border mx-0.5" />
 
+            {/* Floating Text Color & Highlight Pickers */}
+            <TextColorPickerDropdown
+              compact
+              currentColor={
+                editor.isActive('textColor')
+                  ? (editor.getAttributes('textColor').color as TextColor)
+                  : null
+              }
+              onSelect={color => editor.chain().focus().setTextColor(color).run()}
+              onClear={() => editor.chain().focus().unsetTextColor().run()}
+            />
+            <HighlightPickerDropdown
+              compact
+              currentColor={
+                editor.isActive('highlight')
+                  ? (editor.getAttributes('highlight').color as HighlightColor)
+                  : null
+              }
+              onSelect={color => editor.chain().focus().setHighlight({ color }).run()}
+              onClear={() => editor.chain().focus().unsetHighlight().run()}
+            />
+
+            <div className="w-px h-4 bg-border mx-0.5" />
+
             <button
               type="button"
               onClick={handleAddLink}
@@ -929,6 +1045,27 @@ export default function Editor({
           >
             <EditorContent editor={editor} />
           </div>
+        )}
+
+        {/* Link Hover Preview and Quick Actions Popup */}
+        <LinkHoverPopup
+          editor={editor}
+          containerRef={editorContainerRef}
+          onEditLink={handleEditLinkFromHover}
+          editable={frontmatter.review_status !== 'pitch'}
+        />
+
+        {/* Custom Link Dialog replacing window.prompt */}
+        {linkDialogState?.isOpen && (
+          <LinkDialog
+            key={`${linkDialogState.initialUrl}-${linkDialogState.pos ?? 'new'}`}
+            isOpen={linkDialogState.isOpen}
+            initialUrl={linkDialogState.initialUrl}
+            selectedText={linkDialogState.selectedText}
+            onSave={handleSaveLink}
+            onRemove={handleRemoveLinkFromDialog}
+            onClose={() => setLinkDialogState(null)}
+          />
         )}
 
         {/* Status bar */}

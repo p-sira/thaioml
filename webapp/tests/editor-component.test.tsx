@@ -168,4 +168,40 @@ For stage 1 hypertension, <mark data-comment-id="comment_test_1">ACE inhibitors 
 
     expect(screen.getByPlaceholderText(/search comments/i)).toBeInTheDocument();
   });
+
+  it('opens custom link dialog instead of browser prompt when clicking link toolbar button', async () => {
+    const promptSpy = jest.spyOn(window, 'prompt');
+
+    render(
+      <Editor
+        initialContent={sampleMarkdown}
+        filePath="guidelines/hypertension.md"
+        isEditor={true}
+        currentUser={mockCurrentUser}
+      />
+    );
+
+    const linkBtn = screen.getByTitle('Insert / Edit Link');
+    fireEvent.click(linkBtn);
+
+    // Verify window.prompt was NOT called
+    expect(promptSpy).not.toHaveBeenCalled();
+
+    // Verify custom LinkDialog modal is open
+    expect(screen.getByRole('dialog', { name: /link/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /insert link/i })).toBeInTheDocument();
+
+    const input = screen.getByPlaceholderText(/https:\/\/example.com or snomed:38341003/i);
+    expect(input).toBeInTheDocument();
+
+    // Enter URL and save
+    fireEvent.change(input, { target: { value: 'https://thaioml.org/protocol' } });
+    const insertBtn = screen.getByRole('button', { name: /insert link/i });
+    fireEvent.click(insertBtn);
+
+    // Modal closes
+    expect(screen.queryByRole('dialog', { name: /link/i })).not.toBeInTheDocument();
+
+    promptSpy.mockRestore();
+  });
 });
