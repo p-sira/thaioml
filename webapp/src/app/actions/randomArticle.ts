@@ -1,34 +1,33 @@
 "use server";
 
+import { source } from '@/lib/source';
 import fs from 'fs/promises';
 import path from 'path';
 import { redirect } from 'next/navigation';
 
 export async function goToRandomArticle() {
-  const articlesDir = path.join(process.cwd(), '..', 'docs', 'docs', 'articles');
-  
   let targetUrl = '/';
 
   try {
-    const files = await fs.readdir(articlesDir, { recursive: true });
-    const mdFiles = files
-      // filter out directories, only take strings ending with .md
-      .filter((file) => typeof file === 'string' && file.endsWith('.md'))
-      .map(file => {
-        // Normalize path separators for URL
-        const normalized = file.split(path.sep).join('/');
-        // Remove .md extension
-        return normalized.replace(/\.md$/, '');
-      });
+    const articlePages = source.getPages().filter(page => page.url.startsWith('/articles/'));
+    if (articlePages.length > 0) {
+      const randomPage = articlePages[Math.floor(Math.random() * articlePages.length)];
+      targetUrl = randomPage.url;
+    } else {
+      const articlesDir = path.join(process.cwd(), 'content', 'docs', 'articles');
+      const files = await fs.readdir(articlesDir);
+      const mdFiles = files
+        .filter((file) => typeof file === 'string' && file.endsWith('.md'))
+        .map(file => file.replace(/\.md$/, ''));
 
-    if (mdFiles.length > 0) {
-      const randomFile = mdFiles[Math.floor(Math.random() * mdFiles.length)];
-      // The MkDocs site is proxied under the Next.js app
-      targetUrl = `/articles/${randomFile}/`;
+      if (mdFiles.length > 0) {
+        const randomFile = mdFiles[Math.floor(Math.random() * mdFiles.length)];
+        targetUrl = `/articles/${randomFile}`;
+      }
     }
   } catch (error) {
-    console.error("Failed to read articles directory:", error);
+    console.error("Failed to get random article:", error);
   }
-  
+
   redirect(targetUrl);
 }

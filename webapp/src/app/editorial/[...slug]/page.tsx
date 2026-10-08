@@ -5,6 +5,8 @@ import { getMarkdownFile } from '@/app/actions/github';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
+const HAS_CLERK = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false';
+
 export default async function EditorRoute({ 
   params,
   searchParams,
@@ -12,7 +14,16 @@ export default async function EditorRoute({
   params: Promise<{ slug: string[] }>,
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) {
-  const user = await currentUser();
+  if (!HAS_CLERK) {
+    redirect('/sign-in?redirect_url=/editorial');
+  }
+
+  let user = null;
+  try {
+    user = await currentUser();
+  } catch {
+    redirect('/sign-in?redirect_url=/editorial');
+  }
 
   if (!user) {
     redirect('/sign-in?redirect_url=/editorial');

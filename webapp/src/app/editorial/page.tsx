@@ -13,8 +13,19 @@ async function getFileWithFrontmatter(filePath: string) {
   return { path: filePath, data };
 }
 
+const HAS_CLERK = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false';
+
 export default async function EditorialDashboardPage() {
-  const user = await currentUser();
+  if (!HAS_CLERK) {
+    redirect('/sign-in?redirect_url=/editorial');
+  }
+
+  let user = null;
+  try {
+    user = await currentUser();
+  } catch {
+    redirect('/sign-in?redirect_url=/editorial');
+  }
 
   if (!user) {
     redirect('/sign-in?redirect_url=/editorial');

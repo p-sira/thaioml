@@ -2,8 +2,19 @@ import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
+const HAS_CLERK = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false'
+ 
 export default async function ContributePage() {
-  const user = await currentUser()
+  if (!HAS_CLERK) {
+    redirect('/sign-in?redirect_url=/cms')
+  }
+
+  let user = null
+  try {
+    user = await currentUser()
+  } catch {
+    redirect('/sign-in?redirect_url=/cms')
+  }
 
   if (!user) {
     redirect('/sign-in?redirect_url=/cms')

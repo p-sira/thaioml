@@ -30,3 +30,8 @@ apm_modules/
 # Cloudflare / OpenNext
 .open-next/
 .wrangler/
+
+# Playwright
+test-results/
+playwright-report/
+
