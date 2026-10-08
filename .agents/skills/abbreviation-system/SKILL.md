@@ -1,45 +1,18 @@
 ---
 name: abbreviation-system
-description: >-
-  Explains the core principles of how abbreviations are treated in ThaiOML.
-  Use this when parsing abbreviations or when resolving an abbreviation collision.
+description: Handle medical abbreviations in ThaiOML articles, including ambiguous abbreviations and collisions between meanings.
 ---
 
 # Abbreviation System
 
-In ThaiOML, abbreviations are treated as first-class entities, not plain text. This is critical for the RAG system to accurately disambiguate medical jargon.
+Treat an abbreviation as terminology that needs clinical context rather than a globally unique alias.
 
-## 1. The Disambiguation Principle
-An abbreviation like "MS" can mean *Multiple Sclerosis*, *Mitral Stenosis*, or *Morphine Sulfate*.
-Because of this, abbreviations must be explicitly registered and linked.
+## Workflow
 
-## 2. Creating an Abbreviation Entity
-When a new abbreviation collision is found, or when defining a major abbreviation, create a dedicated file:
-`webapp/content/docs/articles/abbreviations/[ABBREVIATION].md` (or in the root articles folder if `type` handles it).
+1. Search article frontmatter and content for the abbreviation and each proposed expansion before editing.
+2. For an unambiguous abbreviation, add it to the canonical concept's `synonyms` and define it on first use in prose.
+3. For an abbreviation with multiple meanings, keep each expansion attached to its canonical concept and make the wording explicit enough to disambiguate it.
+4. Reuse the article's existing identifier and linking conventions. Do not invent an abbreviation registry, identifier prefix, or generated disambiguation page unless the repository implements that system.
+5. Verify that search and linking resolve the intended concept and that no duplicate concept article was introduced.
 
-**Example Format:**
-```yaml
----
-id: abbr-ms
-title: MS
-type: abbreviation
-meanings:
-  - neuro-multiple-sclerosis
-  - cardio-mitral-stenosis
-  - pharm-morphine-sulfate
----
-
-# MS
-
-This abbreviation can refer to:
-* [Multiple Sclerosis](neuro-multiple-sclerosis.md)
-* [Mitral Stenosis](cardio-mitral-stenosis.md)
-* [Morphine Sulfate](pharm-morphine-sulfate.md)
-```
-
-## 3. Build Rules
-The static site build process (or a CI script) will eventually be responsible for:
-1. Validating the abbreviation registry.
-2. Detecting collisions.
-3. Generating these disambiguation pages automatically if missing.
-4. Generating a global abbreviation index.
+When the work also changes article content or metadata, apply `medical-article-workflow`.

@@ -1,18 +1,23 @@
 ---
 name: update-design-principles
-description: >-
-  Use this skill when the user mentions a new architectural design, a new coding principle, or a new workflow pattern that needs to be remembered.
+description: Record a user-approved ThaiOML architecture principle or recurring workflow so future implementation follows it. Use when the user asks to adopt, document, or remember the principle.
 ---
 
-# Updating Design Principles and Workflows
+# Update Design Principles
 
-ThaiOML relies on the AI customization system (`AGENTS.md` and `.agents/skills/`) to maintain consistency. When the user proposes a new principle, design, or workflow, you must capture it so future agents remember it.
+Store each rule in its canonical, reviewable location without duplicating it across instruction layers.
 
-## Procedure for Updating Principles
+## Workflow
 
-1. **Analyze the Request:** Determine if the new principle is a fundamental, global rule (belongs in `AGENTS.md`) or a specific procedure/runbook (belongs in a specific skill inside `.agents/skills/`).
-2. **Draft a Plan:** DO NOT modify the rules immediately. Draft an implementation plan (`implementation_plan.md`) describing exactly what file you intend to modify and what the new rule will say.
-3. **Request Approval:** Request the user's feedback on the plan.
-4. **Execute:** Once the user approves, update the appropriate `AGENTS.md` or `SKILL.md` file.
+1. Identify the affected domain and read its canonical public guideline or internal developer reference.
+2. Confirm the request represents a durable principle or recurring workflow rather than a one-off implementation choice.
+3. Store internal developer architecture and workflow documents in the project-root `reference/` directory. Keep public governance and editorial policy in `webapp/content/docs/guidelines/`.
+4. Update or create a focused skill only when agents need reusable execution guidance beyond the canonical document. Link to the project reference instead of copying it into the skill.
+5. Change `AGENTS.md` only when the user explicitly requests it and the rule truly applies repository-wide.
+6. Check references, remove superseded guidance, and verify that the new rule agrees with the implementation or update the implementation when that is part of the request.
 
-*Remember: Always maintain "progressive disclosure". Keep `AGENTS.md` extremely lean and point to specific skills for detailed instructions.*
+Do not create an approval document or pause for a separate approval cycle unless the user asks for a plan. Keep concise routing in `SKILL.md` and substantial developer documentation in the project-root `reference/` directory.
+
+## Skill installation
+
+Use the repository's npm-based skill tooling for future skill installation and updates. Do not use APM. Preserve locally maintained skills when updating third-party packages.

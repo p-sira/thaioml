@@ -1,27 +1,27 @@
-# ThaiOML: Agent Guidelines
-
-Welcome to the Open Medical Library of Thailand (ThaiOML) workspace. As an AI pair programmer, you MUST adhere to these fundamental architectural and governance rules at all times.
+# ThaiOML Agent Guidelines
 
 ## 1. Core Principles
-* **Single Source of Truth:** The Git repository is the absolute source of truth. NO content exists exclusively inside a CMS database. Furthermore, to avoid drift between human instructions and agent behavior, all detailed operational workflows and governance rules must be documented in the public `webapp/content/docs/guidelines/` directory. Agent skills should NOT hardcode these workflows; instead, they must instruct agents to read those canonical Markdown files (using tools like `view_file`) before taking action.
-* **Markdown First:** All canonical content is stored as `Markdown + YAML Frontmatter`. It must be portable, version-controlled, and AI-friendly.
-* **Static First:** The public website is statically generated (via Next.js/Fumadocs). There are NO dynamic database queries happening at runtime for the frontend. 
-* **Separation of Concerns:** The static frontend (`webapp/`) and the AI search/RAG backend (`backend/`) are decoupled. Publishing must NEVER depend on the AI systems.
-* **Python Tooling:** You MUST strictly use `uv` for all Python dependency management and environments across the repository (backend). The use of standard `pip` is banned.
-* **Auth & Identity:** Clerk is the single source of truth for identity and roles. See `webapp/content/docs/guidelines/auth-architecture.md` for rules on Next.js API JWT templates and FastAPI role dependencies.
-* **Deployment-First Environment Configuration:** NEVER hardcode environment-specific URLs (especially `http://localhost:...`) anywhere in the codebase (Next.js, FastAPI, or Fumadocs). Always aim for deployment from the start. Use environment variables (e.g., `NEXT_PUBLIC_API_URL`, FastAPI config files) to handle environment routing. This ensures seamless, immediate deployments across local, staging, and production environments.
-* **Infrastructure & Hosting Stack:** ThaiOML employs a decoupled multi-tier stack: Cloudflare Workers (Next.js webapp via OpenNext), Google Cloud Run (FastAPI backend container), and Supabase (PostgreSQL with `pgvector` and `pg_trgm`). Detailed architecture and deployment specifications are canonical in `webapp/content/docs/guidelines/architecture-stack.md`.
+* Single Source of Truth: Git is the sole source of truth. Public governance lives in [webapp/content/docs/guidelines], while internal developer documentation lives in the project-root [reference] directory. Always read the relevant canonical source before modifying domain logic.
+* Content Format: All content uses Markdown with YAML frontmatter. The public documentation site is statically generated via Next.js and Fumadocs; frontend pages never run runtime database queries.
+* Decoupled Tiers: The static frontend ([webapp]) and AI/RAG backend ([backend]) are decoupled. Content publishing must never depend on backend availability.
+  * Frontend: Next.js 16, React 19, Fumadocs, Tailwind CSS v4 on Cloudflare Workers via OpenNext.
+  * Backend: FastAPI (Python 3.13) on Google Cloud Run.
+  * Database: Supabase PostgreSQL with `pgvector` and `pg_trgm`.
 
-## 2. Agent Skills
-To save your context window, detailed procedures have been extracted into Skills. If you need to perform any of the following tasks, you MUST load the respective skill before modifying files:
+## 2. Governance Context
+* ThaiOML is an independent organization.
+* Editorial Roles: Contributors draft, expert reviewers approve in ThaiOML Studio, and student editors merge changes.
+* Review Metadata Always keep article YAML frontmatter `review_status` synchronized with this workflow.
 
-* **Creating or Editing Medical Articles:** Use the `medical-article-workflow` skill. It contains rules on YAML schema, CMS editorial processes, and language guidelines.
-* **Handling Abbreviations:** Use the `abbreviation-system` skill. It explains how to treat abbreviations as entities and resolve disambiguations.
-* **Testing the RAG Pipeline:** Use the `rag-pipeline-runbook` skill for instructions on running the local FastAPI server and `pgvector` container.
-* **Frontend Architecture:** Use the `frontend-architecture-workflow` skill. It explains how to handle theme resolution and cross-app state synchronization.
-* **Updating Principles & Designs:** If the user mentions a new design, principle, or workflow, you MUST use the `update-design-principles` skill to properly document it in the system.
-* **Telemetry & Analytics:** Use the `telemetry-architecture-workflow` skill to ensure compliance with the privacy-first PostHog architecture across Next.js and FastAPI.
+## 3. Engineering Constraints
+* Python Tooling: Use uv exclusively for Python dependency management, never pip.
+* Auth & Roles: Clerk is the sole authority for identity and user roles. Next.js proxies forward Clerk JWTs to FastAPI role dependencies.
+* Environment Configuration: Never hardcode environment-specific URLs (e.g., `localhost`). Use environment variables (such as `NEXT_PUBLIC_API_URL` and backend settings) across local, staging, and production.
 
-## 3. Governance Context
-* ThaiOML is an independent organization. Branches (like specific medical schools) operate under this unified structure.
-* Reviewers (staff/experts) approve content via ThaiOML Studio, and the responsible editors (medical students) merge on that basis. Always ensure `review_status` metadata accurately reflects this pipeline.
+## 4. Canonical Guideline Index
+Inspect these canonical sources before executing domain tasks:
+* [reference/architecture-stack.md]: Multi-tier infrastructure and deployment contracts.
+* [reference/auth-architecture.md]: Clerk tokens, JWT templates, and role enforcement.
+* [reference/frontend-architecture.md]: Fumadocs components, shared state, and theme setup.
+* [reference/telemetry-architecture.md]: Analytics event schemas and client/server tracking.
+* [webapp/content/docs/guidelines/author-guideline.md], [webapp/content/docs/guidelines/reviewer-guideline.md], [webapp/content/docs/guidelines/editor-guideline.md]: Content creation, peer review, and editorial approval.

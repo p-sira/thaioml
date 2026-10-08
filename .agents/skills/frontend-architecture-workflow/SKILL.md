@@ -1,21 +1,18 @@
 ---
 name: frontend-architecture-workflow
-description: >-
-  Use this skill when modifying theme logic, cross-app shared state, or global frontend architecture in ThaiOML.
+description: Modify ThaiOML theme resolution, shared frontend state, proxy integration, or other cross-app frontend architecture.
 ---
 
 # Frontend Architecture Workflow
 
-When performing any tasks related to the frontend architecture, theme preferences, or cross-application state in ThaiOML (between the Next.js webapp and Fumadocs static site), you **MUST** adhere to the documented design principles.
+Before changing cross-app frontend behavior, read [reference/frontend-architecture.md](../../../reference/frontend-architecture.md) and inspect the current implementation named by the task. Treat the reference as the design contract and the code as the source for current file paths and APIs.
 
-## 1. Review Canonical Documentation
+Preserve these invariants:
 
-Before modifying any theme logic, you **MUST** read the canonical documentation to understand the Standard Resolution Flow:
+- Shared preferences resolve synchronously from the established cookie before asynchronous account reconciliation.
+- Authenticated preference sync uses Clerk metadata; Clerk remains the identity and role authority.
+- Cross-app behavior works through the configured Next.js and static-content integration with relative routing.
+- Environment-specific origins come from configuration rather than hardcoded URLs.
+- Styling changes respect the documented theme palette and CSS isolation constraints.
 
-- Call the `view_file` tool on `webapp/content/docs/guidelines/frontend-architecture.md`.
-
-## 2. Key Reminders
-
-- The standard flow involves a synchronous **Performance Layer** (Local Cookies) and an asynchronous **Sync Layer** (Clerk `publicMetadata`).
-- ThaiOML relies on `.thaioml.org` domain cookies to share state between the static library and the webapp. 
-- Never implement arbitrary `localStorage` solutions for cross-app features without considering domain-bound cookies and this documented architecture.
+Test the smallest affected integration surface. For proxy, theme, or hydration changes, include a production build when practical because development mode does not exercise every boundary.

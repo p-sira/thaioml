@@ -1,39 +1,31 @@
 ---
 name: rag-pipeline-runbook
-description: >-
-  Instructions for starting and interacting with the FastAPI Retrieval-Augmented Generation (RAG) backend.
-  Use this when tasked with testing the vector database, ingestion, or search APIs.
+description: Run, test, or debug ThaiOML's FastAPI RAG, ingestion, vector search, and SNOMED terminology services.
 ---
 
 # RAG Pipeline Runbook
 
-The ThaiOML RAG pipeline operates entirely independently of the static frontend. It uses `FastAPI`, `LangChain`, and `pgvector`. It also hosts the AI SNOMED auto-linker for ThaiOML Studio.
+Before changing backend integration or deployment behavior, read [reference/architecture-stack.md](../../../reference/architecture-stack.md). The FastAPI backend is decoupled from the statically generated frontend, which must remain publishable when the backend is unavailable.
 
-## 1. Local Environment Requirements
-To test the full RAG pipeline locally, you need the PostgreSQL `pgvector` container running.
-If you are inside the VS Code Devcontainer, it is already running.
-If you are operating directly on a host, start it via:
-```bash
-docker compose -f .devcontainer/docker-compose.yml up db -d
-```
-*Note: Connection string is always `postgresql://postgres:postgres@localhost:5432/thaioml`*
+## Local operation
 
-**Database Dependency:** All major backend features, including RAG querying and SNOMED auto-linking/suggestions, now require a live connection to the `pgvector` Postgres database. SNOMED CT lookups rely on local tables (`snomed_concepts`, `snomed_descriptions`) populated from RF2 files, rather than an external terminology server.
+- Manage Python dependencies with `uv` only.
+- Configure secrets and service URLs through environment variables. Never embed a local or production database URL in code or instructions.
+- Start the API from the repository root with `make dev-backend`.
+- Run backend tests with `make test-backend`, or a focused test with `cd backend && uv run pytest <path>`.
+- Use the configured `DATABASE_URL`; confirm the target before migrations, ingestion, or destructive database operations.
 
-## 2. Running the Backend Server
-The backend is managed with `uv`. To start the FastAPI server:
-```bash
-make dev-backend
-```
-*(This translates to `cd backend && uv run uvicorn main:app --reload --port 8080`)*
+The current terminology endpoints are `POST /snomed-suggest` and `POST /auto-link`. Inspect `backend/src/backend/api/routes.py` for request models, authentication, and response contracts rather than relying on copied examples.
 
-The server will be available at `http://localhost:8080`. You can access the interactive Swagger UI at `http://localhost:8080/docs` to test endpoints:
-- `POST /auto-link`: AI-powered SNOMED term extraction and linkage (uses OpenRouter + local Postgres).
-- `POST /snomed-suggest`: Single term resolution (queries local Postgres via pg_trgm).
-- (RAG ingestion and search endpoints)
+## Database and ingestion work
 
-## 3. Ingestion Rules
-When building or debugging the ingestion scripts (which chunk markdown and send to pgvector), ensure:
-- Chunk boundaries respect Markdown headings and clinical subsections.
-- Chunk sizes are between 300-800 tokens.
-- All YAML frontmatter metadata (doc_id, title, specialty, type) is injected into the vector metadata payload so it can be used for filtering during search.
+Apply `supabase` for Supabase-specific operations and `supabase-postgres-best-practices` before changing Postgres schemas, migrations, queries, indexes, RLS, or pgvector behavior.
+
+For document ingestion:
+
+- Preserve Markdown heading boundaries where practical.
+- Carry the metadata fields used by current retrieval filters and record management.
+- Keep stable source identifiers so incremental cleanup can replace changed chunks.
+- Derive chunk sizing from the embedding model and retrieval tests rather than treating a fixed token range as a repository invariant.
+
+Verify API changes with focused tests. Verify ingestion changes against a disposable or explicitly approved database target and report the target used.
