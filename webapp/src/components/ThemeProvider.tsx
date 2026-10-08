@@ -2,19 +2,10 @@
 
 import { useUser } from '@clerk/nextjs'
 import { useEffect, useRef } from 'react'
+import { getBrowserCookie, setBrowserCookie } from '@/lib/browserCookies'
+import { isTheme, type Theme } from '@/lib/theme'
 
-function setCookie(name: string, value: string, days: number = 365) {
-  const d = new Date()
-  d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000))
-  const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  const domainString = isLocal ? '' : `domain=.${window.location.hostname.replace(/^[^.]+\./g, '')};`
-  document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;${domainString}SameSite=Lax`
-}
-
-function getCookie(name: string) {
-  const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
-  return v ? v[2] : null;
-}
+const THEME_MAX_AGE = 60 * 60 * 24 * 365
 
 /**
  * Inner component that calls useUser() — must only be rendered inside <ClerkProvider>.
@@ -26,19 +17,14 @@ function ClerkThemeSync({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!isLoaded || !user) return
 
-    const dbTheme = user.publicMetadata?.theme as string | undefined
+    const dbTheme = user.publicMetadata?.theme
 
-    if (dbTheme) {
-      const localTheme = getCookie('thaioml-theme')
+    if (isTheme(dbTheme)) {
+      const localTheme = getBrowserCookie('thaioml-theme')
 
-      let updated = false
-      if (dbTheme && dbTheme !== localTheme) {
-        setCookie('thaioml-theme', dbTheme)
-        updated = true
-      }
-
-      if (updated) {
-        applyThemeVariables(dbTheme || localTheme || 'leuko')
+      if (dbTheme !== localTheme) {
+        setBrowserCookie('thaioml-theme', dbTheme, THEME_MAX_AGE)
+        applyThemeVariables(dbTheme)
       }
     }
   }, [user, isLoaded])
@@ -57,10 +43,10 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     initialized.current = true
 
     const applyCurrent = () => {
-      let theme = getCookie('thaioml-theme');
-      if (!theme) {
-        theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'darkroom' : 'leuko';
-      }
+      const savedTheme = getBrowserCookie('thaioml-theme');
+      const theme: Theme = isTheme(savedTheme)
+        ? savedTheme
+        : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'darkroom' : 'leuko';
       applyThemeVariables(theme)
     }
 
@@ -68,7 +54,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleMediaChange = () => {
-      if (!getCookie('thaioml-theme')) {
+      if (!isTheme(getBrowserCookie('thaioml-theme'))) {
         applyCurrent();
       }
     };
@@ -90,7 +76,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
-function applyThemeVariables(theme: string) {
+function applyThemeVariables(theme: Theme) {
   // We apply CSS variables that align with Mkdocs Material for consistency across apps
   document.body.setAttribute('data-md-color-scheme', theme)
 }

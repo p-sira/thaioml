@@ -3,27 +3,67 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Edit2, LayoutDashboard, Search, Filter } from 'lucide-react';
-
-interface ArticleData {
-  title?: string;
-  review_status?: string;
-  abstract?: string;
-  assigned_editor?: string;
-  assigned_reviewers?: string | string[];
-  active_author?: string;
-}
-
-interface Article {
-  path: string;
-  data: ArticleData;
-}
+import { ARTICLE_STATUSES, isArticleAssignedTo, type EditorialArticle } from '@/lib/editorial';
+import { fieldStyles } from '@/components/ui/FormField';
+import { classNames } from '@/lib/classNames';
 
 interface DashboardClientProps {
-  articles: Article[];
+  articles: EditorialArticle[];
   currentUser: string;
   isAdmin: boolean;
   isEditor: boolean;
   newArticleForm?: React.ReactNode;
+}
+
+function ArticleCard({ article, currentUser }: { article: EditorialArticle; currentUser: string }) {
+  const { data } = article;
+
+  return (
+    <article className="bg-background rounded-xl border border-border shadow-sm p-4 flex flex-col gap-3">
+      <div>
+        <div className="flex justify-between items-start mb-2">
+          <h2 className="font-semibold text-foreground-strong">{data.title || 'Untitled'}</h2>
+          <span className="text-xs px-2 py-1 bg-surface text-foreground-muted rounded-full font-medium whitespace-nowrap ml-2">
+            Status: {data.review_status || 'unknown'}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 mb-2">
+          <span className={classNames(
+            'text-xs px-2 py-1 rounded font-medium',
+            data.active_author === currentUser ? 'bg-green-100 text-green-700' : 'bg-surface text-foreground-muted',
+          )}>
+            Author: @{data.active_author || 'none'}
+          </span>
+        </div>
+        <p className="text-xs text-foreground-muted mt-1 truncate">{article.path.split('/').pop()}</p>
+      </div>
+
+      {data.abstract && (
+        <p className="text-sm text-foreground-muted line-clamp-3 bg-surface p-2 rounded border border-border">
+          {data.abstract}
+        </p>
+      )}
+
+      <div className="text-xs text-foreground-muted flex flex-col gap-1">
+        {data.assigned_editor && <div><span className="font-medium text-foreground">Editor:</span> {data.assigned_editor}</div>}
+        {data.assigned_reviewers && data.assigned_reviewers.length > 0 && (
+          <div><span className="font-medium text-foreground">Reviewers:</span> {
+            Array.isArray(data.assigned_reviewers) ? data.assigned_reviewers.join(', ') : data.assigned_reviewers
+          }</div>
+        )}
+      </div>
+
+      <div className="mt-auto pt-3 border-t border-border">
+        <Link
+          href={`/editorial/${article.path}`}
+          className="flex items-center justify-center gap-2 text-sm font-medium text-accent hover:opacity-80 bg-surface py-2 rounded-md transition w-full"
+        >
+          <Edit2 className="w-4 h-4" />
+          View / Edit
+        </Link>
+      </div>
+    </article>
+  );
 }
 
 export default function DashboardClient({ articles, currentUser, isAdmin, isEditor, newArticleForm }: DashboardClientProps) {
@@ -34,14 +74,10 @@ export default function DashboardClient({ articles, currentUser, isAdmin, isEdit
   // 1. Filter by permissions / related to you
   const visibleArticles = articles.filter(article => {
     if (isAdmin) return true;
-    const d = article.data;
-    const isRelated = 
-      d.active_author === currentUser || 
-      d.assigned_editor === currentUser || 
-      (Array.isArray(d.assigned_reviewers) ? d.assigned_reviewers.includes(currentUser) : d.assigned_reviewers === currentUser);
-    
-    if (isEditor && d.review_status === 'pitch') return true;
-    
+    const isRelated = isArticleAssignedTo(article, currentUser);
+
+    if (isEditor && article.data.review_status === 'pitch') return true;
+
     return isRelated;
   });
 
@@ -53,62 +89,8 @@ export default function DashboardClient({ articles, currentUser, isAdmin, isEdit
   });
 
   // 3. Group into My Active vs Archived/Others
-  const myActiveArticles = filteredArticles.filter(a => {
-    const d = a.data;
-    return d.active_author === currentUser || 
-           d.assigned_editor === currentUser || 
-           (Array.isArray(d.assigned_reviewers) ? d.assigned_reviewers.includes(currentUser) : d.assigned_reviewers === currentUser);
-  });
-  
-  const archivedArticles = filteredArticles.filter(a => !myActiveArticles.includes(a));
-
-  const renderCard = (article: Article) => (
-    <div key={article.path} className="bg-background rounded-xl border border-border shadow-sm p-4 flex flex-col gap-3">
-      <div>
-        <div className="flex justify-between items-start mb-2">
-          <h4 className="font-semibold text-foreground-strong">{article.data.title || 'Untitled'}</h4>
-          <span className="text-xs px-2 py-1 bg-surface text-foreground-muted rounded-full font-medium whitespace-nowrap ml-2">
-            Status: {article.data.review_status || 'unknown'}
-          </span>
-        </div>
-        <div className="flex items-center gap-2 mb-2">
-           <span className={`text-xs px-2 py-1 rounded font-medium ${article.data.active_author === currentUser ? 'bg-green-100 text-green-700' : 'bg-surface text-foreground-muted'}`}>
-             Author: @{article.data.active_author || 'none'}
-           </span>
-        </div>
-        <p className="text-xs text-foreground-muted mt-1 truncate">{article.path.split('/').pop()}</p>
-      </div>
-      
-      {article.data.abstract && (
-        <p className="text-sm text-foreground-muted line-clamp-3 bg-surface p-2 rounded border border-border">
-          {article.data.abstract}
-        </p>
-      )}
-
-      <div className="text-xs text-foreground-muted flex flex-col gap-1">
-        {article.data.assigned_editor && (
-          <div><span className="font-medium text-foreground">Editor:</span> {article.data.assigned_editor}</div>
-        )}
-        {article.data.assigned_reviewers && article.data.assigned_reviewers.length > 0 && (
-          <div><span className="font-medium text-foreground">Reviewers:</span> {
-            Array.isArray(article.data.assigned_reviewers) 
-              ? article.data.assigned_reviewers.join(', ') 
-              : article.data.assigned_reviewers
-          }</div>
-        )}
-      </div>
-
-      <div className="mt-auto pt-3 border-t border-border">
-        <Link 
-          href={`/editorial/${article.path}`}
-          className="flex items-center justify-center gap-2 text-sm font-medium text-accent hover:opacity-80 bg-surface py-2 rounded-md transition w-full"
-        >
-          <Edit2 className="w-4 h-4" />
-          View / Edit
-        </Link>
-      </div>
-    </div>
-  );
+  const myActiveArticles = filteredArticles.filter(article => isArticleAssignedTo(article, currentUser));
+  const archivedArticles = filteredArticles.filter(article => !isArticleAssignedTo(article, currentUser));
 
   return (
     <>
@@ -131,7 +113,7 @@ export default function DashboardClient({ articles, currentUser, isAdmin, isEdit
               placeholder="Search articles..." 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 text-sm border border-border rounded-md bg-background text-foreground placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-accent"
+              className={`${fieldStyles} pl-9`}
             />
           </div>
           <div className="relative w-full sm:w-48 flex items-center gap-2">
@@ -139,15 +121,10 @@ export default function DashboardClient({ articles, currentUser, isAdmin, isEdit
             <select 
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="w-full pl-2 pr-4 py-2 text-sm border border-border rounded-md bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent"
+              className={fieldStyles}
             >
               <option value="all">All Statuses</option>
-              <option value="pitch">Pitch</option>
-              <option value="accepted">Accepted</option>
-              <option value="drafting">Drafting</option>
-              <option value="in_review">In Review</option>
-              <option value="approved">Approved</option>
-              <option value="published">Published</option>
+              {ARTICLE_STATUSES.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
           </div>
         </div>
@@ -196,13 +173,13 @@ export default function DashboardClient({ articles, currentUser, isAdmin, isEdit
         {activeTab === 'active' && (
           <>
             {myActiveArticles.length === 0 && <p className="text-sm text-foreground-muted italic col-span-full">No active articles found.</p>}
-            {myActiveArticles.map(renderCard)}
+            {myActiveArticles.map(article => <ArticleCard key={article.path} article={article} currentUser={currentUser} />)}
           </>
         )}
         {activeTab === 'archived' && (
           <>
             {archivedArticles.length === 0 && <p className="text-sm text-foreground-muted italic col-span-full">No archived articles found.</p>}
-            {archivedArticles.map(renderCard)}
+            {archivedArticles.map(article => <ArticleCard key={article.path} article={article} currentUser={currentUser} />)}
           </>
         )}
       </div>

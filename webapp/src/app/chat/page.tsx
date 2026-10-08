@@ -17,6 +17,60 @@ type Message = {
   content: string;
 };
 
+function ChatComposer({
+  input,
+  isLoading,
+  placeholder,
+  onInputChange,
+  onSubmit,
+}: {
+  input: string;
+  isLoading: boolean;
+  placeholder: string;
+  onInputChange: (value: string) => void;
+  onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
+}) {
+  return (
+    <form
+      onSubmit={onSubmit}
+      className="flex relative items-end shadow-sm hover:shadow-md transition-shadow duration-200 rounded-2xl border border-foreground/20 bg-background overflow-hidden focus-within:ring-2 focus-within:ring-blue-600 focus-within:border-transparent text-left"
+    >
+      <textarea
+        aria-label="Medical question"
+        value={input}
+        onChange={(event) => onInputChange(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" && !event.shiftKey) {
+            event.preventDefault();
+            event.currentTarget.form?.requestSubmit();
+          }
+        }}
+        placeholder={placeholder}
+        className="w-full max-h-48 min-h-[56px] resize-none py-4 pl-4 pr-14 bg-transparent outline-none text-foreground placeholder:text-foreground/50"
+        rows={1}
+      />
+      <button
+        type="submit"
+        aria-label="Send question"
+        disabled={!input.trim() || isLoading}
+        className="absolute right-2 bottom-2 p-2 rounded-xl bg-blue-600 text-white disabled:opacity-50 disabled:bg-foreground/20 hover:bg-blue-700 transition-colors"
+      >
+        {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+      </button>
+    </form>
+  );
+}
+
+function MedicalDisclaimer({ compact = false }: { compact?: boolean }) {
+  return (
+    <div className={`text-center ${compact ? 'mt-2' : 'mt-3'}`}>
+      <span className="text-xs text-foreground/40">
+        AI can make mistakes. Please verify important medical information.
+      </span>
+    </div>
+  );
+}
+
 export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -69,7 +123,7 @@ export default function ChatPage() {
     return () => clearTimeout(timeout);
   }, [displayText, isDeleting, placeholderIndex, messages.length, input.length]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!input.trim() || isLoading) return;
 
@@ -132,40 +186,14 @@ export default function ChatPage() {
 
             {/* Centered Input Area for Empty State */}
             <div className="w-full">
-              <form
+              <ChatComposer
+                input={input}
+                isLoading={isLoading}
+                placeholder={displayText || "Ask a medical question..."}
+                onInputChange={setInput}
                 onSubmit={handleSubmit}
-                className="flex relative items-end shadow-sm hover:shadow-md transition-shadow duration-200 rounded-2xl border border-foreground/20 bg-background overflow-hidden focus-within:ring-2 focus-within:ring-blue-600 focus-within:border-transparent text-left"
-              >
-                <textarea
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSubmit(e);
-                    }
-                  }}
-                  placeholder={displayText || "Ask a medical question..."}
-                  className="w-full max-h-48 min-h-[56px] resize-none py-4 pl-4 pr-14 bg-transparent outline-none text-foreground placeholder:text-foreground/50"
-                  rows={1}
-                />
-                <button
-                  type="submit"
-                  disabled={!input.trim() || isLoading}
-                  className="absolute right-2 bottom-2 p-2 rounded-xl bg-blue-600 text-white disabled:opacity-50 disabled:bg-foreground/20 hover:bg-blue-700 transition-colors"
-                >
-                  {isLoading ? (
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                  ) : (
-                    <Send className="w-5 h-5" />
-                  )}
-                </button>
-              </form>
-              <div className="text-center mt-3">
-                <span className="text-xs text-foreground/40">
-                  AI can make mistakes. Please verify important medical information.
-                </span>
-              </div>
+              />
+              <MedicalDisclaimer />
             </div>
           </div>
         ) : (
@@ -225,40 +253,14 @@ export default function ChatPage() {
       {messages.length > 0 && (
         <footer className="p-4 bg-background border-t border-foreground/10">
           <div className="max-w-3xl mx-auto">
-            <form
+            <ChatComposer
+              input={input}
+              isLoading={isLoading}
+              placeholder="Ask a medical question..."
+              onInputChange={setInput}
               onSubmit={handleSubmit}
-              className="flex relative items-end shadow-sm hover:shadow-md transition-shadow duration-200 rounded-2xl border border-foreground/20 bg-background overflow-hidden focus-within:ring-2 focus-within:ring-blue-600 focus-within:border-transparent"
-            >
-              <textarea
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }
-                }}
-                placeholder="Ask a medical question..."
-                className="w-full max-h-48 min-h-[56px] resize-none py-4 pl-4 pr-14 bg-transparent outline-none text-foreground placeholder:text-foreground/50"
-                rows={1}
-              />
-              <button
-                type="submit"
-                disabled={!input.trim() || isLoading}
-                className="absolute right-2 bottom-2 p-2 rounded-xl bg-blue-600 text-white disabled:opacity-50 disabled:bg-foreground/20 hover:bg-blue-700 transition-colors"
-              >
-                {isLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                ) : (
-                  <Send className="w-5 h-5" />
-                )}
-              </button>
-            </form>
-            <div className="text-center mt-2">
-              <span className="text-xs text-foreground/40">
-                AI can make mistakes. Please verify important medical information.
-              </span>
-            </div>
+            />
+            <MedicalDisclaimer compact />
           </div>
         </footer>
       )}

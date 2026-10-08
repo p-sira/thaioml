@@ -1,26 +1,11 @@
-import { currentUser } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-
-const HAS_CLERK = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false'
+import { buttonStyles } from '@/components/ui/Button'
+import { getUserRoles, requireUser } from '@/lib/auth'
  
 export default async function ContributePage() {
-  if (!HAS_CLERK) {
-    redirect('/sign-in?redirect_url=/cms')
-  }
-
-  let user = null
-  try {
-    user = await currentUser()
-  } catch {
-    redirect('/sign-in?redirect_url=/cms')
-  }
-
-  if (!user) {
-    redirect('/sign-in?redirect_url=/cms')
-  }
-
-  const roles = (user.publicMetadata?.roles as string[]) || []
+  const user = await requireUser('/cms')
+  const roles = getUserRoles(user)
   const hasPermission = roles.includes('editor') || roles.includes('admin') || roles.includes('author');
 
   if (hasPermission) {
@@ -40,7 +25,7 @@ export default async function ContributePage() {
             <p className="text-sm text-slate-500 mb-1">Send an email to:</p>
             <a href="mailto:code@psira.me" className="text-blue-600 font-bold hover:underline text-lg">code@psira.me</a>
           </div>
-          <Link href="/" className="px-6 py-3 bg-blue-600 text-white rounded-full font-bold shadow hover:bg-blue-700 transition">
+          <Link href="/" className={buttonStyles({ className: 'rounded-full px-6 py-3' })}>
             Return Home
           </Link>
         </div>

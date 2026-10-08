@@ -5,7 +5,7 @@ import AuthButton from './AuthButton';
 
 export default function Navbar() {
   return (
-    <div role="navigation" className="w-full flex items-center justify-between py-2 px-8 bg-background border-b border-foreground/10">
+    <nav aria-label="Primary" className="w-full flex items-center justify-between py-2 px-8 bg-background border-b border-foreground/10">
       {/* Left: Logo & Text */}
       <div className="flex items-center gap-3 w-1/3">
         <Link href="/" className="flex items-center gap-3 group no-underline">
@@ -20,6 +20,6 @@ export default function Navbar() {
       <div className="flex items-center justify-end w-1/3">
         <AuthButton />
       </div>
-    </div>
+    </nav>
   );
 }

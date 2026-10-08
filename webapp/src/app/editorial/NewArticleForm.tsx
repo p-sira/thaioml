@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getSnomedSuggestion } from '@/app/actions/medical';
 import { Loader2, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/Button';
+import { FormField, fieldStyles } from '@/components/ui/FormField';
 
 export default function NewArticleForm() {
   const router = useRouter();
@@ -25,7 +27,7 @@ export default function NewArticleForm() {
           .replace(/[^a-z0-9]+/g, '-')
           .replace(/(^-|-$)+/g, '');
         
-        const slug = `${kebabTitle}.md`;
+        const slug = `${kebabTitle || `article-${data.id}`}.md`;
         
         // Use encodeURIComponent to safely pass the suggested SNOMED ID and Title as query params
         // So the new editor can pick them up to populate the frontmatter
@@ -43,53 +45,51 @@ export default function NewArticleForm() {
 
   if (!isOpen) {
     return (
-      <button 
+      <Button
         onClick={() => setIsOpen(true)}
-        className="flex items-center gap-2 bg-foreground text-background px-4 py-2 rounded-md hover:opacity-90 transition shadow-sm font-medium"
+        className="shadow-sm"
       >
         <Plus className="w-4 h-4" />
         New Article
-      </button>
+      </Button>
     );
   }
 
   return (
     <div className="fixed inset-0 bg-foreground/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-background rounded-lg shadow-xl w-full max-w-md overflow-hidden border border-border">
+      <div role="dialog" aria-modal="true" aria-labelledby="new-article-title" className="bg-background rounded-lg shadow-xl w-full max-w-md overflow-hidden border border-border">
         <div className="px-6 py-4 border-b border-border">
-          <h2 className="text-xl font-bold text-foreground-strong">Create New Article</h2>
+          <h2 id="new-article-title" className="text-xl font-bold text-foreground-strong">Create New Article</h2>
           <p className="text-sm text-foreground-muted mt-1">
             Enter a descriptive title. We will automatically resolve a SNOMED CT concept to strictly categorize it.
           </p>
         </div>
         
         <form onSubmit={handleSubmit} className="p-6">
-          <div className="mb-6">
-            <label className="block text-sm font-medium text-foreground mb-2">Article Title</label>
+          <FormField label="Article Title" htmlFor="article-title" className="mb-6">
             <input
+              id="article-title"
               type="text"
               autoFocus
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="w-full px-4 py-2 border border-border rounded-md bg-background text-foreground placeholder:text-foreground-muted focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent"
+              className={fieldStyles}
               placeholder="e.g. Myocardial Infarction"
               required
             />
-          </div>
+          </FormField>
           
           <div className="flex justify-end gap-3">
-            <button
-              type="button"
+            <Button
               onClick={() => setIsOpen(false)}
               disabled={isCreating}
-              className="px-4 py-2 text-foreground font-medium hover:bg-surface rounded-md transition"
+              variant="ghost"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               disabled={isCreating || !title.trim()}
-              className="px-4 py-2 bg-foreground text-background font-medium rounded-md hover:opacity-90 transition disabled:opacity-50 flex items-center gap-2"
             >
               {isCreating ? (
                 <>
@@ -99,7 +99,7 @@ export default function NewArticleForm() {
               ) : (
                 'Create & Edit'
               )}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

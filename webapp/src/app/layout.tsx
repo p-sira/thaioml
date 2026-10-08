@@ -8,6 +8,7 @@ import { CookieBanner } from "@/components/CookieBanner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Script from "next/script";
+import { isTheme } from "@/lib/theme";
 
 import "./globals.css";
 
@@ -31,7 +32,8 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = await cookies();
-  const theme = cookieStore.get("thaioml-theme")?.value || "leuko";
+  const storedTheme = cookieStore.get("thaioml-theme")?.value;
+  const theme = isTheme(storedTheme) ? storedTheme : "leuko";
 
   return (
     <ClerkThemeProvider initialTheme={theme}>

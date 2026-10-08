@@ -3,8 +3,13 @@
 import Link from 'next/link';
 import { UserButton, useAuth, useUser } from '@clerk/nextjs';
 import { User } from 'lucide-react';
+import { buttonStyles } from './ui/Button';
 
 const HAS_CLERK = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false';
+
+function SignInLink() {
+  return <Link href="/sign-in" className={buttonStyles()}>Sign In</Link>;
+}
 
 function InnerAuthButton() {
   const { isLoaded, isSignedIn } = useAuth();
@@ -38,27 +43,11 @@ function InnerAuthButton() {
         <UserButton.Action label="manageAccount" />
       </UserButton.MenuItems>
     </UserButton>
-  ) : (
-    <Link
-      href="/sign-in"
-      className="px-4 py-2 text-sm font-medium bg-foreground text-background rounded-md hover:bg-foreground/90 transition"
-    >
-      Sign In
-    </Link>
-  );
+  ) : <SignInLink />;
 }
 
 export default function AuthButton() {
-  if (!HAS_CLERK) {
-    return (
-      <Link
-        href="/sign-in"
-        className="px-4 py-2 text-sm font-medium bg-foreground text-background rounded-md hover:bg-foreground/90 transition"
-      >
-        Sign In
-      </Link>
-    );
-  }
+  if (!HAS_CLERK) return <SignInLink />;
   
   return <InnerAuthButton />;
 }

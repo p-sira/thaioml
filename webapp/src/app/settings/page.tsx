@@ -1,26 +1,10 @@
-import { currentUser } from '@clerk/nextjs/server'
-import { redirect } from 'next/navigation'
 import UserSettingsClient from './UserSettingsClient'
-
-const HAS_CLERK = process.env.NEXT_PUBLIC_CLERK_ENABLED !== 'false'
+import { requireUser } from '@/lib/auth'
 
 export default async function SettingsPage() {
-  if (!HAS_CLERK) {
-    redirect('/sign-in')
-  }
+  const user = await requireUser('/settings')
 
-  let user = null
-  try {
-    user = await currentUser()
-  } catch {
-    redirect('/sign-in')
-  }
-
-  if (!user) {
-    redirect('/sign-in')
-  }
-
-  const currentTheme = (user?.publicMetadata?.theme as string) || 'leuko'
+  const currentTheme = typeof user.publicMetadata?.theme === 'string' ? user.publicMetadata.theme : 'leuko'
 
   return (
     <div className="min-h-screen flex flex-col p-4">
