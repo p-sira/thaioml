@@ -60,6 +60,7 @@ interface EditorProps {
   filePath: string;
   isEditor?: boolean;
   currentUser?: string | CurrentUserInfo;
+  showActiveAuthorWarning?: boolean;
 }
 
 export default function Editor({
@@ -67,6 +68,7 @@ export default function Editor({
   filePath,
   isEditor = false,
   currentUser = '',
+  showActiveAuthorWarning = false,
 }: EditorProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
@@ -921,9 +923,10 @@ export default function Editor({
         </div>
 
         {/* Warning Banner for Active Author */}
-        {frontmatter.active_author &&
+        {showActiveAuthorWarning &&
+          frontmatter.active_author &&
           frontmatter.active_author !== normalizedUser.username && (
-            <div className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-800 px-4 py-2 text-xs text-amber-800 dark:text-amber-200 flex items-center justify-center font-medium">
+            <div role="alert" className="bg-amber-50 dark:bg-amber-950/40 border-b border-amber-200 dark:border-amber-800 px-4 py-2 text-xs text-amber-800 dark:text-amber-200 flex items-center justify-center font-medium">
               ⚠️ Warning: @{frontmatter.active_author} is currently the active author
               of this draft. Edit with caution to avoid concurrent merge conflicts.
             </div>
