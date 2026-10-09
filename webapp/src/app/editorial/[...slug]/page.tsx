@@ -2,8 +2,37 @@ import Editor from '@/components/cms/Editor';
 import { getMarkdownFile } from '@/app/actions/github';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
-import { requireEditorialUser } from '@/lib/auth';
+import { clerkClient } from '@clerk/nextjs/server';
+import { getUserRoles, requireEditorialUser } from '@/lib/auth';
 import matter from 'gray-matter';
+
+const EDITORIAL_ROLES = new Set(['admin', 'author', 'editor']);
+
+async function activeAuthorCanEdit(content: string, currentUsername: string) {
+  const activeAuthor = matter(content).data.active_author;
+
+  if (
+    typeof activeAuthor !== 'string'
+    || !activeAuthor
+    || activeAuthor === currentUsername
+  ) {
+    return false;
+  }
+
+  try {
+    const client = await clerkClient();
+    const { data: users } = await client.users.getUserList({
+      username: [activeAuthor],
+      limit: 1,
+    });
+    const user = users.find(candidate => candidate.username === activeAuthor);
+
+    return Boolean(user && getUserRoles(user).some(role => EDITORIAL_ROLES.has(role)));
+  } catch (error) {
+    console.error('Unable to verify active author permissions:', error);
+    return false;
+  }
+}
 
 export default async function EditorRoute({ 
   params,
@@ -50,6 +79,10 @@ export default async function EditorRoute({
     avatar: user.imageUrl || '',
     role: isEditor ? 'editor' : 'author',
   };
+  const showActiveAuthorWarning = await activeAuthorCanEdit(
+    content,
+    currentAuthor.username,
+  );
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -66,7 +99,13 @@ export default async function EditorRoute({
       </header>
       
       <main className="flex-1 p-6 max-w-7xl w-full mx-auto">
-        <Editor initialContent={content} filePath={filePath} isEditor={isEditor} currentUser={currentAuthor} />
+        <Editor
+          initialContent={content}
+          filePath={filePath}
+          isEditor={isEditor}
+          currentUser={currentAuthor}
+          showActiveAuthorWarning={showActiveAuthorWarning}
+        />
       </main>
     </div>
   );
