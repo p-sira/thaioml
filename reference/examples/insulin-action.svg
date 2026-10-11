@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="140" viewBox="0 0 720 140" role="img" aria-labelledby="title description">
+  <title id="title">Simplified insulin action</title>
+  <desc id="description">Pancreatic beta cells secrete insulin, which supports glucose uptake into cells.</desc>
+  <!-- Original ThaiOML example schematic; CC-BY-NC 4.0. -->
+  <rect width="720" height="140" rx="12" fill="#f8fafc"/>
+  <g fill="#e0f2fe" stroke="#075985" stroke-width="2">
+    <rect x="20" y="35" width="190" height="70" rx="8"/>
+    <rect x="265" y="35" width="190" height="70" rx="8"/>
+    <rect x="510" y="35" width="190" height="70" rx="8"/>
+  </g>
+  <g fill="none" stroke="#075985" stroke-width="3">
+    <path d="M215 70h40m-10-8 10 8-10 8"/>
+    <path d="M460 70h40m-10-8 10 8-10 8"/>
+  </g>
+  <g fill="#0c4a6e" font-family="sans-serif" font-size="18" text-anchor="middle">
+    <text x="115" y="66">Pancreatic</text><text x="115" y="90">β cells</text>
+    <text x="360" y="77">Insulin secretion</text>
+    <text x="605" y="66">Cellular</text><text x="605" y="90">glucose uptake</text>
+  </g>
+</svg>

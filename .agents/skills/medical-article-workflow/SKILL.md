@@ -9,6 +9,8 @@ Medical content lives under `webapp/content/docs/` as Markdown with YAML frontma
 
 ## Load the applicable policy
 
+Read `reference/content-format-specification.md` for the current metadata, citation, and serialization contract. When changing that contract, update the specification and its linked example in the same change.
+
 Read only the canonical guidelines required by the task:
 
 - Drafting or revising content: `webapp/content/docs/guidelines/author-guideline.md`
