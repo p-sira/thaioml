@@ -1,10 +1,9 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { visit } from 'unist-util-visit';
+import { visit, SKIP } from 'unist-util-visit';
 import type { Plugin } from 'unified';
-import type { Node, Parent } from 'unist';
-import type { Text, Link, PhrasingContent } from 'mdast';
+import type { PhrasingContent, Root } from 'mdast';
 
 let snomedIndex: Record<string, string> | null = null;
 
@@ -46,13 +45,12 @@ function getSnomedIndex() {
   return snomedIndex;
 }
 
-export const remarkThaiOMLLinker: Plugin = () => {
+export const remarkThaiOMLLinker: Plugin<[], Root> = () => {
   const index = getSnomedIndex();
 
   return (tree, file) => {
-    // Parse frontmatter from the file's raw content
-    // Because fumadocs-mdx might not pass it directly in vfile.data.frontmatter
-    const { data: frontmatter } = matter(String(file.value));
+    // Fumadocs supplies validated metadata separately from the Markdown body.
+    const frontmatter = (file.data.frontmatter ?? matter(String(file.value)).data) as Record<string, unknown>;
     
     if (!frontmatter || !frontmatter.snomed_links) return;
 
@@ -60,6 +58,7 @@ export const remarkThaiOMLLinker: Plugin = () => {
     if (typeof snomedLinks !== 'object') return;
 
     const terms = Object.keys(snomedLinks).sort((a, b) => b.length - a.length);
+    if (!terms.length) return;
 
     // Escape regex characters
     const escapeRegExp = (string: string) => {
@@ -68,8 +67,11 @@ export const remarkThaiOMLLinker: Plugin = () => {
 
     const pattern = new RegExp(`\\b(${terms.map(escapeRegExp).join('|')})\\b`, 'g');
 
-    visit(tree, 'text', (node: Text, indexInParent: number | undefined, parent: Parent | undefined) => {
-      if (!parent || parent.type === 'link' || parent.type === 'heading' || parent.type === 'code' || parent.type === 'inlineCode') {
+    visit(tree, (current, indexInParent, parent) => {
+      if (['link', 'linkReference', 'heading', 'code', 'inlineCode'].includes(current.type) || (current.data && 'citationGenerated' in current.data)) return SKIP;
+      if (current.type !== 'text') return;
+      const node = current as import('mdast').Text;
+      if (!parent) {
         return;
       }
 

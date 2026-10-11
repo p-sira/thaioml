@@ -2,6 +2,7 @@
 
 import { Octokit } from 'octokit';
 import { currentUser } from '@clerk/nextjs/server';
+import { validateCitationDocument } from '@/lib/citations';
 
 const getOctokit = () => {
   const token = process.env.THAIOML_BOT_GITHUB_TOKEN || process.env.THAIOML_BOT;
@@ -15,6 +16,7 @@ const OWNER = 'p-sira';
 const REPO = 'thaioml';
 
 export async function saveMarkdownFile(filePath: string, content: string, message: string) {
+  validateCitationDocument(content);
   const user = await currentUser();
   if (!user) {
     throw new Error('Unauthorized');
@@ -209,6 +211,7 @@ export async function listMarkdownFiles(directoryPath: string) {
 }
 
 export async function moveMarkdownFile(oldPath: string, newPath: string, content: string, message: string) {
+  validateCitationDocument(content);
   const user = await currentUser();
   if (!user) {
     throw new Error('Unauthorized');

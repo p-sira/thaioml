@@ -12,6 +12,8 @@ ThaiOML's public library and interactive application share one Next.js applicati
 
 Publishing content must not require the FastAPI backend or PostgreSQL at request time.
 
+The article format contract lives in [content-format-specification.md](content-format-specification.md). Update it and its linked example whenever content schemas, serialization or rendering support changes.
+
 ## Theme resolution
 
 The supported themes are `leuko`, `darkroom`, and `progressnote`. Resolve them in this order:

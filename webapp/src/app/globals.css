@@ -223,3 +223,14 @@ body {
 :root[data-md-color-scheme="progressnote"] .theme-text-purple {
   color: #7e22ce;
 }
+/* Citation atoms retain stable keys in Markdown and show derived numbers in Studio. */
+.article-citation[data-citation-label] {
+  font-size: 0;
+  cursor: pointer;
+}
+.article-citation[data-citation-label]::after {
+  content: attr(data-citation-label);
+  font-size: 0.75rem;
+  vertical-align: super;
+  color: var(--color-accent);
+}

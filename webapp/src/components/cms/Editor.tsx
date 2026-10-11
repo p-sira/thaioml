@@ -17,6 +17,9 @@ import LinkDialog from './LinkDialog';
 import LinkHoverPopup from './LinkHoverPopup';
 import { HighlightMark, HighlightColor } from './extensions/HighlightMark';
 import { TextColorMark, TextColor } from './extensions/TextColorMark';
+import { Citation, editorCitationGroups } from './extensions/Citation';
+import ReferencesPanel from './ReferencesPanel';
+import { citationErrors, validateCitationDocument } from '@/lib/citations';
 import {
   HighlightPickerDropdown,
   TextColorPickerDropdown,
@@ -140,7 +143,11 @@ export default function Editor({
   } | null>(null);
 
   // Sidebar controls
-  const [sidebarTab, setSidebarTab] = useState<'comments' | 'metadata'>('comments');
+  const [sidebarTab, setSidebarTab] = useState<'comments' | 'metadata' | 'references'>('comments');
+  const [citationGroups, setCitationGroups] = useState<string[][]>([]);
+  const citationRange = useRef<{ from: number; to: number } | null>(null);
+  const [editingCitationIds, setEditingCitationIds] = useState<string[] | null>(null);
+  const [saveError, setSaveError] = useState('');
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
   // Link modal state (replaces browser window.prompt)
@@ -173,6 +180,7 @@ export default function Editor({
         CommentMark,
         HighlightMark,
         TextColorMark,
+        Citation,
       ],
       content: initialBody,
       editorProps: {
@@ -183,6 +191,22 @@ export default function Editor({
       },
       editable: frontmatter.review_status !== 'pitch',
       immediatelyRender: false,
+      onCreate: ({ editor }) => setCitationGroups(editorCitationGroups(editor.state.doc)),
+      onUpdate: ({ editor }) => setCitationGroups(editorCitationGroups(editor.state.doc)),
+      onSelectionUpdate: ({ editor }) => {
+        if (editor.isFocused) {
+          citationRange.current = { from: editor.state.selection.from, to: editor.state.selection.to };
+          setEditingCitationIds(null);
+        }
+      },
+      onTransaction: ({ transaction }) => {
+        if (citationRange.current && transaction.docChanged) {
+          citationRange.current = {
+            from: transaction.mapping.map(citationRange.current.from),
+            to: transaction.mapping.map(citationRange.current.to),
+          };
+        }
+      },
     },
     [initialBody]
   );
@@ -198,8 +222,21 @@ export default function Editor({
     const container = editorContainerRef.current;
     if (!container) return;
 
-    const handleClick = (e: MouseEvent) => {
+    const handleClick = (e: Event) => {
       const target = e.target as HTMLElement;
+      const citationEl = target.closest('[data-citation-ids]');
+      if (citationEl && editor) {
+        const pos = editor.view.posAtDOM(citationEl, 0);
+        if (pos < 0) return;
+        const node = editor.state.doc.nodeAt(pos);
+        if (node?.type.name === 'citation') {
+          citationRange.current = { from: pos, to: pos + node.nodeSize };
+          setEditingCitationIds(node.attrs.ids);
+          setSidebarTab('references');
+          setIsSidebarOpen(true);
+          return;
+        }
+      }
       const markEl = target.closest('mark[data-comment-id]');
       if (markEl) {
         const commentId = markEl.getAttribute('data-comment-id');
@@ -212,8 +249,19 @@ export default function Editor({
     };
 
     container.addEventListener('click', handleClick);
-    return () => container.removeEventListener('click', handleClick);
-  }, []);
+    const handleCitationKey = (event: KeyboardEvent) => {
+      if ((event.key === 'Enter' || event.key === ' ') && (event.target as HTMLElement).matches('[data-citation-ids]')) {
+        event.preventDefault();
+        event.stopPropagation();
+        handleClick(event);
+      }
+    };
+    container.addEventListener('keydown', handleCitationKey, true);
+    return () => {
+      container.removeEventListener('click', handleClick);
+      container.removeEventListener('keydown', handleCitationKey, true);
+    };
+  }, [editor]);
 
   // Trigger creating a comment from current selection
   const handleTriggerAddComment = useCallback(() => {
@@ -442,6 +490,7 @@ export default function Editor({
   const handleSave = async () => {
     setIsSaving(true);
     setSaveSuccess(false);
+    setSaveError('');
     try {
       // @ts-expect-error tiptap-markdown extends storage dynamically
       const markdown = editor.storage.markdown.getMarkdown();
@@ -461,6 +510,9 @@ export default function Editor({
       }
 
       const fileContent = matter.stringify(markdown, dataToSave);
+      const issues = citationErrors(dataToSave.references, editorCitationGroups(editor.state.doc));
+      if (issues.length) throw new Error(issues.join('\n'));
+      validateCitationDocument(fileContent);
 
       if (
         dataToSave.review_status === 'published' &&
@@ -486,8 +538,8 @@ export default function Editor({
         setSaveSuccess(true);
         setTimeout(() => setSaveSuccess(false), 3000);
       }
-    } catch {
-      alert('Error saving document to GitHub');
+    } catch (error) {
+      setSaveError(error instanceof Error ? error.message : 'Error saving document to GitHub');
     } finally {
       setIsSaving(false);
     }
@@ -613,6 +665,7 @@ export default function Editor({
     <div className="flex h-full min-h-[750px] border border-border rounded-xl overflow-hidden bg-background shadow-md">
       {/* Main Document & Editor Area */}
       <div className="flex-1 flex flex-col min-w-0 border-r border-border">
+        {saveError && <p role="alert" className="p-3 text-red-600 whitespace-pre-line">{saveError}</p>}
         {/* Full Rich Toolbar */}
         <div className="bg-surface border-b border-border p-2 flex flex-wrap items-center justify-between gap-1.5 sticky top-0 z-20 shadow-xs">
           {/* Formatting tools */}
@@ -1129,6 +1182,11 @@ export default function Editor({
                 <SlidersHorizontal className="w-3.5 h-3.5" />
                 <span>Metadata</span>
               </button>
+              <button type="button" onMouseDown={event => event.preventDefault()} onClick={() => {
+                citationRange.current = { from: editor.state.selection.from, to: editor.state.selection.to };
+                setEditingCitationIds(null);
+                setSidebarTab('references');
+              }} className="flex-1 py-1.5 rounded-md text-foreground" aria-pressed={sidebarTab === 'references'}>References</button>
             </div>
           </div>
 
@@ -1153,6 +1211,23 @@ export default function Editor({
                 onEditReply={handleEditReply}
               />
             </div>
+          ) : sidebarTab === 'references' ? (
+            <ReferencesPanel
+              key={editingCitationIds?.join(';') ?? 'insert'}
+              value={frontmatter.references}
+              groups={citationGroups}
+              editable={frontmatter.review_status !== 'pitch'}
+              onChange={value => handleFrontmatterChange('references', value)}
+              editingIds={editingCitationIds}
+              onCancelEdit={() => setEditingCitationIds(null)}
+              onInsert={ids => {
+                if (frontmatter.review_status === 'pitch') return;
+                const range = citationRange.current ?? { from: editor.state.selection.from, to: editor.state.selection.to };
+                editor.chain().focus().insertContentAt(range, { type: 'citation', attrs: { ids } }).run();
+                citationRange.current = { from: editor.state.selection.from, to: editor.state.selection.to };
+                setEditingCitationIds(null);
+              }}
+            />
           ) : (
             /* Tab 2: Article Frontmatter Metadata */
             <div className="p-4 space-y-4 overflow-y-auto flex-1">
