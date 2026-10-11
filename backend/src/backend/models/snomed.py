@@ -6,14 +6,14 @@ from backend.core.db import Base
 class SnomedConcept(Base):
     __tablename__ = "snomed_concepts"
 
-    concept_id = Column(BigInteger, primary_key=True, index=True)
+    concept_id = Column(BigInteger, primary_key=True)
     active = Column(Boolean, nullable=False, default=True)
 
 
 class SnomedDescription(Base):
     __tablename__ = "snomed_descriptions"
 
-    id = Column(BigInteger, primary_key=True, index=True)
+    id = Column(BigInteger, primary_key=True)
     concept_id = Column(BigInteger, nullable=False, index=True)
     term = Column(Text, nullable=False)
     type_id = Column(BigInteger, nullable=False)

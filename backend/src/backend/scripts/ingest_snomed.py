@@ -90,8 +90,16 @@ def ingest_descriptions(file_path: Path):
 
 def main():
     data_dir = Path(__file__).resolve().parent.parent.parent.parent / "data"
-    concept_file = data_dir / "sct2_Concept_Snapshot_INT_20260901.txt"
-    desc_file = data_dir / "sct2_Description_Snapshot-en_INT_20260901.txt"
+    concept_files = list(data_dir.glob("sct2_Concept_Snapshot_INT_*.txt"))
+    if len(concept_files) != 1:
+        raise FileNotFoundError(
+            "Expected exactly one SNOMED concept snapshot matching "
+            f"{data_dir / 'sct2_Concept_Snapshot_INT_*.txt'}, found {len(concept_files)}"
+        )
+
+    concept_file = concept_files[0]
+    timestamp = concept_file.stem.removeprefix("sct2_Concept_Snapshot_INT_")
+    desc_file = data_dir / f"sct2_Description_Snapshot-en_INT_{timestamp}.txt"
 
     create_tables()
 

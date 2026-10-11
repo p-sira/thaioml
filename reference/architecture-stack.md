@@ -24,6 +24,8 @@ ThaiOML uses a decoupled three-tier architecture. Git remains the source of trut
 - `pgvector` supports embedding search; `pg_trgm` supports fuzzy terminology lookup.
 - The backend connects through SQLAlchemy and psycopg using `DATABASE_URL`.
 - Production connections use the configured Supabase pooler and TLS. Do not encode a region, hostname, credential, or local fallback in application code.
+- SNOMED tables are accessed through FastAPI and trusted database ingestion connections. Keep RLS enabled, revoke table privileges from `PUBLIC`, `anon`, and `authenticated`, and retain restrictive deny policies for the two API roles. Clerk authorization remains in FastAPI; browser clients do not query these tables directly.
+- Primary keys supply the SNOMED ID indexes. Do not add duplicate indexes on `snomed_concepts.concept_id` or `snomed_descriptions.id`.
 
 ## Supporting services
 
