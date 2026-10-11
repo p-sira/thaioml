@@ -89,6 +89,36 @@ For stage 1 hypertension, <mark data-comment-id="comment_test_1">ACE inhibitors 
     expect(screen.getByText('Sira Editor')).toBeInTheDocument();
   });
 
+  it('warns when another active author has permission to edit', () => {
+    render(
+      <Editor
+        initialContent={sampleMarkdown}
+        filePath="guidelines/hypertension.md"
+        isEditor={true}
+        currentUser={mockCurrentUser}
+        showActiveAuthorWarning={true}
+      />
+    );
+
+    expect(screen.getByRole('alert')).toHaveTextContent(
+      '@author_dr_somchai is currently the active author',
+    );
+  });
+
+  it('does not warn when the active author lacks permission to edit', () => {
+    render(
+      <Editor
+        initialContent={sampleMarkdown}
+        filePath="guidelines/hypertension.md"
+        isEditor={true}
+        currentUser={mockCurrentUser}
+        showActiveAuthorWarning={false}
+      />
+    );
+
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+
   it('switches between Comments and Metadata sidebar tabs', async () => {
     render(
       <Editor
