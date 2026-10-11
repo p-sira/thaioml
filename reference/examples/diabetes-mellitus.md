@@ -108,4 +108,4 @@ comments:
 - Chronic hyperglycemia increases risk of **eye, kidney, nerve and cardiovascular disease**. [@niddk-overview; @niddk-management]
   - Thai mnemonic: <mark data-comment-id="comment_example_resolved" data-resolved="true" class="comment-highlight comment-highlight-resolved">ตา–ไต–ประสาท</mark> recalls the major microvascular targets.
   - Coordinate **glucose management, blood-pressure control, lipid management and complication surveillance**. [@niddk-management]
-- Terminology review: [Diabetes mellitus](snomed:73211009) opens a concept preview in Studio; use the relative library link for public navigation.
+- Terminology review: [Diabetes mellitus](snomed:73211009) opens a concept preview in Studio and resolves to the library article at build time. Referenced concepts without articles, such as [Metformin](snomed:372567009), receive an article-pending stub without another AI pass.

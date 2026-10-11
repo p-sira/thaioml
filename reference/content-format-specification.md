@@ -30,7 +30,7 @@ Workflow: `pitch → accepted → drafting → in_review → approved → publis
 | `references` | Optional array of `{ id, text, url? }`; see citations below. |
 | `comments` | Optional array of [CommentThread](../webapp/src/types/editorial.ts) records; see comment anchors below. |
 
-Unknown frontmatter is preserved by Studio saves. The Fumadocs schema explicitly retains `references` and `snomed_links` for build plugins; other custom fields are not automatically exposed by the public content loader. Implementation: [source configuration](../webapp/source.config.ts).
+Unknown frontmatter is preserved by Studio saves. The Fumadocs schema explicitly retains `id`, `snomed_id`, `references` and `snomed_links` for build plugins; other custom fields are not automatically exposed by the public content loader. Implementation: [source configuration](../webapp/source.config.ts).
 
 ## Body and inline formatting
 
@@ -54,11 +54,15 @@ Comment anchor IDs must match frontmatter threads. A thread has `id`, `createdAt
 
 ### Terminology behavior
 
-Studio's `/term` command and link dialog insert `snomed:` links and support link previews. Build-time `snomed_links` matching creates relative article links for indexed legacy `id` values, or `/stub/{id}` when no target exists. Matching excludes existing links, headings, code, and generated citations/references. The Auto Link action replaces body Markdown returned by FastAPI; it does not populate the `snomed_links` map automatically.
+Studio's `/term` command and link dialog insert `snomed:` links and support link previews. Auto Link analyzes the full body in one model call, verifies canonical names against active terminology, and merges the returned mappings into `snomed_links` without rewriting the body or replacing existing mappings. Repeated canonical names share a lookup; unresolved terms and conflicting mappings for the same phrase are omitted. Review context-sensitive abbreviations before saving.
+
+At build time, both `snomed_id` and legacy `id` identify article destinations. Explicit `snomed:ID` links (including legacy `snomed://ID` and reference-style links) and mapped phrases become relative article links, or `/stub/{id}` when no article exists. Automatic phrase matching is case-sensitive and excludes existing links, headings, code, and generated citations/references; self-concept mappings are omitted. Duplicate article concept IDs and invalid mappings fail the build.
+
+A build-generated terminology index supplies stub content from Git metadata with the saved concept label, an article-pending notice, and referring library pages. Editorial drafts are excluded. Stubs are excluded from search-engine indexing; unknown IDs return 404. Publishing an article updates destinations on the next build, and previously shared stub URLs redirect to the article. No model, backend or database call is needed during publishing or reading.
 
 ### Current rendering boundaries
 
-Stored syntax does not guarantee identical Studio and public presentation. The current public page supplies no custom Mermaid, GitHub-alert or SNOMED-protocol component: Mermaid remains code, exam alerts remain blockquotes, and public navigation should use generated or ordinary relative links. Studio's configured extensions do not provide dedicated image, table or Mermaid editing. Check round-trip preservation before editing such blocks in Studio. The current `.md` compiler removes raw HTML tags, so highlight/color/comment wrappers retain their text but lose their markup publicly; Studio retains the wrappers and theme classes. These limitations must be updated when support changes.
+Stored syntax does not guarantee identical Studio and public presentation. The current public page supplies no custom Mermaid or GitHub-alert component: Mermaid remains code, exam alerts remain blockquotes; terminology links are resolved by the build plugin. Studio's configured extensions do not provide dedicated image, table or Mermaid editing. Check round-trip preservation before editing such blocks in Studio. The current `.md` compiler removes raw HTML tags, so highlight/color/comment wrappers retain their text but lose their markup publicly; Studio retains the wrappers and theme classes. These limitations must be updated when support changes.
 
 ## References and citations
 

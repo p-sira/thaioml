@@ -19,6 +19,7 @@ import { HighlightMark, HighlightColor } from './extensions/HighlightMark';
 import { TextColorMark, TextColor } from './extensions/TextColorMark';
 import { Citation, editorCitationGroups } from './extensions/Citation';
 import ReferencesPanel from './ReferencesPanel';
+import { terminologyLinks } from '@/lib/terminology';
 import { citationErrors, validateCitationDocument } from '@/lib/citations';
 import {
   HighlightPickerDropdown,
@@ -513,6 +514,7 @@ export default function Editor({
       const issues = citationErrors(dataToSave.references, editorCitationGroups(editor.state.doc));
       if (issues.length) throw new Error(issues.join('\n'));
       validateCitationDocument(fileContent);
+      terminologyLinks(dataToSave.snomed_links);
 
       if (
         dataToSave.review_status === 'published' &&
@@ -553,13 +555,15 @@ export default function Editor({
       const result = await autoLinkContent(
         markdown,
         frontmatter.title,
-        frontmatter.snomed_id
+        frontmatter.snomed_id ?? frontmatter.id
       );
 
-      const linkedMarkdown =
-        typeof result === 'string' ? result : result.body || markdown;
-
-      editor.commands.setContent(linkedMarkdown);
+      const links = terminologyLinks(result.links);
+      setFrontmatter(previous => ({
+        ...previous,
+        snomed_links: { ...links, ...terminologyLinks(previous.snomed_links) },
+      }));
+      alert(`Identified ${Object.keys(links).length} medical terms. Save the article to publish their links.`);
     } catch {
       alert('Error running Auto Link. Ensure RAG backend is running.');
     } finally {

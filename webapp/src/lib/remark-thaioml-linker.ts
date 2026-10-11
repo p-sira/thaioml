@@ -1,131 +1,46 @@
-import fs from 'fs';
-import path from 'path';
 import matter from 'gray-matter';
 import { visit, SKIP } from 'unist-util-visit';
 import type { Plugin } from 'unified';
 import type { PhrasingContent, Root } from 'mdast';
+import { conceptId, snomedLinkId, terminologyLinks, type TerminologyIndex } from './terminology';
 
-let snomedIndex: Record<string, string> | null = null;
-
-function buildSnomedIndex(dir: string, baseDir: string, index: Record<string, string>) {
-  const files = fs.readdirSync(dir);
-  for (const file of files) {
-    const fullPath = path.join(dir, file);
-    if (!fs.existsSync(fullPath)) continue;
-    if (fs.statSync(fullPath).isDirectory()) {
-      buildSnomedIndex(fullPath, baseDir, index);
-    } else if (fullPath.endsWith('.md') || fullPath.endsWith('.mdx')) {
-      const content = fs.readFileSync(fullPath, 'utf8');
-      const { data } = matter(content);
-      if (data.id) {
-        let relativePath = path.relative(baseDir, fullPath).replace(/\\/g, '/');
-        // Remove .md or .mdx extensions
-        relativePath = relativePath.replace(/\.mdx?$/, '');
-        // Remove index at the end if it exists
-        if (relativePath.endsWith('/index')) {
-          relativePath = relativePath.slice(0, -6);
-        } else if (relativePath === 'index') {
-          relativePath = '';
-        }
-        const url = `/${relativePath}`;
-        index[String(data.id)] = url;
-      }
-    }
-  }
-}
-
-function getSnomedIndex() {
-  if (!snomedIndex) {
-    snomedIndex = {};
-    const contentDir = path.resolve(process.cwd(), 'content/docs');
-    if (fs.existsSync(contentDir)) {
-      buildSnomedIndex(contentDir, contentDir, snomedIndex);
-    }
-  }
-  return snomedIndex;
-}
-
-export const remarkThaiOMLLinker: Plugin<[], Root> = () => {
-  const index = getSnomedIndex();
-
+export const remarkThaiOMLLinker: Plugin<[TerminologyIndex, string?], Root> = (index, manifestPath) => {
+  const destination = (id: string) => index[id]?.article ?? `/stub/${id}`;
   return (tree, file) => {
-    // Fumadocs supplies validated metadata separately from the Markdown body.
+    // Destinations may change while this article's Markdown stays unchanged.
+    const compiler = file.data._compiler as { addDependency?: (path: string) => void } | undefined;
+    if (manifestPath) compiler?.addDependency?.(manifestPath);
     const frontmatter = (file.data.frontmatter ?? matter(String(file.value)).data) as Record<string, unknown>;
-    
-    if (!frontmatter || !frontmatter.snomed_links) return;
+    const ownId = conceptId(String(frontmatter.snomed_id ?? frontmatter.id ?? ''));
+    const links = terminologyLinks(frontmatter.snomed_links);
+    const terms = Object.keys(links).filter(term => conceptId(links[term].split('|')[0]) !== ownId).sort((a, b) => b.length - a.length);
+    const escapeRegExp = (text: string) => text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // Unicode boundaries also support Thai and phrases ending in punctuation.
+    const pattern = terms.length ? new RegExp(`(?<![\\p{L}\\p{N}_])(${terms.map(escapeRegExp).join('|')})(?![\\p{L}\\p{N}_])`, 'gu') : undefined;
 
-    const snomedLinks = frontmatter.snomed_links as Record<string, string>;
-    if (typeof snomedLinks !== 'object') return;
-
-    const terms = Object.keys(snomedLinks).sort((a, b) => b.length - a.length);
-    if (!terms.length) return;
-
-    // Escape regex characters
-    const escapeRegExp = (string: string) => {
-      return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    };
-
-    const pattern = new RegExp(`\\b(${terms.map(escapeRegExp).join('|')})\\b`, 'g');
-
-    visit(tree, (current, indexInParent, parent) => {
-      if (['link', 'linkReference', 'heading', 'code', 'inlineCode'].includes(current.type) || (current.data && 'citationGenerated' in current.data)) return SKIP;
-      if (current.type !== 'text') return;
-      const node = current as import('mdast').Text;
-      if (!parent) {
-        return;
-      }
-
-      const matches = [...node.value.matchAll(pattern)];
-      if (matches.length === 0) return;
-
-      const newChildren: PhrasingContent[] = [];
-      let lastIndex = 0;
-
+    // Resolve authored links even inside headings; exclusions below apply to auto-linking.
+    visit(tree, current => {
+      if (current.type !== 'link' && current.type !== 'definition') return;
+      const id = snomedLinkId(current.url);
+      if (id) current.url = destination(id);
+      else if (/^snomed:/i.test(current.url)) throw new Error(`Invalid SNOMED link: ${current.url}.`);
+    });
+    visit(tree, (current, position, parent) => {
+      if (['link', 'linkReference', 'heading', 'code', 'inlineCode', 'image', 'html'].includes(current.type) || current.data && 'citationGenerated' in current.data) return SKIP;
+      if (current.type !== 'text' || !parent || position === undefined || !pattern) return;
+      const matches = [...current.value.matchAll(pattern)];
+      if (!matches.length) return;
+      const children: PhrasingContent[] = [];
+      let end = 0;
       for (const match of matches) {
-        const matchIndex = match.index!;
-        const matchedTerm = match[0];
-
-        // Add text before match
-        if (matchIndex > lastIndex) {
-          newChildren.push({
-            type: 'text',
-            value: node.value.slice(lastIndex, matchIndex),
-          });
-        }
-
-        const snomedIdRaw = String(snomedLinks[matchedTerm]);
-        const snomedId = snomedIdRaw.split('|')[0].trim();
-        let url = index[snomedId];
-        
-        if (!url) {
-          url = `/stub/${snomedId}`;
-        }
-
-        // Add link
-        newChildren.push({
-          type: 'link',
-          url,
-          children: [{ type: 'text', value: matchedTerm }],
-        });
-
-        lastIndex = matchIndex + matchedTerm.length;
+        const start = match.index!;
+        if (start > end) children.push({ type: 'text', value: current.value.slice(end, start) });
+        children.push({ type: 'link', url: destination(conceptId(links[match[0]].split('|')[0])!), children: [{ type: 'text', value: match[0] }] });
+        end = start + match[0].length;
       }
-
-      // Add remaining text
-      if (lastIndex < node.value.length) {
-        newChildren.push({
-          type: 'text',
-          value: node.value.slice(lastIndex),
-        });
-      }
-
-      // Replace node with new children
-      if (indexInParent !== undefined) {
-        parent.children.splice(indexInParent, 1, ...newChildren);
-      }
-      
-      // return indexInParent + newChildren.length to avoid processing the newly inserted text nodes
-      return indexInParent! + newChildren.length;
+      if (end < current.value.length) children.push({ type: 'text', value: current.value.slice(end) });
+      parent.children.splice(position, 1, ...children);
+      return position + children.length;
     });
   };
 };

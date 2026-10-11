@@ -1,10 +1,11 @@
 from unittest.mock import patch
 
 import pytest
+from fastapi.testclient import TestClient
+
 from backend.core.auth import get_current_user
 from backend.core.db import get_db
 from backend.main import app
-from fastapi.testclient import TestClient
 
 
 def override_get_current_user():
@@ -53,8 +54,8 @@ def test_snomed_suggest_endpoint(mock_suggest, client):
 @patch("backend.api.routes.auto_link_terms")
 def test_auto_link_endpoint(mock_auto_link, client):
     mock_auto_link.return_value = (
-        "Patient has [Hypertension](snomed://123456).",
-        {"Hypertension": "123456"},
+        "Patient has Hypertension.",
+        {"Hypertension": "123456 | Hypertension"},
     )
 
     response = client.post("/auto-link", json={"body": "Patient has Hypertension."})
@@ -62,7 +63,7 @@ def test_auto_link_endpoint(mock_auto_link, client):
     assert response.status_code == 200
     data = response.json()
     assert "Hypertension" in data["links"]
-    assert data["body"] == "Patient has [Hypertension](snomed://123456)."
+    assert data["body"] == "Patient has Hypertension."
     mock_auto_link.assert_called_once_with(
         "Patient has Hypertension.", "mocked_db_session", title=None, snomed_id=None
     )

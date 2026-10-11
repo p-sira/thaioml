@@ -7,6 +7,7 @@ import matter from 'gray-matter';
 import { Citation, editorCitationGroups } from '@/components/cms/extensions/Citation';
 import Editor from '@/components/cms/Editor';
 import { saveMarkdownFile } from '@/app/actions/github';
+import { autoLinkContent } from '@/app/actions/medical';
 
 jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn() }) }));
 jest.mock('@/app/actions/github', () => ({ saveMarkdownFile: jest.fn().mockResolvedValue({ success: true }), moveMarkdownFile: jest.fn() }));
@@ -60,6 +61,21 @@ describe('Citation editor integration', () => {
     expect(saved.data.comments).toEqual([]);
     expect(saved.data.review_status).toBe('drafting');
     expect(saved.content).toContain('[@c]');
+  });
+
+  it('saves auto-link mappings while preserving existing terminology and citation content', async () => {
+    const alert = jest.spyOn(window, 'alert').mockImplementation(() => {});
+    jest.mocked(autoLinkContent).mockResolvedValue({ body: 'Unexpected replacement', links: { Claim: '123 | Claim', Existing: '456 | Changed' } });
+    render(<Editor initialContent={source.replace('comments: []', 'snomed_links:\n  Existing: "789 | Existing"\ncomments: []')} filePath="webapp/content/docs/editorial/test.md" />);
+    fireEvent.click(await screen.findByRole('button', { name: /auto link/i }));
+    await waitFor(() => expect(alert).toHaveBeenCalledWith(expect.stringContaining('Identified 2 medical terms')));
+    fireEvent.click(screen.getByRole('button', { name: /save to github/i }));
+    await waitFor(() => expect(saveMarkdownFile).toHaveBeenCalled());
+    const saved = matter(jest.mocked(saveMarkdownFile).mock.calls[0][1]);
+    expect(saved.data.snomed_links).toEqual({ Claim: '123 | Claim', Existing: '789 | Existing' });
+    expect(saved.content).toContain('Claim [@b; @a]');
+    expect(saved.content).not.toContain('Unexpected replacement');
+    alert.mockRestore();
   });
 
   it('blocks saving a missing citation and locks reference controls during pitch', async () => {

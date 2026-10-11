@@ -20,4 +20,16 @@ const config: Config = {
 };
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
-export default createJestConfig(config);
+const resolveConfig = createJestConfig(config);
+const jestConfig = async () => {
+  const resolved = await resolveConfig();
+  // The Markdown visitor packages are ESM; transform them for Jest's CJS runtime.
+  resolved.transformIgnorePatterns = resolved.transformIgnorePatterns?.map(pattern =>
+    pattern.includes('node_modules')
+      ? `(?!.*node_modules/(?:unist-util-visit|unist-util-visit-parents|unist-util-is)/)${pattern}`
+      : pattern,
+  );
+  return resolved;
+};
+
+export default jestConfig;

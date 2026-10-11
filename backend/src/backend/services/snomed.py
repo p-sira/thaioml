@@ -2,12 +2,13 @@ import json
 import urllib.parse
 import urllib.request
 
-from backend.core.config import settings
-from backend.models.snomed import SnomedDescription
 from langchain_openai import ChatOpenAI
 from pydantic import SecretStr
 from sqlalchemy import func, or_, select
 from sqlalchemy.orm import Session
+
+from backend.core.config import settings
+from backend.models.snomed import SnomedDescription
 
 
 def _strip_semantic_tag(text: str) -> str:
@@ -148,11 +149,13 @@ def auto_link_terms(
     prompt_text = f"""You are a medical terminology extraction system. 
 Analyze the following markdown text and extract clinically significant terms (abbreviations, diseases, drugs, procedures). 
 For each extracted term, predict the exact, canonical English SNOMED CT term name.
+Article title: {title or "Not supplied"}
+Skip already linked terms and ambiguous abbreviations whose meaning is unclear.
 Output ONLY a valid JSON array of objects with keys "original_text" and "canonical_snomed_term".
 Do not wrap in markdown blocks, just return raw JSON.
 
 Text:
-{body[:4000]}
+{body}
 """
 
     response = snomed_llm.invoke(prompt_text)
@@ -172,20 +175,30 @@ Text:
     try:
         extracted_terms = json.loads(content_to_parse.strip())
     except json.JSONDecodeError:
-        print(f"Failed to parse LLM output: {content}")
-        extracted_terms = []
+        raise ValueError("Terminology extraction returned invalid JSON.") from None
+
+    if not isinstance(extracted_terms, list) or any(
+        not isinstance(item, dict)
+        or not isinstance(item.get("original_text"), str)
+        or not isinstance(item.get("canonical_snomed_term"), str)
+        for item in extracted_terms
+    ):
+        raise ValueError("Terminology extraction returned invalid term records.")
 
     final_links = {}
-    modified_body_lines = body.split("\n")
+    resolved_terms: dict[str, tuple[str, str] | None] = {}
+    ambiguous_phrases: set[str] = set()
 
     for item in extracted_terms:
         orig = item.get("original_text", "").strip()
         canon = item.get("canonical_snomed_term", "").strip()
-        if not orig or not canon:
+        if not orig or not canon or orig not in body or orig in ambiguous_phrases:
             continue
 
         try:
-            match = _search_snomed_term(canon, db, exact=False)
+            if canon not in resolved_terms:
+                resolved_terms[canon] = _search_snomed_term(canon, db, exact=True)
+            match = resolved_terms[canon]
             if match:
                 concept_id, display_term = match
 
@@ -195,18 +208,16 @@ Text:
                 if title and orig.lower() == title.lower():
                     continue
 
-                final_links[orig] = f"{concept_id} | {display_term}"
-
-                # Replace in markdown using word boundaries, ignoring already linked text
-                pattern = re.compile(r"(?<!\[)\b" + re.escape(orig) + r"\b(?!\])")
-
-                for i, line in enumerate(modified_body_lines):
-                    if not line.lstrip().startswith("#"):
-                        modified_body_lines[i] = pattern.sub(
-                            f"[{orig}](snomed://{concept_id})", line
-                        )
+                if not str(concept_id).isdigit():
+                    continue
+                target = f"{concept_id} | {display_term}"
+                if orig in final_links and final_links[orig] != target:
+                    final_links.pop(orig)
+                    ambiguous_phrases.add(orig)
+                    continue
+                final_links[orig] = target
         except Exception as e:  # noqa: BLE001
             print(f"Error resolving {canon}: {e}")
 
-    modified_body = "\n".join(modified_body_lines)
-    return modified_body, final_links
+    # The compiler inserts links through the Markdown AST, preserving the body.
+    return body, final_links
