@@ -24,8 +24,16 @@ This is the FastAPI backend for ThaiOML. It handles RAG (Retrieval-Augmented Gen
    ```
 
 3. **SNOMED CT Lookup Feature (Optional):**
-   - Place the SNOMED RF2 release files in the `backend/data/` directory.
-   - Run the ingestion script: `uv run ingest` (or `python src/backend/scripts/ingest_snomed.py`)
+   - Use the complete International RF2 **Snapshot** release, not Full or Delta files. Place exactly one `sct2_Concept_Snapshot_INT_<YYYYMMDD>.txt` and the matching `sct2_Description_Snapshot-en_INT_<YYYYMMDD>.txt` directly in `backend/data/`. Move the previous release files elsewhere.
+   - The Supabase schema must already be initialized and migrated. The importer preserves the existing tables, indexes, grants, and RLS policies; it does not create a schema. `DATABASE_URL` must identify the intended database and a trusted role with permission to read, truncate, and load both SNOMED tables. A direct connection or session pooler is suitable.
+   - From `backend/`, optionally validate without connecting to the database: `uv run ingest --validate-only`.
+   - Run `uv run ingest`. It validates both files into a temporary local SQLite database, then replaces both tables in one PostgreSQL transaction using COPY. Updated terms and new IDs replace the previous release; inactive or absent records are removed. Active descriptions belonging to inactive concepts are excluded. There is no separate Supabase upload step.
+   - Imports block SNOMED table access while uploading. Schedule a maintenance window and allow temporary server disk headroom for the old and replacement data plus WAL; the old files remain until commit to support rollback. Local staging also needs disk space for both parsed snapshots.
+   - The importer verifies row counts and checks the projected total size of all PostgreSQL databases against **460,000,000 bytes** before committing. Failed validation, loading, or the size check leaves the previous release intact. It reports the measured total after commit; unrelated concurrent database growth can still exceed the limit. A larger release that cannot fit is rejected rather than partially imported.
+
+   To use another directory: `uv run ingest --data-dir /path/to/snapshot-files`.
+
+   Ingestion tests run with `uv run pytest -q tests/test_ingest_snomed.py`. Set `SNOMED_TEST_DATABASE_URL` to a disposable PostgreSQL database named `snomed_ingestion_test` to include database integration tests; those tests replace its SNOMED tables. They never use `DATABASE_URL`.
 
 4. **Start the server:**
    ```bash

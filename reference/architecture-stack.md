@@ -26,6 +26,7 @@ ThaiOML uses a decoupled three-tier architecture. Git remains the source of trut
 - Production connections use the configured Supabase pooler and TLS. Do not encode a region, hostname, credential, or local fallback in application code.
 - SNOMED tables are accessed through FastAPI and trusted database ingestion connections. Keep RLS enabled, revoke table privileges from `PUBLIC`, `anon`, and `authenticated`, and retain restrictive deny policies for the two API roles. Clerk authorization remains in FastAPI; browser clients do not query these tables directly.
 - Primary keys supply the SNOMED ID indexes. Do not add duplicate indexes on `snomed_concepts.concept_id` or `snomed_descriptions.id`.
+- SNOMED ingestion validates a complete International RF2 Snapshot locally, then atomically replaces active terminology with COPY into the existing tables. Release refreshes preserve RLS and indexes, remove retired records, and reject a replacement whose projected total database size reaches 460,000,000 bytes. The upload requires a maintenance window and temporary disk headroom for rollback.
 
 ## Supporting services
 
